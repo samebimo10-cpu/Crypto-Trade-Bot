@@ -96,12 +96,30 @@ def test_check_order_kill_switch_first(risk):
     assert d.rejected_by.startswith(CHECKS[0])       # not the reconciliation check
 
 
-def test_reduce_only_survives_a_flatten(risk):
-    """A flatten is executed by orders, so those orders must get through."""
+def test_reduce_only_survives_a_flatten(risk, state):
+    """A flatten is executed by orders, so those orders must get through.
+
+    The order has to be a real reduction against a real position. This test
+    used to assert that a reduce_only *buy* against a flat book survived the
+    switch, which it did - and which was never what a flatten looks like.
+    """
+    state.positions[("sim", "BTCUSDT")] = Position("sim", "BTCUSDT", dec("0.05"),
+                                                   dec("60000"), dec("60000"))
     risk.killswitch.engage(Trigger.DAILY_LOSS, NOW, "test")
     assert risk.killswitch.state == SwitchState.FLATTENING
-    d = risk.evaluate(intent(reduce_only=True), ctx())
-    assert d.approved
+    d = risk.evaluate(intent(qty="0.05", side="sell", reduce_only=True), ctx())
+    assert d.approved, d.rejected_by
+
+
+def test_a_reduce_only_label_on_an_enlargement_does_not_survive_a_flatten(risk, state):
+    """`reduce_only` is a flag any caller can set. The exemption is earned by
+    the arithmetic, not by the label."""
+    state.positions[("sim", "BTCUSDT")] = Position("sim", "BTCUSDT", dec("0.05"),
+                                                   dec("60000"), dec("60000"))
+    risk.killswitch.engage(Trigger.DAILY_LOSS, NOW, "test")
+    d = risk.evaluate(intent(qty="0.01", side="buy", reduce_only=True), ctx())
+    assert not d.approved
+    assert d.rejected_by.startswith(CHECKS[0])
 
 
 def test_unknown_symbol_has_no_feed_and_is_rejected(risk):

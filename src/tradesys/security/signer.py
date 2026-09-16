@@ -241,15 +241,38 @@ class SigningService:
     def refusals(self) -> List[Dict[str, object]]:
         return [row for row in self.audit if row["refused"]]
 
-    def as_signer(self, strategy_id: str, environment: str, endpoint: str):
-        """Adapt to the venue adapters' ``Signer`` protocol.
+    def as_signer(self, strategy_id: str, environment: str):
+        """Adapt to the venue adapters' signing protocol.
 
         The adapter gets something that can sign and nothing that can be read.
+
+        **The endpoint is supplied per call, not bound here.** It used to be a
+        constructor argument, which meant the allowlist inspected whichever
+        path the wiring happened to name - ``/api/v3/order`` - on every signed
+        request the adapter ever made. A withdrawal request was signed, sent,
+        and recorded in the audit as an order. The allowlist has to see what is
+        actually being signed or it is decoration.
+
+        ``sign`` without a path is refused rather than defaulted. A default is
+        how the constant came back.
         """
         service = self
 
         class _ScopedSigner:
+            def sign_for(self, path: str, payload: str) -> str:
+                if not path:
+                    raise ValueError(
+                        "refusing to sign without the request path: the endpoint "
+                        "allowlist has nothing to inspect and the audit row has "
+                        "nothing to record"
+                    )
+                return service.sign(strategy_id, environment, path, payload).signature
+
             def sign(self, payload: str) -> str:
-                return service.sign(strategy_id, environment, endpoint, payload).signature
+                raise ValueError(
+                    "this signer is path-aware: call sign_for(path, payload). "
+                    "Signing without a path is what let a withdrawal request be "
+                    "signed against a hardcoded /api/v3/order."
+                )
 
         return _ScopedSigner()

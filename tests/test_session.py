@@ -118,10 +118,23 @@ def test_the_session_starts_and_runs():
     assert "clock_drift" in s.startup_report
 
 
-def test_the_dead_man_is_armed_before_any_order():
-    s, _, _ = session()
+def test_the_dead_man_is_armed_by_its_beater_not_by_the_session():
+    """The session used to arm the switch itself, one line before the loop that
+    checked it, so it read as armed everywhere and could fire nowhere. It is
+    armed by whatever is actually beating it, and the gate refuses to start a
+    session that requires one and has none."""
+    s, _, clock = session()
     asyncio.run(s.start())
-    assert s.pipeline.risk.killswitch.deadman_last_beat is not None
+    assert s.pipeline.risk.killswitch.deadman_last_beat is None
+
+    s, _, clock = session(require_deadman=True)
+    with pytest.raises(StartupGateFailed, match="dead"):
+        asyncio.run(s.start())
+
+    s, _, clock = session(require_deadman=True)
+    assert s.beat_risk(clock["now"])
+    asyncio.run(s.start())
+    assert s.pipeline.risk.killswitch.deadman_last_beat == clock["now"]
 
 
 def test_startup_refuses_when_the_venue_holds_an_unknown_position():

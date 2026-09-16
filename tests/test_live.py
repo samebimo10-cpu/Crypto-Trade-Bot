@@ -485,9 +485,14 @@ class FakeSession:
         self.executor = _Exec()
         self.strategies = []
         self.fills = []
+        self.beats = 0
 
     async def start(self, operator=None):
         self.started += 1
+
+    def beat_risk(self, now=None):
+        self.beats += 1
+        return True
 
     async def on_event(self, event):
         self.events.append(event)
@@ -596,7 +601,8 @@ def test_a_planned_rotation_does_not_back_off():
     source = ReplaySource([[depth(101, 105)], [depth(101, 106)]])
     runner = LiveRunner(FakeSession(), feed(), lambda: source, clock=clock,
                         config=LiveConfig(rotate_after_ns=23 * 3600 * 10**9,
-                                          max_connections=2, tick_interval_s=0),
+                                          max_connections=2, tick_interval_s=0,
+                                          heartbeat_interval_s=0),
                         sleep=sleep)
     run(runner.run())
     assert all(s == 0 for s in sleeps), "a rotation is not a failure"
@@ -614,9 +620,13 @@ def test_the_tick_loop_runs_independently_of_market_data():
     ticked = {"n": 0}
 
     async def sleep(seconds):
-        ticked["n"] += 1
-        if ticked["n"] >= 3:
-            runner.stop()
+        # Count only the tick loop's own cadence. The risk heartbeat now sleeps
+        # on this same fake from a task of its own, and counting both would
+        # stop the run before the tick loop had run twice.
+        if seconds == LiveConfig().tick_interval_s:
+            ticked["n"] += 1
+            if ticked["n"] >= 3:
+                runner.stop()
         await asyncio.sleep(0)
 
     runner = LiveRunner(session, feed(), lambda: source, clock=lambda: START,
@@ -786,3 +796,14 @@ def test_a_gap_mid_stream_is_counted_by_the_session_not_just_the_feed():
     run(runner.run())
     assert f.stats.gaps == 1
     assert session.metrics.snapshot()["sequence_gaps"] == 1
+
+
+def test_the_risk_heartbeat_runs_in_a_task_of_its_own():
+    """The beat must not come from the loop that checks the switch, so it gets
+    its own task and its own cadence."""
+    runner, session, _, sleeps = runner_over(
+        [[depth(101, 105)] * 6], max_messages=6,
+        tick_interval_s=5.0, heartbeat_interval_s=2.0)
+    run(runner.run())
+    assert session.beats >= 2                 # one before the gate, then the loop
+    assert 2.0 in sleeps and 5.0 in sleeps    # two independent cadences

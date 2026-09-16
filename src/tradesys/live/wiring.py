@@ -139,7 +139,11 @@ def build_binance_live(
         # the only control between a compromised process and a withdrawal.
         service.add_key("live", "tradesys", environment, creds.secret,
                         permissions=("spot", "trade"))
-        signer = service.as_signer("tradesys", environment, "/api/v3/order")
+        # No endpoint here. The signer is told the path on every call, so the
+        # allowlist inspects what is actually being signed. Binding one path at
+        # construction made every signed request - including a withdrawal -
+        # look like `/api/v3/order` to the allowlist and to the audit trail.
+        signer = service.as_signer("tradesys", environment)
 
     adapter = BinanceAdapter(endpoints, api_key=creds.api_key if creds else "",
                              signer=signer)
@@ -174,8 +178,13 @@ def build_binance_live(
     strategy.health.state = StrategyState.PAPER
 
     pipeline = Pipeline([strategy], risk, executor)
-    session = TradingSession(pipeline, adapters,
-                             config=SessionConfig(reconcile_interval_ns=5_000_000_000))
+    session = TradingSession(pipeline, adapters, config=SessionConfig(
+        reconcile_interval_ns=5_000_000_000,
+        # Anything that can place an order must be dead-man protected, and the
+        # gate refuses to start without a beater rather than starting with a
+        # switch that looks armed. Shadow and read-only place nothing.
+        require_deadman=mode in (Mode.PAPER, Mode.LIVE),
+    ))
 
     specs = [StreamSpec(s, mark=futures, liquidations=liquidations and futures)
              for s in symbols]

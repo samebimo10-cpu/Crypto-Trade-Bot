@@ -506,6 +506,37 @@ class Pipeline:
             stop_distance_frac=self._stop_distances(),
         )
 
+    def flatten_risk_context(self, venue: str, now: Nanos) -> RiskContext:
+        """The risk context for a flatten, built from what is actually known.
+
+        The session used to fabricate a ``MarketEvent`` stamped with the
+        current clock and hand it to :meth:`_risk_context`, which made the
+        feed-freshness check assess a made-up event at exactly the moment a
+        real check matters most. The forgery existed because the flatten was
+        otherwise refused by the checks its own trigger set off; the risk
+        service's reduce_only exemption removes the reason for it, so the
+        context can now tell the truth.
+
+        The feed timestamps are the real ones - stale if the feed is stale -
+        and the rate-limit state is read from the venue if the adapter can
+        still answer and left absent if it cannot. A flatten is never
+        throttled, so an absent budget costs nothing.
+        """
+        rate_limit = None
+        try:
+            rate_limit = self.executor.adapter_for(venue).rate_limit_state()
+        except Exception:                                      # noqa: BLE001
+            pass
+        return RiskContext(
+            now=now,
+            feed_last_event=dict(self._feed_last),
+            reconciliation_clean=self.executor.reconciliation_clean,
+            rate_limit=rate_limit,
+            filters=self.filters,
+            mark_prices={symbol: price for (_, symbol), price in self._marks.items()},
+            stop_distance_frac=self._stop_distances(),
+        )
+
     def _stop_distances(self) -> Dict[str, Dec]:
         """Each strategy's current stop distance, for the risk service.
 

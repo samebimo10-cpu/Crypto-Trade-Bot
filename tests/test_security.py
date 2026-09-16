@@ -94,9 +94,25 @@ def test_the_secret_never_appears_in_a_repr():
 
 def test_the_scoped_signer_exposes_only_signing():
     """The adapter gets something that can sign and nothing that can be read."""
-    signer = service().as_signer("carry", "testnet", "/api/v3/order")
-    assert signer.sign("payload")
+    signer = service().as_signer("carry", "testnet")
+    assert signer.sign_for("/api/v3/order", "payload")
     assert not hasattr(signer, "_secret")
+
+
+def test_the_scoped_signer_refuses_to_sign_without_a_path():
+    """The endpoint is per call, never bound at construction. A signer that
+    cannot see the path is an allowlist that inspects a constant."""
+    signer = service().as_signer("carry", "testnet")
+    with pytest.raises(ValueError, match="path-aware"):
+        signer.sign("payload")
+    with pytest.raises(ValueError, match="without the request path"):
+        signer.sign_for("", "payload")
+
+
+def test_the_scoped_signer_refuses_a_withdrawal_path():
+    signer = service().as_signer("carry", "testnet")
+    with pytest.raises(SigningRefused):
+        signer.sign_for("/sapi/v1/capital/withdraw/apply", "payload")
 
 
 def test_rotation_refreshes_the_age():

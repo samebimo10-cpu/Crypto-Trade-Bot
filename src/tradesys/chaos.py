@@ -216,6 +216,92 @@ def _runaway_strategy() -> Tuple[bool, str]:
         "the rate breaker trips independently of strategy logic"
 
 
+
+def _flatten_under_compound_failure() -> Tuple[bool, str]:
+    """The WP1 exit criterion: a flatten under three simultaneous failures.
+
+    Venue returning 5xx, an order left in QUERY by it, and the dead-man's
+    switch firing - all at once, driven through the real
+    :class:`~tradesys.session.TradingSession` against the real simulator rather
+    than against a component in isolation.
+
+    Every one of those failures used to stop the flatten by itself:
+
+    * the dead-man could not fire at all, because the loop that beat it was the
+      loop that checked it;
+    * the flatten it would have demanded was refused by the risk checks that
+      the same conditions had set off - reconciliation, feed freshness,
+      notional, per-trade risk and loss state;
+    * the 5xx was discarded along with every other ``ExecutionResult``, so the
+      flatten reported nothing and never retried;
+    * the resulting QUERY order was either resent blind or counted as done.
+
+    The guarantee is not "it placed some orders". It is that the book ends
+    **flat**.
+    """
+    from .core.events import Position as _Position
+    from .demo import PERP_VENUE, SYMBOL, build_pipeline
+    from .layers.l5_risk.service import FLATTEN_STRATEGY_ID
+    from .session import SessionConfig, TradingSession
+
+    pipeline, adapters, _ = build_pipeline()
+    venue = adapters[PERP_VENUE]
+    clock = {"now": venue.now}
+    session = TradingSession(
+        pipeline, adapters,
+        config=SessionConfig(reconcile_interval_ns=8 * 3600 * 10**9,
+                             strategy_settle_ns=0, require_deadman=True),
+        clock=lambda: clock["now"],
+    )
+    session.beat_risk(clock["now"])
+    asyncio.run(session.start())
+
+    # A position to close, and a book to close it into.
+    pipeline.books.positions[(PERP_VENUE, SYMBOL)] = _Position(
+        PERP_VENUE, SYMBOL, dec("0.5"), dec("60000"), dec("60000"))
+    pipeline.books.apply_to(pipeline.risk.state)
+    pipeline._marks[(PERP_VENUE, SYMBOL)] = dec("60000")
+    pipeline._touch[(PERP_VENUE, SYMBOL)] = (dec("59990"), dec("60010"))
+
+    # Failure 1: the feed died ten minutes ago and reconciliation is dirty.
+    # Both of these are flatten triggers, and both used to refuse the flatten.
+    pipeline._feed_last[SYMBOL] = clock["now"] - 600 * 10**9
+    pipeline.executor.reconciliation_clean = False
+    # Failure 2: the account is past its daily loss limit, which is a third
+    # check that used to refuse the order it had just demanded.
+    pipeline.risk.state.day_start_equity = pipeline.risk.state.equity * dec("1.1")
+
+    # Failure 3: the venue is returning 5xx. The first flatten order will come
+    # back UnknownState and sit in QUERY.
+    venue.faults.reject_next = "down"
+
+    # And the risk service stops answering. No beat, and time passes.
+    clock["now"] += 30 * 10**9
+    asyncio.run(session.tick(clock["now"]))
+
+    if Trigger.DEADMAN not in pipeline.risk.killswitch.engaged:
+        return False, "the dead-man never fired"
+
+    # Drive the session forward the way the runner does: tick, let the
+    # simulator match, book the fills. Bounded, because a flatten that needs
+    # unbounded time has not terminated.
+    for _ in range(20):
+        venue.advance(1_000_000_000)
+        for fill in venue.step():
+            pipeline.on_fill(fill)
+        clock["now"] += 1_000_000_000
+        asyncio.run(session.tick(clock["now"]))
+        if not any(p.quantity for p in pipeline.books.positions.values()):
+            break
+
+    open_qty = sum((abs(p.quantity) for p in pipeline.books.positions.values()), dec(0))
+    flatten_orders = [m for m in pipeline.executor.machines.values()
+                      if m.intent.strategy_id == FLATTEN_STRATEGY_ID]
+    live = [m for m in flatten_orders if not m.is_terminal]
+    ok = open_qty == 0 and not live
+    return ok, (f"terminated with {open_qty} open and {len(live)} order(s) still "
+                f"working, after {len(flatten_orders)} flatten order(s)")
+
 SCENARIOS: Tuple[Scenario, ...] = (
     Scenario("dropped_response", "a retry after an unknown outcome must not fill twice",
              _dropped_response, "double position"),
@@ -243,6 +329,10 @@ SCENARIOS: Tuple[Scenario, ...] = (
              _audit_path_lost, "unreconstructable day"),
     Scenario("runaway_strategy", "the order-rate breaker is independent of strategy logic",
              _runaway_strategy, "infinite loop"),
+    Scenario("flatten_under_compound_failure",
+             "a flatten under venue 5xx, an order in QUERY and the dead-man "
+             "firing terminates FLAT",
+             _flatten_under_compound_failure, "unflattenable book"),
 )
 
 

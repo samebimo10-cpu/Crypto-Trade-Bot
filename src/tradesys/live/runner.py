@@ -16,6 +16,9 @@ Four things it does that a naive read loop does not:
    drawdown ladder run on a timer, not on market data. A feed that has silently
    died produces no events, and a system that only acts on events is then a
    system that has stopped checking whether it still holds what it thinks.
+   The risk service's heartbeat runs on a *second* timer, in its own task. The
+   loop that beats the dead-man must not be the loop that checks it: one that
+   does both always finds the switch freshly beaten and can never fire.
 4. **Keeps the private-stream token alive independently of the socket.** The
    token expires on its own schedule; a healthy socket carrying a dead token
    delivers nothing and looks fine.
@@ -71,6 +74,11 @@ class LiveConfig:
     #: Independent of market data. SPEC section 9.3 sets 5s as the *maximum*
     #: interval, not a target.
     tick_interval_s: float = 5.0
+    #: The risk service's liveness probe, on its own task and its own cadence.
+    #: It has to be shorter than the dead-man tolerance or the switch fires on
+    #: a healthy system, and it has to be a different loop from the tick or the
+    #: switch can never fire at all.
+    heartbeat_interval_s: float = 2.0
     #: Extend the private-stream token at half its 60-minute life, so a single
     #: failed request is survivable rather than fatal.
     token_keepalive_s: float = 1800.0
@@ -176,6 +184,9 @@ class LiveRunner:
         only thing standing between a restart and trading around a position
         nobody knows about.
         """
+        # Arm the dead-man before the gate runs, so the gate can refuse to
+        # start a session that requires it and has nothing beating it.
+        self.session.beat_risk(self.clock())
         await self.session.start(operator=operator)
         if self.config.mode == Mode.READ_ONLY:
             # Step 2 is about the data path. Enabling strategies here would
@@ -185,7 +196,8 @@ class LiveRunner:
 
         self._stop_event = asyncio.Event()
         tasks = [asyncio.create_task(self._market_loop()),
-                 asyncio.create_task(self._tick_loop())]
+                 asyncio.create_task(self._tick_loop()),
+                 asyncio.create_task(self._risk_heartbeat_loop())]
         if self._user_source is not None and self._keys is not None:
             tasks.append(asyncio.create_task(self._user_loop()))
         try:
@@ -427,3 +439,30 @@ class LiveRunner:
                     # validity left, and the reconnect path issues a fresh
                     # token anyway.
                     self.report.errors.append(f"token keepalive: {e}")
+
+    async def _risk_heartbeat_loop(self) -> None:
+        """Beat the dead-man's switch, from a task the tick loop does not own.
+
+        Separate from :meth:`_tick_loop` on purpose, and the separation is the
+        entire fix. The session used to beat the switch inside ``tick`` and
+        then ask, in the next statement, whether the switch had been beaten -
+        so the switch was unfireable, and the chaos scenario that "proved" it
+        worked was testing :class:`KillSwitch` in isolation rather than the
+        system.
+
+        The probe itself is a real one: ``beat_risk`` asks the risk service to
+        do the work a decision needs and declines to beat if it cannot. A
+        heartbeat that only writes a timestamp proves the writer is alive.
+
+        Failures are swallowed here deliberately. The absence of a beat *is*
+        the signal; raising out of this task would stop the beating and stop
+        the runner, which is the one outcome worse than a missed beat.
+        """
+        while not self._stop:
+            await self._sleep(self.config.heartbeat_interval_s)
+            if self._stop:
+                return
+            try:
+                self.session.beat_risk(self.clock())
+            except Exception as e:                          # noqa: BLE001
+                self.report.errors.append(f"risk heartbeat: {e}")

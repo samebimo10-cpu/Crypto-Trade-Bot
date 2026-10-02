@@ -1,0 +1,338 @@
+{
+  "id": "c1_nabyen",
+  "number": 1,
+  "title": "Daughter of the Rock",
+  "place": "Jos, Plateau State",
+  "teaser": "Granite hills, blue tourmaline, and a letter that turns Nabyen's whole life upside down.",
+  "start": "n1_rocks",
+  "scenes": [
+    {
+      "id": "n1_rocks",
+      "background": "jos",
+      "memory": "m_jos",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Jos, Plateau State. Morning sun on the granite hills, and air cool enough to make Lagos jealous."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Nabyen Dalyop had a tray of blue tourmaline in one hand and a customer haggling in her ear when the boy came running."
+        },
+        {"speaker": "nabyen", "mood": "smile", "text": "Slow down, Dung! Who is chasing you?"},
+        {
+          "speaker": "narrator",
+          "text": "He pressed an envelope into her hands. Red wax, stamped with two rivers meeting."
+        },
+        {
+          "speaker": "letter",
+          "text": "Nabyen. If you are reading this, I am gone. Come to Port Harcourt. Trust the rivers, not the men who sail them. — G.O."
+        },
+        {
+          "speaker": "nabyen",
+          "mood": "surprised",
+          "text": "Chief Gideon Okoro? THE Chief Gideon? Why would a man like that write to me?"
+        },
+        {"speaker": "kaneng", "mood": "surprised", "text": "Give me that."},
+        {"speaker": "narrator", "text": "Her mother's hands were shaking."}
+      ],
+      "prompt": "Mama Kaneng is hiding something.",
+      "choices": [
+        {
+          "id": "c_press",
+          "text": "\"Mama. What aren't you telling me?\"",
+          "effects": {"trust": -5, "affection": 5},
+          "setFlags": ["pressed_mama"],
+          "response": [
+            {
+              "speaker": "kaneng",
+              "mood": "sad",
+              "text": "Not here. Not in front of the whole market. Tonight, at the rocks."
+            }
+          ]
+        },
+        {
+          "id": "c_watch",
+          "text": "Say nothing. Watch her face.",
+          "effects": {"trust": 5},
+          "setFlags": ["watched_mama"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Kaneng folds the letter into her wrapper the way you fold away a prayer. Her eyes are wet."
+            },
+            {"speaker": "kaneng", "text": "Close the stall early, my daughter. We need to talk."}
+          ]
+        },
+        {
+          "id": "c_burn",
+          "text": "Drop the letter in the brazier. Rich men's problems are not hers.",
+          "effects": {"reputation": 5, "affection": -5},
+          "setFlags": ["burned_letter"],
+          "echo": "Mama will remember this.",
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "The wax hisses. Kaneng snatches the letter out of the coals with her bare hand."
+            },
+            {
+              "speaker": "kaneng",
+              "mood": "angry",
+              "text": "This IS your problem. It has been your problem since before you were born."
+            }
+          ]
+        }
+      ],
+      "puzzle": "n_stones",
+      "next": "n2_dusk"
+    },
+    {
+      "id": "n2_dusk",
+      "background": "jos_dusk",
+      "setFlags": ["has_bracelet"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Evening at the balancing rocks. The sky goes orange, then violet, then full of stars."
+        },
+        {
+          "speaker": "kaneng",
+          "mood": "sad",
+          "text": "Thirty years ago, a young man came up from the river to buy tin. Tall. Loud. He laughed like thunder."
+        },
+        {
+          "speaker": "kaneng",
+          "text": "He stayed one rainy season. Then his father called him home to build an empire, and he went."
+        },
+        {
+          "speaker": "kaneng",
+          "mood": "worried",
+          "text": "He sent money every year. I sent it back every year. Pride is a heavy wrapper to wear, Nabyen."
+        }
+      ],
+      "prompt": "The rocks are very quiet.",
+      "choices": [
+        {
+          "id": "c_father",
+          "text": "\"Chief Gideon was my father.\"",
+          "effects": {"affection": 5},
+          "setFlags": ["knows_father"],
+          "response": [
+            {"speaker": "kaneng", "text": "Was. Is. Blood doesn't care about funerals."},
+            {
+              "speaker": "narrator",
+              "text": "She presses half a coral bracelet into Nabyen's palm. \"He kept the other half. Every day of his life.\""
+            }
+          ]
+        },
+        {
+          "id": "c_why",
+          "text": "\"Why did you never tell me?\"",
+          "effects": {"trust": 5},
+          "response": [
+            {
+              "speaker": "kaneng",
+              "mood": "angry",
+              "text": "Because men with empires have enemies, and I wanted you to have a life, not a crown."
+            },
+            {
+              "speaker": "narrator",
+              "text": "She presses half a coral bracelet into Nabyen's palm. \"He kept the other half.\""
+            }
+          ]
+        },
+        {
+          "id": "c_go",
+          "text": "\"Then I'm going to Port Harcourt.\"",
+          "effects": {"reputation": 5},
+          "setFlags": ["determined"],
+          "response": [
+            {
+              "speaker": "kaneng",
+              "mood": "smile",
+              "text": "Of course you are. You are his daughter as much as mine."
+            },
+            {
+              "speaker": "narrator",
+              "text": "She presses half a coral bracelet into Nabyen's palm. \"Take this. He has the other half.\""
+            }
+          ]
+        }
+      ],
+      "puzzle": "n_plateau",
+      "next": "n3_market"
+    },
+    {
+      "id": "n3_market",
+      "background": "jos_market",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Next morning the market is louder than usual, because a black SUV with Lagos plates is parked in the middle of it."
+        },
+        {
+          "speaker": "kolade",
+          "mood": "smile",
+          "text": "Nabyen Dalyop. Kolade Balogun, House of the Lagoon. I flew up at dawn just to meet you."
+        },
+        {
+          "speaker": "kolade",
+          "text": "We got the same letter. Mine said 'earn it.' I'm guessing yours said something kinder."
+        },
+        {
+          "speaker": "kolade",
+          "mood": "smile",
+          "text": "I have a jet waiting at Heipang. Port Harcourt by lunch. We could be allies, you and I."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Then her phone buzzes. A voice she hasn't heard since she was twelve and learning to swim in the creeks."
+        },
+        {
+          "speaker": "tari",
+          "mood": "worried",
+          "text": "Nabyen? It's Tari. Tari Ebiowei. The Chief asked me to keep you safe. Don't get in any car from Lagos."
+        }
+      ],
+      "prompt": "Two men. Two offers.",
+      "choices": [
+        {
+          "id": "c_jet",
+          "text": "Fly with Kolade.",
+          "effects": {"affection": 5, "reputation": 5},
+          "setFlags": ["ally_kolade", "spark_kolade"],
+          "response": [
+            {
+              "speaker": "kolade",
+              "mood": "smile",
+              "text": "Smart woman. Lagos and the Plateau. Together we'd be unstoppable."
+            }
+          ]
+        },
+        {
+          "id": "c_tari",
+          "text": "Tell Tari to come and get her.",
+          "effects": {"trust": 5, "affection": 5},
+          "setFlags": ["ally_tari", "spark_tari"],
+          "echo": "Kolade will remember this.",
+          "response": [
+            {
+              "speaker": "tari",
+              "mood": "smile",
+              "text": "Take the bus to Makurdi. I'll meet you at the river. I'm already on my way."
+            },
+            {"speaker": "kolade", "text": "Suit yourself. I'll save you a seat at the table."}
+          ]
+        },
+        {
+          "id": "c_alone",
+          "text": "Take the night bus. Alone.",
+          "effects": {"reputation": 5, "trust": 5},
+          "setFlags": ["independent"],
+          "response": [
+            {
+              "speaker": "nabyen",
+              "mood": "smile",
+              "text": "I carry my own stones down the hill, Mr Balogun. I can carry myself to Port Harcourt."
+            }
+          ]
+        }
+      ],
+      "next": "n4_road"
+    },
+    {
+      "id": "n4_road",
+      "background": "road_night",
+      "memory": "m_road",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["ally_kolade"]},
+          "text": "The jet hums south over the dark Benue. Kolade sleeps. Nabyen doesn't."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"notFlags": ["ally_kolade"]},
+          "text": "The bus rattles south through the night, past dark hills and sleeping towns."
+        },
+        {
+          "speaker": "narrator",
+          "text": "She opens her bag for water and finds something that wasn't there this morning."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A business card. Heavy cream paper. 'Banque Moreau, Genève.' On the back, in neat handwriting: 'Stay in Jos.'"
+        },
+        {"speaker": "nabyen", "mood": "worried", "text": "Someone was in my room."}
+      ],
+      "prompt": "Somebody wants her to stay home.",
+      "choices": [
+        {
+          "id": "c_keep_card",
+          "text": "Keep the card hidden. Whoever sent it is watching.",
+          "effects": {"trust": 5},
+          "setFlags": ["clue_moreau"],
+          "response": [{"speaker": "nabyen", "text": "Moreau. I'll remember you."}]
+        },
+        {
+          "id": "c_tear_card",
+          "text": "Tear it in half. She doesn't take orders from strangers.",
+          "effects": {"reputation": 5},
+          "setFlags": ["clue_moreau", "defiant"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "She keeps the half with the name on it, though. She's angry, not foolish."
+            }
+          ]
+        }
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "n_wings",
+      "if": {"flags": ["ally_kolade"]},
+      "title": "Wings over the Benue",
+      "text": "Nabyen flew south with Lagos at her side. Kolade is charming, generous and very interested in her future. Maybe a little too interested."
+    },
+    {
+      "id": "n_river",
+      "if": {"flags": ["ally_tari"]},
+      "title": "The River Remembers",
+      "text": "Nabyen called the boy who taught her to swim. He came at once, the way rivers do."
+    },
+    {
+      "id": "n_road",
+      "title": "Her Own Road",
+      "text": "Nabyen went south alone, owing nobody anything. In a game of thrones, that's rare and dangerous."
+    }
+  ],
+  "reflections": [
+    {"if": {"flags": ["burned_letter"]}, "text": "Mama Kaneng's hand is bandaged. She hasn't mentioned it."},
+    {
+      "if": {"flags": ["knows_father"]},
+      "text": "Nabyen knows who her father was. Soon everyone else will too."
+    },
+    {"if": {"min": {"affection": 60}}, "text": "Hearts are opening. Hers included."}
+  ],
+  "secrets": {
+    "s_plea": {
+      "title": "A father's plea",
+      "text": "PLEA, hidden in the Plateau. On the back of the Chief's letter, in pencil so faint she almost missed it: 'Forgive me, Kaneng.'"
+    }
+  },
+  "memories": {
+    "m_jos": {
+      "title": "Morning on the Rocks",
+      "background": "jos",
+      "text": "Blue tourmaline, cool air, and a boy running with a red-wax letter."
+    },
+    "m_road": {
+      "title": "The Road South",
+      "background": "road_night",
+      "text": "A card that says 'Stay in Jos.' She didn't."
+    }
+  }
+}

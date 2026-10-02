@@ -1,6 +1,10 @@
 // Story engine: pure functions over chapter data and a "run" (one playthrough
 // of one chapter). Nothing here touches the DOM or storage, so the whole
 // branch-and-converge logic is testable in Node.
+//
+// A saga is a sequence of chapters. Stats, flags and the chosen point-of-view
+// character carry from one chapter's run into the next (see nextChapter and
+// the `carry` argument of newRun).
 
 export const STATS = ['trust', 'affection', 'reputation'];
 const STAT_MIN = 0;
@@ -14,14 +18,19 @@ const STAT_MAX = 100;
 //   puzzle   -> the scene's word puzzle
 export const PHASES = ['lines', 'choice', 'response', 'puzzle'];
 
-export function newRun(chapter) {
-  return {
+export function newRun(chapter, carry = {}) {
+  const stats = carry.stats ?? { ...defaultStats(), ...(chapter.initialStats || {}) };
+  const flags = carry.flags ?? [];
+  const pov = carry.pov ?? null;
+  const run = {
     chapterId: chapter.id,
     sceneId: chapter.start,
     phase: 'lines',
     lineIndex: 0,
-    stats: { ...defaultStats(), ...(chapter.initialStats || {}) },
-    flags: [],
+    carry: { stats, flags, pov }, // the chapter's starting state, for replays
+    pov,
+    stats: { ...stats },
+    flags: [...flags],
     choices: [],      // [{ sceneId, choiceId, text }]
     checkpoints: [],  // snapshots taken just before each choice, for replay
     puzzles: {},      // puzzleId -> summary once solved
@@ -29,6 +38,13 @@ export function newRun(chapter) {
     pendingNext: null,
     complete: false,
   };
+  return enterScene(run, getScene(chapter, chapter.start));
+}
+
+// Flags a scene sets just by being reached (deaths, endings, places visited).
+function enterScene(run, scene) {
+  if (!scene.setFlags?.length) return run;
+  return { ...run, flags: [...new Set([...run.flags, ...scene.setFlags])] };
 }
 
 function defaultStats() {
@@ -40,12 +56,17 @@ function defaultStats() {
 //   anyFlags: at least one of these flags is set
 //   notFlags: none of these flags are set
 //   min/max:  { stat: value } bounds, inclusive
+//   pov / notPov: the point-of-view character is (not) one of these ids
+//   count:    { of: [flags], min: n } at least n of these flags are set
 export function checkCondition(cond, run) {
   if (!cond) return true;
   const has = (f) => run.flags.includes(f);
   if (cond.flags && !cond.flags.every(has)) return false;
   if (cond.anyFlags && !cond.anyFlags.some(has)) return false;
   if (cond.notFlags && cond.notFlags.some(has)) return false;
+  if (cond.pov && !asList(cond.pov).includes(run.pov)) return false;
+  if (cond.notPov && asList(cond.notPov).includes(run.pov)) return false;
+  if (cond.count && cond.count.of.filter(has).length < cond.count.min) return false;
   for (const [stat, v] of Object.entries(cond.min || {})) {
     if ((run.stats[stat] ?? 0) < v) return false;
   }
@@ -54,6 +75,8 @@ export function checkCondition(cond, run) {
   }
   return true;
 }
+
+const asList = (v) => (Array.isArray(v) ? v : [v]);
 
 export function getScene(chapter, sceneId) {
   const scene = chapter.scenes.find((s) => s.id === sceneId);
@@ -139,7 +162,7 @@ function enterPhase(chapter, run, phase) {
 function goToScene(chapter, run, sceneId) {
   const base = { ...run, response: null, pendingNext: null };
   if (!sceneId) return { ...base, complete: true, phase: 'end' };
-  return enterPhase(chapter, { ...base, sceneId }, 'lines');
+  return enterPhase(chapter, enterScene({ ...base, sceneId }, getScene(chapter, sceneId)), 'lines');
 }
 
 export function choose(chapter, run, choiceId) {
@@ -152,8 +175,11 @@ export function choose(chapter, run, choiceId) {
   const flags = [...new Set([...run.flags, ...(choice.setFlags || [])])].filter(
     (f) => !(choice.clearFlags || []).includes(f),
   );
+  const pov = choice.pov ?? run.pov;
+  if (choice.pov) flags.push(`pov_${choice.pov}`);
   let r = {
     ...run,
+    pov,
     stats: applyEffects(run.stats, choice.effects),
     flags,
     choices: [...run.choices, { sceneId: scene.id, choiceId: choice.id, text: choice.text }],
@@ -191,4 +217,17 @@ export function restoreCheckpoint(chapter, run, index) {
 // player's choices led to on the results screen.
 export function pickOutcome(chapter, run) {
   return (chapter.outcomes || []).find((o) => checkCondition(o.if, run)) ?? null;
+}
+
+// The chapter that follows `chapterId` for this run: the next entry in the
+// story manifest whose condition holds (POV chapters are conditional on the
+// chosen character). Returns the manifest entry, or null at the saga's end.
+export function nextChapter(story, chapterId, run) {
+  const i = story.chapters.findIndex((c) => c.id === chapterId);
+  return story.chapters.slice(i + 1).find((c) => checkCondition(c.if, run)) ?? null;
+}
+
+// What the next chapter's run starts with.
+export function carryFrom(run) {
+  return { stats: { ...run.stats }, flags: [...run.flags], pov: run.pov };
 }

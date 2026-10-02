@@ -3,13 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#1d1a2b" />
+  <meta name="theme-color" content="#2a0f3a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="description" content="StoryWord — a story you change with words." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="StoryWord: Crown of the Confluence. A story you change with words, from Jos to Lagos to Tobago." />
   <title>StoryWord</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body data-scene="none">
+  <div id="scene" aria-hidden="true"></div>
   <div id="app" aria-live="polite">
     <main class="screen center"><p class="muted">Loading…</p></main>
   </div>

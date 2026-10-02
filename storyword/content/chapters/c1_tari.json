@@ -1,0 +1,264 @@
+{
+  "id": "c1_tari",
+  "number": 1,
+  "title": "Prince of the Creeks",
+  "place": "Bayelsa State",
+  "teaser": "Mangroves, mist and a midnight ambush. Someone doesn't want Tari to reach Port Harcourt alive.",
+  "start": "t1_creek",
+  "scenes": [
+    {
+      "id": "t1_creek",
+      "background": "bayelsa",
+      "memory": "m_creeks",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bayelsa. Mist on the creeks, and mangrove roots reaching into the water like old men's fingers."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tari Ebiowei had been on the water since four. The fishermen had already told him. The Chief was dead."
+        },
+        {
+          "speaker": "tari",
+          "mood": "sad",
+          "text": "He pulled me out of this river when I was six. Raised me like his own. And I wasn't there."
+        },
+        {
+          "speaker": "letter",
+          "text": "Tari. You were the son I chose. Protect the girl from the Rock. Nabyen. Do not let them near her. — G.O."
+        },
+        {
+          "speaker": "tari",
+          "mood": "surprised",
+          "text": "Nabyen? Little Nabyen from Jos? She used to scream at every fish."
+        }
+      ],
+      "prompt": "The crew are watching him.",
+      "choices": [
+        {
+          "id": "c_crew",
+          "text": "\"Gather the crew. We sail for Port Harcourt tonight.\"",
+          "effects": {"reputation": 10},
+          "setFlags": ["crew_loyal"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Twelve boats. Twelve men. Every one of them owes the Chief their life."
+            }
+          ]
+        },
+        {
+          "id": "c_alone_t",
+          "text": "Go alone. Fewer eyes, fewer mouths.",
+          "effects": {"trust": 5},
+          "setFlags": ["travels_light"],
+          "response": [
+            {
+              "speaker": "tari",
+              "text": "If someone poisoned an old lion in his own house, they'll be watching the river."
+            }
+          ]
+        },
+        {
+          "id": "c_killer",
+          "text": "\"First, I find out who killed him.\"",
+          "effects": {"trust": 5, "reputation": -5},
+          "setFlags": ["suspects_poison"],
+          "response": [
+            {
+              "speaker": "tari",
+              "mood": "angry",
+              "text": "Old men don't die of 'tiredness' the same week they rewrite their will. Somebody did this."
+            }
+          ]
+        }
+      ],
+      "puzzle": "t_waters",
+      "next": "t2_call"
+    },
+    {
+      "id": "t2_call",
+      "background": "bayelsa",
+      "lines": [
+        {"speaker": "narrator", "text": "His phone rings. Port Harcourt. The widow."},
+        {
+          "speaker": "ibiere",
+          "mood": "angry",
+          "text": "Tari. You will stay away from the funeral. My husband's charity ended when his heart stopped."
+        },
+        {"speaker": "ibiere", "text": "This is family business, and you are not family."}
+      ],
+      "prompt": "Ibiere Okoro, the Chief's widow, wants him gone.",
+      "choices": [
+        {
+          "id": "c_defy",
+          "text": "\"With respect, Madam, I'll be there.\"",
+          "effects": {"reputation": 5},
+          "setFlags": ["defied_ibiere"],
+          "response": [{"speaker": "ibiere", "mood": "angry", "text": "Then come. And see how quickly respect runs out."}]
+        },
+        {
+          "id": "c_lie_ib",
+          "text": "\"Of course, Madam. I'll stay in the creeks.\"",
+          "effects": {"trust": -5},
+          "setFlags": ["lied_ibiere"],
+          "echo": "Ibiere believed you.",
+          "response": [
+            {"speaker": "ibiere", "mood": "smile", "text": "Good boy."},
+            {"speaker": "narrator", "text": "He's already untying the boat."}
+          ]
+        },
+        {
+          "id": "c_ask_ib",
+          "text": "\"Madam, who was with him the night he died?\"",
+          "effects": {"trust": 5, "reputation": -5},
+          "setFlags": ["suspects_ibiere", "clue_moreau"],
+          "response": [
+            {"speaker": "ibiere", "mood": "surprised", "text": "How dare you."},
+            {
+              "speaker": "narrator",
+              "text": "She hangs up, but not before he hears another woman's voice in the room. An accent. French, or Swiss."
+            }
+          ]
+        }
+      ],
+      "next": "t3_night"
+    },
+    {
+      "id": "t3_night",
+      "background": "creek_night",
+      "memory": "m_night_creek",
+      "lines": [
+        {"speaker": "narrator", "text": "Midnight on the creeks. No moon cover, no engines but his own."},
+        {"speaker": "narrator", "text": "Then another engine. Fast. Lights off."},
+        {"speaker": "tari", "mood": "angry", "text": "DOWN!"},
+        {
+          "speaker": "narrator",
+          "text": "Bullets chew the mangroves. A speedboat swings past, and something heavy splashes into the water beside him."
+        },
+        {"speaker": "narrator", "text": "One of the attackers has gone overboard. He can't swim."}
+      ],
+      "prompt": "The speedboat is getting away. The man in the water is going under.",
+      "choices": [
+        {
+          "id": "c_chase",
+          "text": "Chase the boat.",
+          "effects": {"reputation": 5},
+          "setFlags": ["chased", "suspects_kolade"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "He loses them in the mangroves, but they drop something in the chase: a bank card. First Lagoon Bank, Lagos."
+            },
+            {"speaker": "tari", "mood": "angry", "text": "Kolade Balogun's bank."}
+          ]
+        },
+        {
+          "id": "c_save",
+          "text": "Save the drowning man.",
+          "effects": {"affection": 5, "trust": 5},
+          "setFlags": ["saved_attacker", "clue_moreau"],
+          "response": [
+            {"speaker": "narrator", "text": "Tari hauls him into the boat, coughing up river."},
+            {
+              "speaker": "narrator",
+              "text": "'The white woman pays in francs,' the man gasps. 'She said nobody from the creeks reaches Port Harcourt.'"
+            }
+          ]
+        }
+      ],
+      "puzzle": "t_rivers",
+      "next": "t4_dawn"
+    },
+    {
+      "id": "t4_dawn",
+      "background": "ph_day",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Dawn. The Port Harcourt jetty. Tari ties up the boat with hands that won't stop shaking."
+        },
+        {
+          "speaker": "narrator",
+          "text": "And there at the end of the jetty, in an orange ankara dress, is a woman he hasn't seen since she was twelve."
+        },
+        {"speaker": "nabyen", "mood": "surprised", "text": "Tari? Tari Ebiowei? Since when are you so tall?"},
+        {
+          "speaker": "nabyen",
+          "mood": "smile",
+          "text": "You still owe me a fish, you know. A big one. You promised."
+        }
+      ],
+      "prompt": "Nabyen Dalyop, all grown up.",
+      "choices": [
+        {
+          "id": "c_hug",
+          "text": "Pull her into a hug. Fish later.",
+          "effects": {"affection": 10},
+          "setFlags": ["spark_nabyen"],
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Okay. Okay! You smell like the river."}]
+        },
+        {
+          "id": "c_warn",
+          "text": "\"Someone tried to kill me last night. Stay close.\"",
+          "effects": {"trust": 10},
+          "setFlags": ["ally_nabyen"],
+          "response": [{"speaker": "nabyen", "mood": "worried", "text": "Then we stay close."}]
+        },
+        {
+          "id": "c_formal",
+          "text": "\"Miss Dalyop. The Chief asked me to look after you.\"",
+          "effects": {"reputation": 5},
+          "response": [{"speaker": "nabyen", "mood": "sad", "text": "Miss Dalyop. Wow. Okay, Captain."}]
+        }
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "t_blood",
+      "if": {"flags": ["suspects_kolade"]},
+      "title": "Blood in the Water",
+      "text": "A Lagos bank card, dropped by men who tried to kill him. Tari now has a name to hate. It might even be the right one."
+    },
+    {
+      "id": "t_francs",
+      "if": {"flags": ["clue_moreau"]},
+      "title": "The Woman Who Pays in Francs",
+      "text": "Someone far from the creeks is paying in Swiss money for Nigerian blood."
+    },
+    {
+      "id": "t_tide",
+      "title": "Turning Tide",
+      "text": "Tari reached Port Harcourt alive. On the creeks, that's a kind of victory."
+    }
+  ],
+  "reflections": [
+    {
+      "if": {"flags": ["spark_nabyen"]},
+      "text": "Something old and warm is waking up between the captain and the girl from the rocks."
+    },
+    {"if": {"flags": ["crew_loyal"]}, "text": "Twelve boats answer to Tari now."},
+    {"if": {"flags": ["lied_ibiere"]}, "text": "Ibiere thinks Tari is in the creeks. She'll find out soon."}
+  ],
+  "secrets": {
+    "s_swear": {
+      "title": "An oath on the water",
+      "text": "SWEAR, from the waters. Tari's father swore on the Nun River to protect the Chief, and died keeping that oath. The Chief never forgave himself."
+    }
+  },
+  "memories": {
+    "m_creeks": {
+      "title": "Mist on the Creeks",
+      "background": "bayelsa",
+      "text": "Mangroves, a canoe, and news nobody wanted to deliver."
+    },
+    "m_night_creek": {
+      "title": "Ambush at Midnight",
+      "background": "creek_night",
+      "text": "Fireflies, bullets, and a man who couldn't swim."
+    }
+  }
+}

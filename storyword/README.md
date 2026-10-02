@@ -1,166 +1,131 @@
-# StoryWord
+# StoryWord: Crown of the Confluence
 
-A mobile story + word puzzle game. You follow a story, make choices that
-shift how people see you, and solve short word puzzles to move it forward.
+A story + word puzzle game you can play offline. It's a saga of mystery, romance, death and
+joy that moves from **Jos (Plateau State)**, **Kano**, **Lagos**, **Bayelsa** and **Port
+Harcourt** to **London**, **Switzerland** and **the Caribbean**.
 
-> Read → Choose → Solve → Influence → Reward → Continue Story
+> Four houses. One crown. A death that started everything.
 
-This is the MVP: **Season 1 "The Message", Chapter 1 "Come Home"**, playable
-in a mobile browser. It has no dependencies and no build step.
+When Chief Gideon Okoro dies in Port Harcourt, four letters sealed in red wax go out across
+Nigeria. You choose whose story to follow:
 
-## Run it
+| | Character | House | Home |
+|---|---|---|---|
+| ⭐ | **Nabyen Dalyop** (key character) | House of the Rock | Jos, Plateau State |
+| | Tari Ebiowei | House of the Creeks | Yenagoa, Bayelsa State |
+| | Hadiza Lawan | House of the Walls | Kano |
+| | Kolade Balogun | House of the Lagoon | Lagos |
+
+Each house has its own first chapter. After that the four stories join up: a funeral in
+Port Harcourt, a murder in London, a vault and a deadly mountain pass in Switzerland, and
+the vote for the crown in Tobago. The choices you make carry through every chapter. You
+can fall in love, betray your friends, or send someone down the mountain who never comes
+back.
+
+## Play offline
+
+There are three ways to play.
+
+- **One file, no internet.** Open `offline/StoryWord.html` in any browser on a phone or
+  computer. The whole game is inside that one file, so you can share it over WhatsApp,
+  AirDrop, a USB stick or email.
+- **Install it as an app.** Serve the folder with `npm start` and open it once. Then use
+  *Add to Home Screen*. After that it works with no connection.
+- **Development.** Run `npm start`, then open http://localhost:8080.
 
 ```sh
 cd storyword
-npm start          # http://localhost:8080 (PORT=… to change)
-npm test           # engine + content tests (node:test)
-npm run validate   # check content files after editing them
+npm start          # local server on port 8080
+npm test           # engine, content, story-path and build tests
+npm run validate   # check content after editing
+npm run build      # regenerate offline/StoryWord.html (commit it)
+npm run words -- suggest SECRET    # words a set of letters can spell
+npm run words -- fill              # add every real word to each puzzle's bonus list
 ```
 
-To try it on a phone, open `http://<your-computer's-LAN-IP>:8080` on the same
-network. The game fetches its content as JSON, so it has to be served over
-HTTP. Opening `index.html` as a file won't work.
+## What's in it
 
-## What's in the MVP
+- **A prologue and 5 chapters.** Each playthrough is about 22 scenes and 17 decisions. Including the four
+  first chapters, there are 17 story puzzles, plus 5 rotating Daily Word puzzles.
+- **6 endings.**
+  - *Where the Rivers Meet*: a wedding on the beach.
+  - *The Crown of the Confluence*: you rule alone.
+  - *Four Rivers, One Sea*: the houses share power as a council.
+  - *Ashes on the Water*: tragedy.
+  - *The Price of Gold*: Kolade's betrayal.
+  - *The Seventh Seal*: a secret ending you unlock by finding 4 of the 8 hidden words in
+    one story.
+- **Romance and death.**
+  - If you play Tari, Hadiza or Kolade, you can fall for Nabyen. If you play Nabyen, you
+    choose between Tari and Kolade.
+  - On the Alpine pass, whoever you send down the mountain dies. If you carry the ledger
+    yourself, everyone lives, but the villain escapes.
+- **Animated characters with no image files.** Every portrait is drawn in code with six
+  moods, blinking eyes, breathing and swaying earrings.
+  - Nabyen has deep chocolate skin, box braids with gold cuffs, gold hoops and an ankara
+    top.
+  - Hadiza wears a hijab, Ibiere a gele and Chief Gideon a red chief's cap. Tari wears
+    coral beads.
+- **Colourful animated scenes, also drawn in code.** 24 locations, including the Jos
+  rocks and mining pond, Kano's walls and dye pits, the Durbar, Third Mainland Bridge and
+  its danfos, the Bayelsa mangroves, Port Harcourt's gas flares, Big Ben and Tower Bridge
+  in the rain, the Jet d'Eau, the Alps, and Tobago at sunset.
+- **Words.**
+  - Each puzzle accepts every common English word its letters can spell. The word list is
+    vetted and offensive words are removed.
+  - Hidden *secret words* reveal parts of the mystery.
+  - Hints go in three steps: first letter, then remove letters you don't need, then reveal
+    the word. You earn hints back by solving puzzles and finding bonus words.
+- **Saving and replaying.**
+  - Progress is saved on the device.
+  - You can rewind to any decision.
+  - The game keeps track of memories, secrets, stars, coins and streaks.
 
-| Spec requirement | What's here |
-|---|---|
-| 1 chapter, 5–10 scenes | 12 scene nodes; each playthrough visits 10 |
-| 8–12 choices | 9 decisions per playthrough, 29 options in total |
-| 5–8 characters | Maya, Jun, Rosa, Eli, Daniel, Mr. Hale, and the unknown sender |
-| 3–5 word puzzles | 4 (TRAIN, LATE, HEART, SECRET), plus 3 rotating Daily Word puzzles |
-| 1 meaningful consequence | What you tell Eli about Maya sends the chapter to one of three branches (`s7_fallout` / `s7_tracks` / `s7_kept`), which converge at `s8_night` and lead to one of three outcomes |
-| Save progress | `localStorage`, saved after every action, including partly solved puzzles |
-| Relationship variables | Trust, Affection and Reputation (0–100). They stay hidden while you play and are shown on the results and profile screens |
-| Word validation | Required words complete the puzzle. Bonus words are accepted and rewarded |
-| Hints | First letter → remove letters you don't need → reveal the word |
-| Basic rewards | ⭐ stars, 🪙 coins, 📸 memories, 🔥 word streak |
-| Screens | Home, Story, Choice, Puzzle, Results, Profile, plus Memories and Daily Word |
-
-Some of the design rules and how they show up:
-
-- **Choices are never labelled good or bad.** No stat numbers appear when you
-  choose. Some choices show a single ambiguous line, such as "Eli believed you."
-- **Earlier choices change later scenes.** Telling Jun about the message means
-  Rosa and Daniel already know about it. Telling Eli means Daniel turns up
-  with a bruise. Every path changes the last message you receive.
-- **Replay a scene to see another choice.** The results screen lists every
-  decision you made, and you can rewind to any of them.
-- **Hints are limited but you earn them back by playing.** You start with 3.
-  You get +1 for each solved puzzle and +1 for every 3 bonus words, so you can
-  always earn a hint without paying.
-- **Secret words.** Some puzzles hide bonus words that unlock story secrets
-  (STEAL, RESET). There is also one secret you can find through a choice.
-  These are meant to feed the Secret Ending in later chapters.
-
-## Layout
+## How it's built
 
 ```
 storyword/
-├── index.html, styles.css      shell and styling (light and dark, reduced motion)
+├── index.html, styles.css, sw.js, manifest.webmanifest, icon.svg
+├── offline/StoryWord.html     single-file offline build (generated by tools/build.js)
 ├── src/
-│   ├── main.js                 screens and input; connects the engines to the DOM
-│   ├── ui/portrait.js          SVG character portraits with 6 moods (no art assets)
-│   └── engine/                 pure logic, no DOM, unit-tested in Node
-│       ├── story.js            scenes, phases, conditions, branching, checkpoints
-│       ├── puzzle.js           word validation, hints, stars
-│       ├── progress.js         profile, rewards, streaks, Daily Word, save and load
-│       └── validate.js         content checks
-├── content/                    everything a writer edits
-│   ├── story.json              season manifest (chapters, totals)
-│   ├── chapters/ch1.json       scenes, choices, outcomes, secrets, memories
-│   ├── puzzles.json            chapter puzzles
-│   ├── characters.json         names and portrait looks
-│   └── daily.json              Daily Word entries (one per day, rotating)
-├── tools/                      serve.js, validate-content.js, format-content.js
-└── tests/engine.test.js
+│   ├── main.js                screens, input, scene layer
+│   ├── ui/portrait.js         animated SVG characters
+│   ├── ui/scenes.js           animated SVG locations
+│   └── engine/                pure logic, unit-tested in Node
+│       ├── story.js           scenes, choices, conditions, POV, chapters carrying over
+│       ├── puzzle.js          word validation, hints, stars
+│       ├── progress.js        profile, rewards, Daily Word, save and load
+│       └── validate.js        content checks
+├── content/                   everything a writer edits
+│   ├── story.json             saga manifest: chapter order, POV chapters, secrets
+│   ├── chapters/*.json        prologue, c1_<pov>, c2_funeral … c5_caribbean
+│   ├── puzzles.json, daily.json, characters.json
+└── tools/                     serve, build, validate, words, format-content
+    └── data/common-words.txt  ~11k vetted common English words
 ```
 
-## Writing content
+### Writing content
 
-You add a new chapter by editing JSON, not code:
+Chapters are JSON, so you can add new ones without touching code. These are the main
+features available:
 
-1. Write `content/chapters/chN.json` (copy `ch1.json` as a template).
-2. Add `{ "id": N, "file": "chapters/chN.json" }` to `story.json`.
-3. Add its puzzles to `puzzles.json`.
-4. Run `npm run validate`. It reports broken scene links, unreachable scenes,
-   unknown speakers or puzzles, and words that can't be spelled from the
-   puzzle's letters.
-
-### Scenes
-
-A scene plays its phases in this order, and skips any phase it has no content
-for:
-
-```
-lines → choice → response (the chosen option's lines) → puzzle → next
-```
-
-```jsonc
-{
-  "id": "s4_harbor",
-  "background": "harbor",              // a .bg-* class in styles.css
-  "memory": "m_harbor",                // optional: unlocks when the scene is shown
-  "lines": [
-    {"speaker": "eli", "mood": "angry", "text": "Stay away from my sister."},
-    {"speaker": "narrator", "if": {"flags": ["told_jun"]}, "text": "Only shown if…"}
-  ],
-  "prompt": "Eli wants to know what Maya told you.",
-  "choices": [
-    {
-      "id": "c_tell_eli",
-      "text": "She got a message. Someone's threatening her.",
-      "effects": {"trust": 10, "affection": -10},
-      "setFlags": ["told_eli"],
-      "echo": "Maya asked you not to.",  // optional: shown as a short toast
-      "response": [{"speaker": "eli", "text": "Threatening her? Who?"}],
-      "next": "s5_x"                     // optional: overrides the scene's next
-    }
-  ],
-  "puzzle": "p_secret",                 // optional
-  "next": [                             // a scene id, or routes checked in order
-    {"if": {"flags": ["told_eli"]}, "to": "s7_fallout"},
-    {"to": "s7_kept"}                    // the last route must have no condition
-  ]
-}
-```
-
-- **Conditions** (`if`) can use `flags`, `anyFlags`, `notFlags`, and
-  `min` / `max` stat bounds. You can put one on lines, choices, routes,
-  outcomes and reflections.
-- **Moods** are `neutral`, `smile`, `sad`, `angry`, `surprised` and `worried`.
-- `"next": null` ends the chapter. The results screen then shows the first
-  matching `outcomes` entry and every matching `reflections` line.
-- A flag whose id matches a key in the chapter's `secrets` counts as a secret
-  discovered.
-
-### Puzzles
-
-```jsonc
-{
-  "id": "p_heart",
-  "prompt": "Something still beats under all this silence.",
-  "hint": "Something connected to love.",
-  "letters": ["H", "E", "A", "R", "T"],
-  "requiredWords": ["HEART", "HEAR", "HEAT"],  // find all of these to finish
-  "bonusWords": ["EARTH", "RATE", "..."],      // also accepted and rewarded
-  "secrets": [{"word": "EARTH", "id": "s_x"}],  // optional; the word must be listed above
-  "reward": {"coins": 3},
-  "minLength": 3
-}
-```
-
-There is no dictionary. The game only accepts words listed in the puzzle.
-That keeps each puzzle on theme, but it means `bonusWords` needs to cover the
-real words players are likely to try. Run `node tools/format-content.js` to
-tidy the JSON after editing.
-
-## Not built yet
-
-These are left out on purpose, following the spec's build order:
-
-- sound
-- monetization
-- cosmetics and spending coins (coins are earned but there's nothing to buy yet)
-- chapters 2–10 and the endings
-- any server or account system
+- **Choosing a character.** `"pov": "nabyen"` on a choice sets the player's character.
+  Chapters in `story.json` can be limited to one character with
+  `"if": {"pov": "tari"}`.
+- **Conditions** go on lines, choices, routes, outcomes and reflections:
+  - `flags`, `anyFlags`, `notFlags`
+  - `min` and `max` stat bounds
+  - `pov` and `notPov`
+  - `count: {of: [...], min: n}`
+- **Scene flags.** A scene can set flags just by being reached, using
+  `"setFlags": ["dead_tari"]`. Deaths and endings work this way.
+- **The player's name in text.** `{pov}` in story text is replaced with the name of the
+  character you're playing. Lines spoken by that character are labelled "(you)".
+- **Speakers.** `letter` shows a wax-sealed letter, `phone` shows a text message and
+  `narrator` shows narration.
+- **Checking.** `npm run validate` catches:
+  - broken links and unreachable scenes
+  - unknown speakers
+  - scene art that doesn't exist
+  - secrets that aren't defined
+  - real words a puzzle doesn't accept yet (run `npm run words -- fill`)

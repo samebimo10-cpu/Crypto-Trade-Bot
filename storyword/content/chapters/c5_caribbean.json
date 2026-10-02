@@ -1,0 +1,478 @@
+{
+  "id": "c5_caribbean",
+  "number": 5,
+  "title": "Where the Rivers Meet",
+  "place": "Tobago, the Caribbean",
+  "teaser": "Turquoise water, a pink house on the hill, the Chief's long-lost brother, and the vote for the crown.",
+  "start": "c1_beach",
+  "scenes": [
+    {
+      "id": "c1_beach",
+      "background": "caribbean",
+      "memory": "m_tobago",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tobago. Water the colour of a peacock's throat, sand like sugar, and a pink house on the hill above Castara Bay."
+        },
+        {
+          "speaker": "marcus",
+          "mood": "smile",
+          "text": "So. The children my brother collected. Come, come. There's fish on the fire and rum in the shade."
+        },
+        {
+          "speaker": "marcus",
+          "text": "I'm Marcus, Gideon's little brother. Our mother was from Trinidad. He got the empire and I got the sea. I think I got the better deal."
+        },
+        {
+          "speaker": "marcus",
+          "if": {"flags": ["dead_tari"]},
+          "mood": "sad",
+          "text": "I'm sorry about the boy from the creeks. Gideon wrote about him every Christmas."
+        },
+        {
+          "speaker": "marcus",
+          "if": {"flags": ["dead_hadiza"]},
+          "mood": "sad",
+          "text": "Gideon said the Lawan girl could count the stars and tell you which ones were missing. I'm so sorry."
+        },
+        {
+          "speaker": "marcus",
+          "if": {"flags": ["dead_kolade"]},
+          "mood": "sad",
+          "text": "The Lagos boy. Gideon said he was all ambition and no peace. I hope he has peace now."
+        },
+        {"speaker": "marcus", "text": "I have the last seal, and his last instruction: you choose. Together."}
+      ],
+      "prompt": "Marcus pours the rum.",
+      "choices": [
+        {
+          "id": "c_toast",
+          "text": "Raise a glass to Chief Gideon.",
+          "effects": {"affection": 5},
+          "response": [{"speaker": "marcus", "mood": "smile", "text": "To my big, loud, impossible brother."}]
+        },
+        {
+          "id": "c_toast_fallen",
+          "text": "Raise a glass to everyone this crown has cost.",
+          "effects": {"trust": 5},
+          "response": [{"speaker": "marcus", "mood": "sad", "text": "To Oliver. To all of them."}]
+        }
+      ],
+      "puzzle": "c_island",
+      "next": "c2_ibiere"
+    },
+    {
+      "id": "c2_ibiere",
+      "background": "caribbean",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Then a seaplane lands in the bay, and out steps Ibiere Okoro in purple lace and a temper."
+        },
+        {
+          "speaker": "ibiere",
+          "if": {"flags": ["accused_ibiere"]},
+          "mood": "angry",
+          "text": "You called me a murderer in my own house. I'm here to make sure none of you wear his crown."
+        },
+        {
+          "speaker": "ibiere",
+          "if": {"notFlags": ["accused_ibiere"]},
+          "mood": "sad",
+          "text": "I'm not here to fight. I didn't know about the money. I didn't know about any of it."
+        },
+        {
+          "speaker": "ibiere",
+          "if": {"notFlags": ["accused_ibiere"]},
+          "text": "I didn't know him at all, it seems. But I want his wish carried out."
+        },
+        {
+          "speaker": "ibiere",
+          "if": {"flags": ["betrayer"]},
+          "text": "And I know what the Lagos boy did. Elise's lawyers sent me everything."
+        }
+      ],
+      "prompt": "The widow has arrived.",
+      "choices": [
+        {
+          "id": "c_apologise",
+          "if": {"flags": ["accused_ibiere"]},
+          "text": "Apologise. You were wrong about her.",
+          "effects": {"trust": 10, "reputation": -5},
+          "setFlags": ["apologised"],
+          "response": [{"speaker": "ibiere", "mood": "sad", "text": "...Accepted. Barely."}]
+        },
+        {
+          "id": "c_stand",
+          "if": {"flags": ["accused_ibiere"]},
+          "text": "Stand your ground. Let her fight it in court.",
+          "effects": {"reputation": 10, "trust": -5},
+          "setFlags": ["ibiere_enemy"],
+          "response": [{"speaker": "ibiere", "mood": "angry", "text": "Then I'll see you in court. All of you."}]
+        },
+        {
+          "id": "c_welcome",
+          "if": {"notFlags": ["accused_ibiere"]},
+          "text": "Welcome her to the table.",
+          "effects": {"trust": 5, "affection": 5},
+          "setFlags": ["ibiere_ally"],
+          "response": [{"speaker": "ibiere", "mood": "smile", "text": "Thank you. He would have liked that."}]
+        },
+        {
+          "id": "c_wary",
+          "if": {"notFlags": ["accused_ibiere"]},
+          "text": "Keep her at arm's length.",
+          "effects": {"reputation": 5},
+          "response": [{"speaker": "ibiere", "text": "Wise. I would too."}]
+        }
+      ],
+      "next": "c3_vote"
+    },
+    {
+      "id": "c3_vote",
+      "background": "caribbean_sunset",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Sunset. The sky turns pink, then gold, then violet. Steel pan drifts up from the village."
+        },
+        {
+          "speaker": "marcus",
+          "text": "One crown. The ships, the tin, the cloth, the banks. Everything my brother built goes to whoever you choose."
+        }
+      ],
+      "prompt": "Who wears the Crown of the Confluence?",
+      "choices": [
+        {
+          "id": "c_crown_self",
+          "text": "\"I will.\"",
+          "effects": {"reputation": 15, "affection": -5},
+          "setFlags": ["crowned_self"],
+          "response": [{"speaker": "marcus", "text": "Then wear it well. It's heavier than it looks."}]
+        },
+        {
+          "id": "c_crown_nabyen",
+          "if": {"notPov": "nabyen"},
+          "text": "\"Nabyen. It was always hers.\"",
+          "effects": {"affection": 10, "trust": 5},
+          "setFlags": ["crowned_nabyen"],
+          "response": [
+            {"speaker": "nabyen", "mood": "surprised", "text": "Me? A girl who sells stones in Jos?"},
+            {"speaker": "marcus", "mood": "smile", "text": "The best kind of queen."}
+          ]
+        },
+        {
+          "id": "c_council",
+          "text": "\"Nobody. A council of the houses, every voice equal.\"",
+          "effects": {"trust": 10, "affection": 5},
+          "setFlags": ["council"],
+          "response": [
+            {
+              "speaker": "marcus",
+              "mood": "smile",
+              "text": "Ha! He'd have hated that. Which is how I know it's right."
+            }
+          ]
+        }
+      ],
+      "puzzle": "c_palms",
+      "next": [
+        {"if": {"flags": ["betrayer"]}, "to": "end_betrayal"},
+        {"if": {"flags": ["romance_tari", "dead_tari"]}, "to": "end_ashes"},
+        {"if": {"flags": ["romance_kolade", "dead_kolade"]}, "to": "end_ashes"},
+        {
+          "if": {"anyFlags": ["romance_nabyen", "romance_tari", "romance_kolade"], "min": {"affection": 60}},
+          "to": "end_wedding"
+        },
+        {"if": {"flags": ["crowned_self"]}, "to": "end_crown"},
+        {"to": "end_council"}
+      ]
+    },
+    {
+      "id": "end_wedding",
+      "background": "caribbean_sunset",
+      "setFlags": ["end_wedding"],
+      "memory": "m_wedding",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Three months later. The same beach, the same pink sky, a hundred lanterns in the palms."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["romance_nabyen"]},
+          "text": "{pov} and Nabyen Dalyop are married barefoot in the sand."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["romance_tari"]},
+          "text": "Nabyen Dalyop marries Tari Ebiowei barefoot in the sand. He finally brings her a fish. It's enormous."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["romance_kolade"]},
+          "text": "Nabyen Dalyop marries Kolade Balogun barefoot in the sand. Lagos sends three hundred guests and a live band."
+        },
+        {
+          "speaker": "nabyen",
+          "mood": "smile",
+          "text": "Look at us. A girl from the rocks, married on a beach on the other side of the world. I'm the happiest woman between Jos and Tobago."
+        },
+        {
+          "speaker": "kaneng",
+          "mood": "smile",
+          "text": "My daughter. Look at you. Your father would have cried. Loudly."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["crowned_nabyen"]},
+          "text": "The bride wears a crown of coral and gold. Confluence Holdings has never had a chairwoman before. It does now."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen", "flags": ["crowned_self"]},
+          "text": "The bride wears a crown of coral and gold. Confluence Holdings has never had a chairwoman before. It does now."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["council"]},
+          "text": "At the head table sit the four houses, every voice equal, and nobody wearing a crown at all."
+        },
+        {"speaker": "marcus", "mood": "smile", "text": "Some stories end in blood. This one ends in dancing."}
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
+      "id": "end_crown",
+      "background": "ph_day",
+      "setFlags": ["end_crown"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Port Harcourt. The top floor of Confluence Tower, looking over the Bonny River."
+        },
+        {
+          "speaker": "narrator",
+          "text": "{pov} sits at the head of the table. No crown, just the whole empire in one pair of hands."
+        },
+        {"speaker": "narrator", "text": "Ships, tin, cloth, money. Four rivers, one hand."},
+        {
+          "speaker": "ibiere",
+          "if": {"flags": ["ibiere_ally"]},
+          "mood": "smile",
+          "text": "He'd be proud. Terrified, but proud."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Some nights the tower is very quiet. Power is a beautiful view from a lonely room."
+        }
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
+      "id": "end_council",
+      "background": "caribbean",
+      "setFlags": ["end_council"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Every year after that, on the day the Chief died, the houses meet at the pink house in Tobago."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Jos brings gemstones. The creeks bring fish. Kano brings cloth, and Lagos brings far too much champagne."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"anyFlags": ["dead_tari", "dead_hadiza", "dead_kolade"]},
+          "text": "They always set one extra place at the table."
+        },
+        {
+          "speaker": "marcus",
+          "mood": "smile",
+          "text": "My brother built an empire. You built a family. That's much harder."
+        }
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
+      "id": "end_ashes",
+      "background": "creek_night",
+      "setFlags": ["end_ashes"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "They scatter the ashes on the water at dawn, the way he would have wanted."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"flags": ["dead_tari"]},
+          "mood": "sad",
+          "text": "He promised me a fish. A big one. He never got to keep his promise."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"flags": ["dead_kolade"]},
+          "mood": "sad",
+          "text": "Lagos never sleeps. Neither do I, anymore."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The crown is decided. It weighs more than anything Nabyen has ever carried."
+        },
+        {
+          "speaker": "kaneng",
+          "mood": "sad",
+          "text": "Come home to the rocks, my daughter. Rocks don't leave."
+        }
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
+      "id": "end_betrayal",
+      "background": "lagos_night",
+      "setFlags": ["end_betrayal"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Elise kept her word, even from a cell. Her lawyers made sure the board voted the way she'd promised."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Kolade Balogun wears the Crown of the Confluence in a glass tower on Victoria Island."
+        },
+        {"speaker": "narrator", "text": "Nobody from Jos, the creeks or Kano ever takes his calls again."},
+        {"speaker": "kolade", "mood": "sad", "text": "I earned it, old man. Just like you said."},
+        {"speaker": "narrator", "text": "The view is spectacular. The rooms are very, very empty."}
+      ],
+      "next": null
+    },
+    {
+      "id": "epi_homecoming",
+      "background": "jos",
+      "setFlags": ["end_secret"],
+      "lines": [
+        {"speaker": "narrator", "text": "Secret ending. One year later: Jos, the rocks at sunrise."},
+        {
+          "speaker": "narrator",
+          "text": "Mama Kaneng opens the last letter the Chief ever wrote. It was hidden in the ledger, among the secrets only the curious would find."
+        },
+        {
+          "speaker": "letter",
+          "text": "Kaneng. I was a coward for thirty years. I built four rivers because I was too afraid to come back to one. Tell our daughter she was the only treasure I never deserved. — Gideon."
+        },
+        {"speaker": "kaneng", "mood": "sad", "text": "Foolish, loud, wonderful man."},
+        {"speaker": "nabyen", "mood": "smile", "text": "Come on, Mama. Let's go home."}
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "end_betrayal",
+      "if": {"flags": ["end_betrayal"]},
+      "title": "The Price of Gold",
+      "text": "Kolade won the crown and lost everyone. Lagos never sleeps, and now neither does he."
+    },
+    {
+      "id": "end_ashes",
+      "if": {"flags": ["end_ashes"]},
+      "title": "Ashes on the Water",
+      "text": "Love was found and lost on the same mountain. The crown was won. It was not worth it."
+    },
+    {
+      "id": "end_wedding",
+      "if": {"flags": ["end_wedding"]},
+      "title": "Where the Rivers Meet",
+      "text": "A wedding on a Caribbean beach. Four houses, one family. Some stories end in blood. This one ended in dancing."
+    },
+    {
+      "id": "end_crown",
+      "if": {"flags": ["end_crown"]},
+      "title": "The Crown of the Confluence",
+      "text": "You took the crown. The empire is yours, and so is the silence at the top of the tower."
+    },
+    {
+      "id": "end_council",
+      "title": "Four Rivers, One Sea",
+      "text": "No crown. A council. A family that meets on a beach in Tobago once a year, and argues, and laughs, and remembers."
+    }
+  ],
+  "reflections": [
+    {
+      "if": {"flags": ["end_secret"]},
+      "text": "Secret ending unlocked: The Seventh Seal. You found the hidden words, and the letter the Chief was too afraid to send."
+    },
+    {"if": {"flags": ["justice"]}, "text": "Elise Moreau is in a Swiss prison."},
+    {"if": {"flags": ["vengeance"]}, "text": "Somewhere warm, the wolf is still running. Not for long."},
+    {"if": {"flags": ["ibiere_ally"]}, "text": "The widow became a friend. Nobody saw that coming."},
+    {"if": {"flags": ["ibiere_enemy"]}, "text": "Ibiere's lawyers are already in court."},
+    {
+      "if": {"notFlags": ["end_secret"]},
+      "text": "There's a secret ending. Find at least four hidden words in one story to unlock it."
+    }
+  ],
+  "secrets": {
+    "s_psalm": {
+      "title": "The Chief's psalm",
+      "text": "PSALM. Every evening at sunset Marcus hums the Chief's favourite, Psalm 23. 'He made me learn it for both of us,' he says."
+    }
+  },
+  "memories": {
+    "m_tobago": {
+      "title": "Castara Bay",
+      "background": "caribbean",
+      "text": "A pink house, fish on the fire, and the Chief's long-lost brother."
+    },
+    "m_wedding": {
+      "title": "Barefoot in the Sand",
+      "background": "caribbean_sunset",
+      "text": "A hundred lanterns, a wedding, and a mother dancing."
+    }
+  }
+}

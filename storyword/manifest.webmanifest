@@ -1,0 +1,14 @@
+{
+  "name": "StoryWord: Crown of the Confluence",
+  "short_name": "StoryWord",
+  "description": "A story you change with words, from Jos to Lagos to Tobago.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a0b24",
+  "theme_color": "#2a0f3a",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

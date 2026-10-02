@@ -1,76 +1,128 @@
 {
   "entries": [
     {
-      "id": "d_cup",
-      "title": "The Full Cup",
-      "background": "cafe",
+      "id": "d_roses",
+      "title": "The Danfo of Roses",
+      "background": "lagos",
       "lines": [
-        {"speaker": "narrator", "text": "Something strange happened at the café this morning…"},
+        {"speaker": "narrator", "text": "Something strange happened on Third Mainland Bridge this morning…"},
         {
-          "speaker": "rosa",
-          "mood": "worried",
-          "text": "Someone left a cup at the corner table. Full. Still hot. Nobody saw them come in."
-        }
-      ],
-      "puzzle": {
-        "id": "daily_steam",
-        "theme": "café",
-        "prompt": "Steam curls off a cup nobody ordered.",
-        "hint": "What rises off something hot.",
-        "letters": ["S", "T", "E", "A", "M"],
-        "requiredWords": ["STEAM", "TEAM", "MEAT"],
-        "bonusWords": [
-          "MATE", "TAME", "SEAM", "SAME", "MAST", "MATS", "EAST", "SEAT", "EATS", "TEAS", "MESA", "MATES",
-          "MEATS", "TEAMS", "TAMES", "MET", "MAT", "SAT", "SET", "SEA", "TEA", "EAT", "ATE"
-        ]
-      }
-    },
-    {
-      "id": "d_bottle",
-      "title": "Low Tide",
-      "background": "harbor",
-      "lines": [
-        {"speaker": "narrator", "text": "The tide brought something in overnight."},
-        {
-          "speaker": "hale",
-          "text": "A bottle. Note inside. Hasn't been opened. I thought you should be the one."
-        }
-      ],
-      "puzzle": {
-        "id": "daily_tide",
-        "theme": "sea",
-        "prompt": "The water pulls back and leaves things behind.",
-        "hint": "What comes in, and goes out.",
-        "letters": ["T", "I", "D", "E", "S"],
-        "requiredWords": ["TIDE", "SIDE", "EDIT"],
-        "bonusWords": [
-          "TIDES", "SITED", "DIET", "DIETS", "EDITS", "DIES", "TIES", "SITE", "DIE", "TIE", "SIT", "ITS",
-          "SET"
-        ]
-      }
-    },
-    {
-      "id": "d_note",
-      "title": "Pinned to the Door",
-      "background": "townhall",
-      "lines": [
-        {"speaker": "narrator", "text": "Jun found a note pinned to the Herald's door at dawn."},
-        {
-          "speaker": "jun",
+          "speaker": "kolade",
           "mood": "surprised",
-          "text": "No name. Just one line: \"Ask her about the stones.\""
+          "text": "A danfo stopped in traffic and the driver handed every passenger a red rose. Nobody knows who paid for them."
         }
       ],
       "puzzle": {
-        "id": "daily_stone",
-        "theme": "mystery",
-        "prompt": "\"Ask her about the stones.\"",
-        "hint": "Something written down, and something heavy.",
-        "letters": ["N", "O", "T", "E", "S"],
-        "requiredWords": ["NOTE", "STONE", "TONE"],
+        "id": "daily_roses",
+        "theme": "romance",
+        "prompt": "A red rose for every passenger.",
+        "hint": "What blooms in Lagos traffic.",
+        "letters": ["R", "O", "S", "E", "S"],
+        "requiredWords": ["ROSES", "ROSE", "SORE"],
+        "bonusWords": ["ERS", "ESS", "ORE", "ORS", "RES", "ROE", "SER", "SOS"]
+      }
+    },
+    {
+      "id": "d_gem",
+      "title": "The Glowing Stone",
+      "background": "jos",
+      "lines": [
+        {"speaker": "narrator", "text": "Something strange happened at the mining ponds in Jos this morning…"},
+        {
+          "speaker": "kaneng",
+          "mood": "surprised",
+          "text": "A little girl found a blue stone in the water. It glows when you hold it up to the sun."
+        }
+      ],
+      "puzzle": {
+        "id": "daily_sparkle",
+        "theme": "plateau",
+        "prompt": "A blue stone that holds the sunrise.",
+        "hint": "What a gem does in the light.",
+        "letters": ["S", "P", "A", "R", "K", "L", "E"],
+        "requiredWords": ["SPARKLE", "SPARK", "PEARL"],
         "bonusWords": [
-          "ONES", "NOSE", "NOTES", "ONSET", "TONES", "NETS", "NEST", "SENT", "TENS", "TONS", "TOES", "EONS",
-          "ONE", "NOT", "TON", "TEN", "NET", "SON", "SET", "TOE"
+          "ALE", "ALS", "APE", "ARE", "ARK", "ARS", "ASK", "ASP", "EAR", "EAS", "ELK", "ERA", "ERS", "LAP",
+          "LAS", "LEA", "LES", "PAL", "PAR", "PAS", "PEA", "PER", "PRE", "RAP", "RAS", "REP", "RES", "SAL",
+          "SAP", "SAR", "SEA", "SER", "SKA", "SPA", "ALPS", "ARES", "EARL", "EARS", "LAKE", "LAPS", "LARS",
+          "LEAK", "LEAP", "PALE", "PALS", "PARK", "PEAK", "PEAR", "PEAS", "PLEA", "RAKE", "REAL", "REAP",
+          "REPS", "SAKE", "SALE", "SEAL", "SLAP", "LAKES", "LASER", "LEAKS", "PARKS", "PARSE", "PEAKS",
+          "SPARE", "SPEAK", "SPEAR", "LAKERS", "PEARLS"
+        ]
+      }
+    },
+    {
+      "id": "d_indigo",
+      "title": "Purple Pits",
+      "background": "kano",
+      "lines": [
+        {"speaker": "narrator", "text": "Something strange happened at the Kofar Mata dye pits this morning…"},
+        {
+          "speaker": "hadiza",
+          "mood": "smile",
+          "text": "Every pit turned purple overnight. The dyers say it's a blessing. I say it's chemistry."
+        }
+      ],
+      "puzzle": {
+        "id": "daily_indigo",
+        "theme": "kano",
+        "prompt": "The dye pits glow in the morning light.",
+        "hint": "Kano's most famous colour.",
+        "letters": ["I", "N", "D", "I", "G", "O"],
+        "requiredWords": ["INDIGO", "DOING", "DING"],
+        "bonusWords": ["DIG", "DIN", "DOG", "DON", "GIN", "GOD", "ING", "ION", "NOD", "DINO", "DONG"]
+      }
+    },
+    {
+      "id": "d_lantern",
+      "title": "The Empty Canoe",
+      "background": "bayelsa",
+      "lines": [
+        {"speaker": "narrator", "text": "Something strange happened on the creeks this morning…"},
+        {
+          "speaker": "tari",
+          "mood": "worried",
+          "text": "A canoe drifted up to the jetty with nobody in it. Just a lantern, still burning."
+        }
+      ],
+      "puzzle": {
+        "id": "daily_lantern",
+        "theme": "creeks",
+        "prompt": "A lantern burning in an empty canoe.",
+        "hint": "A light you carry in the dark.",
+        "letters": ["L", "A", "N", "T", "E", "R", "N"],
+        "requiredWords": ["LANTERN", "LATER", "RENT"],
+        "bonusWords": [
+          "ALE", "ALT", "ANN", "ANT", "ARE", "ART", "ATE", "EAN", "EAR", "EAT", "ERA", "ETA", "LAT", "LEA",
+          "LET", "NAN", "NAT", "NET", "RAN", "RAT", "REN", "RET", "TAN", "TAR", "TEA", "TEL", "TEN", "ANTE",
+          "EARL", "EARN", "LANE", "LATE", "LEAN", "LENT", "NEAL", "NEAR", "NEAT", "RANT", "RATE", "REAL",
+          "TALE", "TEAL", "TEAR", "ALERT", "ALTER", "LEARN", "RENAL", "LEARNT", "RENTAL", "TANNER"
+        ]
+      }
+    },
+    {
+      "id": "d_ocean",
+      "title": "Message in a Shell",
+      "background": "caribbean",
+      "lines": [
+        {"speaker": "narrator", "text": "Something strange washed up in Tobago this morning…"},
+        {
+          "speaker": "marcus",
+          "mood": "smile",
+          "text": "A conch shell on my doorstep, and inside it a ring. Gold, with two rivers engraved on it."
+        }
+      ],
+      "puzzle": {
+        "id": "daily_ocean",
+        "theme": "caribbean",
+        "prompt": "The tide brings in a shell with a ring inside.",
+        "hint": "What the shell came out of.",
+        "letters": ["O", "C", "E", "A", "N", "S"],
+        "requiredWords": ["OCEAN", "CANOE", "ONCE"],
+        "bonusWords": [
+          "ACE", "ANS", "CAN", "CON", "COS", "EAN", "EAS", "ECO", "NAS", "NOS", "ONE", "ONS", "SAC", "SAN",
+          "SEA", "SEC", "SEN", "SOC", "SON", "ACES", "ACNE", "CANE", "CANS", "CASE", "CONE", "CONS", "NOSE",
+          "ONES", "SANE", "SCAN", "SEAN", "OCEANS"
         ]
       }
     }

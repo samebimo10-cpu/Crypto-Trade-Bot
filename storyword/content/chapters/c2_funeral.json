@@ -1,0 +1,323 @@
+{
+  "id": "c2_funeral",
+  "number": 2,
+  "title": "The Funeral",
+  "place": "Port Harcourt, Rivers State",
+  "teaser": "White lilies, gold columns, a furious widow, and a will that says the crown must be chosen.",
+  "start": "f1_hall",
+  "scenes": [
+    {
+      "id": "f1_hall",
+      "background": "mansion",
+      "memory": "m_funeral",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Port Harcourt. White lilies, gold columns, and three hundred mourners pretending not to watch each other."
+        },
+        {"speaker": "narrator", "text": "For the first time in years, all four houses stand under one roof."},
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen"},
+          "text": "Nabyen keeps one hand in her pocket, closed tight around half a coral bracelet."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "tari"},
+          "text": "Tari stands at the back, still smelling of the creeks, watching the doors."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "hadiza"},
+          "text": "Hadiza counts the exits, then the guests, then the guards."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "kolade"},
+          "text": "Kolade works the room like it's the opening of a new bank."
+        },
+        {
+          "speaker": "ibiere",
+          "mood": "angry",
+          "text": "Four strangers at my husband's funeral. He collected people the way other men collect cars."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A thin Englishman with rain still on his coat clears his throat. Oliver Ashworth, the family's London solicitor."
+        },
+        {
+          "speaker": "oliver",
+          "text": "Chief Okoro left instructions. The chairmanship of Confluence Holdings, what he called the Crown of the Confluence, is not inherited."
+        },
+        {
+          "speaker": "oliver",
+          "text": "It is chosen, by the four houses together. Once they have brought back the second half of his will from Geneva, and the last seal from his brother."
+        },
+        {"speaker": "ibiere", "mood": "surprised", "text": "His brother? Gideon had no brother."},
+        {
+          "speaker": "oliver",
+          "mood": "worried",
+          "text": "He did, Madam. And the first half of the will is waiting in my office in London."
+        }
+      ],
+      "next": "f2_accuse"
+    },
+    {
+      "id": "f2_accuse",
+      "background": "mansion",
+      "lines": [
+        {
+          "speaker": "ibiere",
+          "mood": "angry",
+          "text": "And this one. A trader from the hills? In my husband's will?"
+        },
+        {
+          "speaker": "ibiere",
+          "text": "Do you know what they call girls like you, Nabyen Dalyop? Gold-diggers."
+        },
+        {"speaker": "nabyen", "mood": "angry", "text": "My mother dug tin, Madam. Not gold."}
+      ],
+      "prompt": "Ibiere has drawn first blood.",
+      "choices": [
+        {
+          "id": "c_defend",
+          "if": {"notPov": "nabyen"},
+          "text": "Step in front of Nabyen. \"Say that again, Madam. To me.\"",
+          "effects": {"affection": 10, "reputation": -5},
+          "setFlags": ["defended_nabyen"],
+          "response": [
+            {"speaker": "nabyen", "mood": "surprised", "text": "...Thank you."},
+            {"speaker": "ibiere", "text": "How touching."}
+          ]
+        },
+        {
+          "id": "c_answer",
+          "if": {"pov": "nabyen"},
+          "text": "\"He was my father, Madam. And I didn't come here for his money.\"",
+          "effects": {"trust": 10, "reputation": -5},
+          "setFlags": ["revealed_father"],
+          "response": [
+            {"speaker": "ibiere", "mood": "surprised", "text": "...Liar."},
+            {"speaker": "narrator", "text": "But her face has gone grey."}
+          ]
+        },
+        {
+          "id": "c_accuse",
+          "text": "\"Where were YOU the night he died, Madam?\"",
+          "effects": {"trust": 5, "reputation": -10},
+          "setFlags": ["accused_ibiere"],
+          "echo": "Ibiere will remember this.",
+          "response": [
+            {"speaker": "ibiere", "mood": "angry", "text": "Get out of my house."},
+            {
+              "speaker": "narrator",
+              "text": "Three hundred people heard that. By evening, so has all of Port Harcourt."
+            }
+          ]
+        },
+        {
+          "id": "c_calm",
+          "text": "\"We're all grieving. Let's bury him in peace.\"",
+          "effects": {"reputation": 10},
+          "setFlags": ["peacemaker"],
+          "response": [{"speaker": "ibiere", "mood": "sad", "text": "...Fine. For him. Not for you."}]
+        }
+      ],
+      "puzzle": "f_funeral",
+      "next": "f3_garden"
+    },
+    {
+      "id": "f3_garden",
+      "background": "ph_garden",
+      "memory": "m_garden",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Midnight. The garden behind the mansion, fireflies over the fountain."
+        },
+        {
+          "speaker": "narrator",
+          "text": "On the stone bench: the Chief's tea tray, taken from his study before the police arrived. One silver spoon has gone black at the tip."
+        },
+        {
+          "speaker": "hadiza",
+          "text": "And this. Four million dollars a year into Banque Moreau, Geneva. For ten years."
+        },
+        {
+          "speaker": "tari",
+          "mood": "angry",
+          "text": "Moreau. The man I pulled out of the creek said a white woman was paying in francs."
+        },
+        {"speaker": "kolade", "text": "Banks are boring. Let's talk about who flies to London tomorrow."},
+        {
+          "speaker": "narrator",
+          "if": {"pov": "kolade", "flags": ["elise_deal"]},
+          "text": "In Kolade's pocket, his phone buzzes. Geneva. He doesn't answer it."
+        }
+      ],
+      "prompt": "Who do you trust most?",
+      "choices": [
+        {
+          "id": "c_trust_nabyen",
+          "if": {"notPov": "nabyen"},
+          "text": "Nabyen. The Chief did.",
+          "effects": {"affection": 5},
+          "setFlags": ["ally_nabyen"],
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Then I'll try to deserve it."}]
+        },
+        {
+          "id": "c_trust_tari",
+          "if": {"notPov": "tari"},
+          "text": "Tari. He's already bled for this.",
+          "effects": {"trust": 5},
+          "setFlags": ["ally_tari"],
+          "response": [{"speaker": "tari", "text": "Nobody touches you while I'm breathing."}]
+        },
+        {
+          "id": "c_trust_hadiza",
+          "if": {"notPov": "hadiza"},
+          "text": "Hadiza. She found the money.",
+          "effects": {"reputation": 5},
+          "setFlags": ["ally_hadiza"],
+          "response": [{"speaker": "hadiza", "mood": "smile", "text": "Wise. Numbers don't lie. People do."}]
+        },
+        {
+          "id": "c_trust_kolade",
+          "if": {"notPov": "kolade"},
+          "text": "Kolade. Lagos knows Geneva.",
+          "effects": {"reputation": 5, "trust": -5},
+          "setFlags": ["ally_kolade"],
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "Finally, somebody with taste."}]
+        }
+      ],
+      "puzzle": "f_poison",
+      "next": "f4_moment"
+    },
+    {
+      "id": "f4_moment",
+      "background": "ph_garden",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "if": {"notPov": "nabyen"},
+          "text": "Later, everyone else has gone inside. Nabyen is still by the fountain, turning half a coral bracelet in her fingers."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"notPov": "nabyen"},
+          "mood": "sad",
+          "text": "He was my father, you know. I never met him. I only ever saw him in newspapers."
+        },
+        {"speaker": "nabyen", "if": {"notPov": "nabyen"}, "text": "Do you think he was a good man?"},
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen"},
+          "text": "Later, Nabyen sits alone by the fountain. Two men find excuses to walk past it."
+        },
+        {
+          "speaker": "tari",
+          "if": {"pov": "nabyen"},
+          "mood": "worried",
+          "text": "You shouldn't be out here alone. Not tonight."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"pov": "nabyen"},
+          "mood": "smile",
+          "text": "Or she should, and I should keep her company."
+        }
+      ],
+      "prompt": "The fireflies are very bright tonight.",
+      "choices": [
+        {
+          "id": "c_hold",
+          "if": {"notPov": "nabyen"},
+          "text": "Take her hand. \"I think he loved you more than he knew how to say.\"",
+          "effects": {"affection": 10},
+          "setFlags": ["spark_nabyen"],
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "...You're kind. I didn't expect kind, here."}]
+        },
+        {
+          "id": "c_honest",
+          "if": {"notPov": "nabyen"},
+          "text": "\"He was a great man. Not always a good one.\"",
+          "effects": {"trust": 10},
+          "response": [{"speaker": "nabyen", "text": "Honest. I'll take honest."}]
+        },
+        {
+          "id": "c_sit_tari",
+          "if": {"pov": "nabyen"},
+          "text": "Ask Tari to sit with her.",
+          "effects": {"affection": 10},
+          "setFlags": ["spark_tari"],
+          "response": [{"speaker": "tari", "mood": "smile", "text": "I'll sit here until the sun comes up, if you want."}]
+        },
+        {
+          "id": "c_sit_kolade",
+          "if": {"pov": "nabyen"},
+          "text": "Let Kolade stay.",
+          "effects": {"affection": 10},
+          "setFlags": ["spark_kolade"],
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "I'm told I'm excellent company. Mostly by me."}]
+        },
+        {
+          "id": "c_leave",
+          "text": "Leave the fireflies to their silence.",
+          "effects": {"reputation": 5},
+          "response": [{"speaker": "narrator", "text": "Tomorrow: London. Some conversations can wait."}]
+        }
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "f_blood",
+      "if": {"flags": ["accused_ibiere"]},
+      "title": "Blood on the Lilies",
+      "text": "You called the widow a murderer in front of three hundred people. If you're wrong, you've made a powerful enemy. If you're right, you've warned her."
+    },
+    {
+      "id": "f_daughter",
+      "if": {"flags": ["revealed_father"]},
+      "title": "His Daughter",
+      "text": "Nabyen told the world whose daughter she is. There's no taking that back now."
+    },
+    {
+      "id": "f_shield",
+      "if": {"flags": ["defended_nabyen"]},
+      "title": "Shield of the Rock",
+      "text": "You stood between Nabyen and the widow's anger. She noticed. Everyone noticed."
+    },
+    {
+      "id": "f_peace",
+      "title": "The Peacemaker",
+      "text": "The Chief was buried in peace. Peace is rare in this family. Enjoy it."
+    }
+  ],
+  "reflections": [
+    {
+      "if": {"anyFlags": ["spark_nabyen", "spark_tari", "spark_kolade"]},
+      "text": "Something started by the fountain tonight."
+    },
+    {"if": {"flags": ["clue_moreau"]}, "text": "The name Moreau keeps coming up."}
+  ],
+  "secrets": {
+    "s_spoon": {
+      "title": "The silver spoon",
+      "text": "SPOON. The poison was never in the tea. It was on the silver spoon, a gift from Geneva, engraved 'E.M.'"
+    }
+  },
+  "memories": {
+    "m_funeral": {
+      "title": "White Lilies",
+      "background": "mansion",
+      "text": "Gold columns, three hundred mourners, and four heirs under one roof."
+    },
+    "m_garden": {
+      "title": "Fireflies at Midnight",
+      "background": "ph_garden",
+      "text": "A blackened spoon, a fountain, and a hand held in the dark."
+    }
+  }
+}

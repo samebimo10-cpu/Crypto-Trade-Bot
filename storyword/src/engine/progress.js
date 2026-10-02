@@ -4,7 +4,7 @@
 // Resources are deliberately few: stars, coins, hint tokens, plus the
 // collectible memories and the word streak.
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export const REWARDS = {
   coinsPerWord: 1,

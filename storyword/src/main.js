@@ -1,13 +1,19 @@
 // StoryWord UI. Screens are rendered as HTML strings into #app; all input
 // goes through one delegated click handler keyed on data-action. Game rules
 // live in src/engine/*; this file only wires them to the screen.
+//
+// The illustrated scene lives in its own layer (#scene) behind #app and is
+// only redrawn when the location changes, so its animations run smoothly
+// while dialogue advances on top.
 
 import * as Story from './engine/story.js';
 import * as Puzzle from './engine/puzzle.js';
 import * as Progress from './engine/progress.js';
 import { portraitSVG } from './ui/portrait.js';
+import { sceneSVG } from './ui/scenes.js';
 
 const app = document.getElementById('app');
+const sceneLayer = document.getElementById('scene');
 const toastHost = document.getElementById('toasts');
 const storage = safeStorage();
 
@@ -15,10 +21,12 @@ let C; // loaded content
 let profile;
 const ui = {
   screen: 'home',
-  puzzle: null, // { key, id, puzzle, state, order, guess, feedback, secretFlags, context }
+  puzzle: null, // { key, puzzle, state, order, guess, feedback, secretFlags, context }
   overlay: null,
   daily: null, // { key, entry, lineIndex, phase }
   shake: false,
+  scene: null, // background currently drawn
+  lastSpeaker: null,
 };
 
 // --- Boot -------------------------------------------------------------------
@@ -28,21 +36,29 @@ async function boot() {
     C = await loadContent();
   } catch (e) {
     app.innerHTML = `<main class="screen center"><p>Couldn't load the story.</p><p class="muted">${esc(e.message)}</p>
-      <p class="muted">Serve this folder over HTTP (npm start) rather than opening the file directly.</p></main>`;
+      <p class="muted">Open the single-file build (dist/storyword.html), or serve this folder with <code>npm start</code>.</p></main>`;
     return;
   }
   profile = Progress.load(storage);
   app.addEventListener('click', onClick);
   document.addEventListener('keydown', onKey);
   render();
+  registerOffline();
 }
 
 async function loadContent() {
-  const get = async (f) => {
-    const res = await fetch(`content/${f}`);
-    if (!res.ok) throw new Error(`${f}: HTTP ${res.status}`);
-    return res.json();
-  };
+  // The single-file build embeds all content, so it needs no network at all.
+  const embedded = globalThis.STORYWORD_CONTENT;
+  const get = embedded
+    ? async (f) => {
+        if (!(f in embedded)) throw new Error(`${f} missing from build`);
+        return embedded[f];
+      }
+    : async (f) => {
+        const res = await fetch(`content/${f}`);
+        if (!res.ok) throw new Error(`${f}: HTTP ${res.status}`);
+        return res.json();
+      };
   const [story, characters, puzzles, daily] = await Promise.all([
     get('story.json'),
     get('characters.json'),
@@ -57,6 +73,16 @@ async function loadContent() {
     chapters,
     puzzles: Object.fromEntries(puzzles.puzzles.map((p) => [p.id, p])),
   };
+}
+
+// Installed as an app (or visited once over HTTP), the game keeps working
+// with no connection: the service worker caches every file.
+function registerOffline() {
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http') && !globalThis.STORYWORD_CONTENT) {
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      /* offline caching is a bonus; the game works without it */
+    });
+  }
 }
 
 function safeStorage() {
@@ -78,6 +104,16 @@ function esc(s) {
 
 const chapterById = (id) => C.chapters.find((c) => c.id === id);
 const currentChapter = () => chapterById(profile.run?.chapterId) ?? C.chapters[0];
+const povName = () => C.characters[profile.run?.pov]?.name ?? 'You';
+
+// Fill templates like {pov} in story text.
+function fmt(text) {
+  return esc(String(text ?? '').replace(/\{pov\}/g, povName()));
+}
+
+function chapterLabel(ch) {
+  return ch.number === 0 ? 'Prologue' : `Chapter ${ch.number}`;
+}
 
 function persist() {
   Progress.save(storage, profile);
@@ -88,8 +124,8 @@ function toast(message) {
   el.className = 'toast';
   el.textContent = message;
   toastHost.appendChild(el);
-  setTimeout(() => el.classList.add('out'), 2400);
-  setTimeout(() => el.remove(), 2900);
+  setTimeout(() => el.classList.add('out'), 2600);
+  setTimeout(() => el.remove(), 3100);
 }
 
 function go(screen) {
@@ -97,6 +133,14 @@ function go(screen) {
   ui.overlay = null;
   render();
   window.scrollTo(0, 0);
+}
+
+// mode: 'full' (story), 'dim' (puzzle, home) or 'none' (menus)
+function setScene(key, mode = 'full') {
+  document.body.dataset.scene = key ? mode : 'none';
+  if (!key || key === ui.scene) return;
+  ui.scene = key;
+  sceneLayer.innerHTML = sceneSVG(key);
 }
 
 function topbar(label, { hints = false } = {}) {
@@ -119,13 +163,19 @@ function render() {
 }
 
 function renderHome() {
-  const chapter = currentChapter();
   const run = profile.run;
+  const chapter = currentChapter();
   const inProgress = run && !run.complete;
-  const scene = Story.getScene(chapter, inProgress ? run.sceneId : chapter.start);
+  const sceneKey = run ? Story.getScene(chapter, run.sceneId).background : 'jos';
+  setScene(sceneKey, 'dim');
+  const heroine = C.characters[C.story.heroine];
   const today = Progress.dateKey();
   const dailyDone = Progress.dailyDone(profile, today);
-  const label = inProgress ? 'Continue' : profile.completedChapters.includes(chapter.id) ? 'Play again' : 'Play';
+  const sagaOver = run?.complete && !Story.nextChapter(C.story, run.chapterId, run);
+  const label = !run ? 'Begin the story' : inProgress ? 'Continue' : sagaOver ? 'See the ending' : 'Next chapter';
+  const sub = !run
+    ? esc(C.story.tagline)
+    : `${chapterLabel(chapter)}: ${esc(chapter.title)}${run.pov ? ` · playing as ${esc(povName())}` : ''}`;
   return `<main class="screen home">
     <header class="topbar">
       <span class="pill">⭐ ${profile.stars}</span>
@@ -133,11 +183,15 @@ function renderHome() {
       <button class="icon-btn" data-action="profile" aria-label="Your progress">☰</button>
     </header>
     <h1 class="logo">STORY<span>WORD</span></h1>
-    <section class="scene-card bg-${esc(scene.background)}">
-      <p class="eyebrow">Season ${C.story.season} · ${esc(C.story.seasonTitle)}</p>
-      <h2>Chapter ${chapter.id}: ${esc(chapter.title)}</h2>
-      <p>${inProgress ? 'Continue the story…' : esc(chapter.teaser)}</p>
+    <section class="hero">
+      <div class="hero-portrait">${portraitSVG(heroine, 'smile', 'hero')}</div>
+      <div class="hero-text">
+        <p class="eyebrow">Season ${C.story.season}</p>
+        <h2>${esc(C.story.seasonTitle)}</h2>
+        <p>${sub}</p>
+      </div>
     </section>
+    <p class="places">Jos · Kano · Lagos · Bayelsa · Port Harcourt · London · Geneva · Tobago</p>
     <button class="btn primary big" data-action="play">${label}</button>
     <nav class="home-links">
       <button class="link-card" data-action="daily">
@@ -146,62 +200,97 @@ function renderHome() {
       </button>
       <button class="link-card" data-action="memories">
         <span>📸 Memories</span>
-        <small>${profile.memories.length} collected</small>
+        <small>${profile.memories.length} collected · ${profile.secrets.length} secrets</small>
       </button>
     </nav>
   </main>`;
 }
 
-function lineHTML(line, { tapHint = true } = {}) {
+function lineHTML(line, run, { tapHint = true } = {}) {
   const ch = C.characters[line.speaker] || {};
+  const tap = tapHint ? '<span class="tap">tap to continue</span>' : '';
+  const isNewSpeaker = ui.lastSpeaker !== line.speaker;
+  ui.lastSpeaker = line.speaker;
   if (ch.message) {
     return `<div class="stage"><div class="phone"><p class="phone-from">${esc(ch.name)}</p>
-      <p class="bubble">${esc(line.text)}</p></div></div>
-      <div class="dialogue message-line">${tapHint ? '<span class="tap">tap to continue</span>' : ''}</div>`;
+      <p class="bubble">${fmt(line.text)}</p></div></div>
+      <div class="dialogue message-line">${tap}</div>`;
+  }
+  if (ch.letter) {
+    return `<div class="stage"><div class="letter-card"><span class="seal"></span><p>${fmt(line.text)}</p></div></div>
+      <div class="dialogue message-line">${tap}</div>`;
   }
   if (ch.narration) {
     return `<div class="stage"></div>
-      <div class="dialogue narration"><p class="line">${esc(line.text)}</p>
-      ${tapHint ? '<span class="tap">tap to continue</span>' : ''}</div>`;
+      <div class="dialogue narration"><p class="line">${fmt(line.text)}</p>${tap}</div>`;
   }
-  return `<div class="stage"><div class="portrait mood-${esc(line.mood || 'neutral')}">${portraitSVG(ch, line.mood)}</div></div>
-    <div class="dialogue"><p class="speaker" style="--accent:${esc(ch.accent)}">${esc(ch.name)}</p>
-    <p class="line">“${esc(line.text)}”</p>
-    ${tapHint ? '<span class="tap">tap to continue</span>' : ''}</div>`;
+  const you = run?.pov === line.speaker ? ' <em>(you)</em>' : '';
+  return `<div class="stage"><div class="portrait${isNewSpeaker ? ' enter' : ''} mood-${esc(line.mood || 'neutral')}">${portraitSVG(ch, line.mood, line.speaker)}</div></div>
+    <div class="dialogue"><p class="speaker" style="--accent:${esc(ch.accent)}">${esc(ch.name)}${you}</p>
+    <p class="line">“${fmt(line.text)}”</p>${tap}</div>`;
 }
 
 function renderStory() {
-  const chapter = currentChapter();
   const run = profile.run;
   if (!run) return renderHome();
+  const chapter = currentChapter();
   if (run.complete) {
     finishChapter();
+    ui.screen = 'results';
     return renderResults();
   }
   // Keep the solved puzzle under its results sheet; the next scene appears
   // only once the player taps continue.
-  if (ui.overlay?.type === 'solved' && ui.puzzle) return renderPuzzle(`Chapter ${chapter.id}`);
+  if (ui.overlay?.type === 'solved' && ui.puzzle) return renderPuzzle(chapterLabel(chapter));
   const view = Story.currentView(chapter, run);
   unlockSceneMemory(chapter, view.scene);
+  const label = `${chapterLabel(chapter)} · ${chapter.place}`;
 
   if (view.type === 'puzzle') {
-    startPuzzle(`ch${chapter.id}:${view.puzzleId}`, C.puzzles[view.puzzleId], 'story');
-    return renderPuzzle(`Chapter ${chapter.id}`);
+    setScene(view.scene.background, 'dim');
+    startPuzzle(`${chapter.id}:${view.puzzleId}`, C.puzzles[view.puzzleId], 'story');
+    return renderPuzzle(chapterLabel(chapter));
   }
-  const bg = `bg-${esc(view.scene.background)}`;
+  setScene(view.scene.background, 'full');
   if (view.type === 'choice') {
-    return `<main class="screen story ${bg}">
-      ${topbar(`Chapter ${chapter.id}`)}
+    if (view.choices.some((c) => c.pov)) return renderCharacterSelect(view);
+    return `<main class="screen story">
+      ${topbar(label)}
       ${choiceStage(view.scene, run)}
       <div class="dialogue choices">
-        <p class="prompt-line">${esc(view.prompt)}</p>
-        ${view.choices.map((c) => `<button class="choice" data-action="choose" data-id="${esc(c.id)}">${esc(c.text)}</button>`).join('')}
+        <p class="prompt-line">${fmt(view.prompt)}</p>
+        ${view.choices.map((c) => `<button class="choice" data-action="choose" data-id="${esc(c.id)}">${fmt(c.text)}</button>`).join('')}
       </div>
     </main>`;
   }
-  return `<main class="screen story ${bg}" data-action="advance">
-    ${topbar(`Chapter ${chapter.id}`)}
-    ${lineHTML(view.line)}
+  return `<main class="screen story" data-action="advance">
+    ${topbar(label)}
+    ${lineHTML(view.line, run)}
+  </main>`;
+}
+
+// "Whose story will you follow?": playable characters as cards.
+function renderCharacterSelect(view) {
+  const cards = view.choices
+    .map((c) => {
+      const ch = C.characters[c.pov];
+      const key = c.pov === C.story.heroine ? ' heroine' : '';
+      return `<button class="char-card${key}" data-action="choose" data-id="${esc(c.id)}" style="--accent:${esc(ch.accent)}">
+        <div class="char-portrait">${portraitSVG(ch, 'smile', `sel-${c.pov}`)}</div>
+        <div class="char-info">
+          ${key ? '<span class="badge">Key character</span>' : ''}
+          <b>${esc(ch.fullName || ch.name)}</b>
+          <span class="house">${esc(ch.house)} · ${esc(ch.home)}</span>
+          <span class="tagline">${esc(ch.tagline)}</span>
+        </div>
+      </button>`;
+    })
+    .join('');
+  return `<main class="screen select">
+    ${topbar('Prologue')}
+    <h2 class="select-title">${fmt(view.prompt)}</h2>
+    <p class="muted center">Each house sees a different story. Play again as someone else to see the others.</p>
+    <div class="char-grid">${cards}</div>
   </main>`;
 }
 
@@ -209,10 +298,10 @@ function renderStory() {
 function choiceStage(scene, run) {
   const line = Story.visibleLines(scene.lines, run).findLast((l) => {
     const ch = C.characters[l.speaker];
-    return ch && !ch.narration && !ch.message;
+    return ch && !ch.narration && !ch.message && !ch.letter && l.speaker !== run.pov;
   });
   if (!line) return '<div class="stage"></div>';
-  return `<div class="stage"><div class="portrait small mood-${esc(line.mood || 'neutral')}">${portraitSVG(C.characters[line.speaker], line.mood)}</div></div>`;
+  return `<div class="stage"><div class="portrait small mood-${esc(line.mood || 'neutral')}">${portraitSVG(C.characters[line.speaker], line.mood, line.speaker)}</div></div>`;
 }
 
 function unlockSceneMemory(chapter, scene) {
@@ -224,9 +313,14 @@ function unlockSceneMemory(chapter, scene) {
   toast(`📸 Memory unlocked: ${chapter.memories[scene.memory].title}`);
 }
 
-function collectSecrets(chapter, flags) {
+function secretById(id) {
+  for (const ch of C.chapters) if (ch.secrets?.[id]) return ch.secrets[id];
+  return null;
+}
+
+function collectSecrets(flags) {
   for (const f of flags) {
-    const secret = chapter.secrets?.[f];
+    const secret = secretById(f);
     if (!secret) continue;
     const { profile: next, isNew } = Progress.addSecret(profile, f);
     if (isNew) {
@@ -289,12 +383,15 @@ function renderPuzzle(label) {
     })
     .join('');
   const word = guess.map((i) => puzzle.letters[i]).join('');
+  const bonusTotal = (puzzle.bonusWords || []).length;
   return `<main class="screen puzzle">
     ${topbar(label, { hints: true })}
-    <blockquote class="prompt">${esc(puzzle.prompt)}</blockquote>
-    <p class="clue">${esc(puzzle.hint)}</p>
-    <div class="rows">${rows}</div>
-    <p class="bonus">${state.bonus.length ? `Bonus words: ${state.bonus.length} ✨` : '&nbsp;'}</p>
+    <div class="puzzle-card">
+      <blockquote class="prompt">${fmt(puzzle.prompt)}</blockquote>
+      <p class="clue">${esc(puzzle.hint)}</p>
+      <div class="rows">${rows}</div>
+      <p class="bonus">${state.bonus.length ? `Bonus words: ${state.bonus.length} of ${bonusTotal} ✨` : `${bonusTotal} bonus words hidden here`}</p>
+    </div>
     <button class="guess${word ? '' : ' empty'}" data-action="backspace" aria-label="Current word; tap to delete a letter">${word ? esc(word) : 'tap the letters'}</button>
     <p class="feedback" role="status">${esc(feedback) || '&nbsp;'}</p>
     <div class="tiles">${tiles}</div>
@@ -319,7 +416,7 @@ function submitGuess() {
     bonus: `Bonus word! ${res.word} +${Progress.REWARDS.coinsPerBonusWord} 🪙`,
     repeat: `Already found ${res.word}`,
     'too-short': `Words need ${p.puzzle.minLength ?? 3}+ letters`,
-    unknown: `${res.word} isn't one of this scene's words`,
+    unknown: `${res.word} isn't a word we know`,
   }[res.result];
   if (res.result === 'unknown' || res.result === 'too-short') ui.shake = true;
   if (res.result === 'bonus') {
@@ -329,7 +426,7 @@ function submitGuess() {
   }
   if (res.secret && !p.secretFlags.includes(res.secret.id)) {
     p.secretFlags.push(res.secret.id);
-    collectSecrets(currentChapter(), [res.secret.id]);
+    collectSecrets([res.secret.id]);
   }
   afterPuzzleChange();
 }
@@ -381,8 +478,7 @@ function finishPuzzle() {
     context: p.context,
   };
   if (p.context === 'story') {
-    const chapter = currentChapter();
-    profile.run = Story.completePuzzle(chapter, profile.run, p.puzzle.id, {
+    profile.run = Story.completePuzzle(currentChapter(), profile.run, p.puzzle.id, {
       stars,
       coins: res.reward.coins + extra,
       words: [...p.state.found, ...p.state.bonus],
@@ -434,7 +530,10 @@ function finishChapter() {
   const chapter = currentChapter();
   const outcome = Story.pickOutcome(chapter, run);
   const res = Progress.completeChapter(profile, chapter.id, outcome?.id);
-  profile = { ...res.profile, lastStats: run.stats };
+  // Endings (including the secret one) are recorded by the flags their
+  // scenes set, so a secret ending and a main ending can both count.
+  const endings = run.flags.filter((f) => f.startsWith('end_'));
+  profile = { ...res.profile, lastStats: run.stats, endings: [...new Set([...res.profile.endings, ...endings])] };
   profile.run = { ...run, finished: true, chapterReward: res.reward, outcomeId: outcome?.id ?? null };
   persist();
 }
@@ -443,45 +542,56 @@ function statBar(name, value) {
   return `<div class="stat"><span>${name}</span><div class="bar"><i style="width:${value}%"></i></div><b>${value}</b></div>`;
 }
 
+const FALLEN = ['tari', 'hadiza', 'kolade'];
+const fallenIn = (run) => FALLEN.filter((id) => run.flags.includes(`dead_${id}`));
+const endingsSeen = () => profile.endings.filter((e) => e.startsWith('end_')).length;
+
 function renderResults() {
   const run = profile.run;
   if (!run?.complete) return renderHome();
+  setScene(null);
   const chapter = currentChapter();
-  const outcome = chapter.outcomes.find((o) => o.id === run.outcomeId);
+  const outcome = (chapter.outcomes || []).find((o) => o.id === run.outcomeId);
   const reflections = (chapter.reflections || []).filter((r) => Story.checkCondition(r.if, run));
   const puzzles = Object.values(run.puzzles);
   const stars = puzzles.reduce((s, p) => s + p.stars, 0) + (run.chapterReward?.stars ?? 0);
   const coins = puzzles.reduce((s, p) => s + p.coins, 0) + (run.chapterReward?.coins ?? 0);
   const words = puzzles.reduce((s, p) => s + p.words.length, 0);
-  const total = C.story.totalChapters;
+  const next = Story.nextChapter(C.story, run.chapterId, run);
+  const nextChapter = next && chapterById(next.id);
+  const fallen = fallenIn(run).map((id) => C.characters[id].name);
+  const isFinale = !next && chapter.number > 0;
   return `<main class="screen results">
-    ${topbar(`Chapter ${chapter.id} of ${total}`)}
-    <p class="eyebrow center">Chapter ${chapter.id} complete</p>
+    ${topbar(chapter.number === 0 ? 'Prologue' : `${chapterLabel(chapter)} of ${C.story.totalChapters}`)}
+    <p class="eyebrow center">${isFinale ? 'The end' : `${chapterLabel(chapter)} complete`}</p>
     <h1 class="center">${esc(chapter.title)}</h1>
-    ${outcome ? `<section class="card outcome"><h2>${esc(outcome.title)}</h2><p>${esc(outcome.text)}</p>
-      ${reflections.length ? `<ul>${reflections.map((r) => `<li>${esc(r.text)}</li>`).join('')}</ul>` : ''}</section>` : ''}
-    <section class="card">
+    ${outcome ? `<section class="card outcome"><h2>${esc(outcome.title)}</h2><p>${fmt(outcome.text)}</p>
+      ${reflections.length ? `<ul>${reflections.map((r) => `<li>${fmt(r.text)}</li>`).join('')}</ul>` : ''}</section>` : ''}
+    ${fallen.length || run.flags.includes('dead_oliver') ? `<section class="card fallen"><h3>The fallen</h3><p>Chief Gideon Okoro${run.flags.includes('dead_oliver') ? ' · Oliver Ashworth' : ''}${fallen.map((n) => ` · ${esc(n)}`).join('')}</p></section>` : ''}
+    ${chapter.number > 0 ? `<section class="card">
       ${statBar('Trust', run.stats.trust)}
       ${statBar('Affection', run.stats.affection)}
       ${statBar('Reputation', run.stats.reputation)}
-    </section>
+    </section>` : ''}
     <section class="card reward-grid">
       <div><b>⭐ ${stars}</b><span>stars</span></div>
       <div><b>🪙 ${coins}</b><span>coins</span></div>
       <div><b>${words}</b><span>words</span></div>
-      <div><b>🔥 ${profile.streak}</b><span>streak</span></div>
+      <div><b>🔍 ${profile.secrets.length}</b><span>secrets</span></div>
     </section>
-    <section class="card path">
+    ${run.choices.length ? `<section class="card path">
       <h3>Your path</h3>
       <p class="muted">Wonder what would have happened? Rewind to any decision.</p>
       <ol>${run.choices
-        .map((c, i) => `<li><div><span>${esc(c.text)}</span><button class="mini" data-action="rewind" data-i="${i}" aria-label="Replay from this choice">↺</button></div></li>`)
+        .map((c, i) => `<li><div><span>${fmt(c.text)}</span><button class="mini" data-action="rewind" data-i="${i}" aria-label="Replay from this choice">↺</button></div></li>`)
         .join('')}</ol>
-    </section>
-    <p class="muted center">Endings seen: ${profile.endings.length} · Chapter ${chapter.id + 1} is coming soon.</p>
+    </section>` : ''}
+    ${isFinale ? `<p class="muted center">Endings seen: ${endingsSeen()} of ${C.story.totalEndings}. Play as another house to see the rest.</p>` : ''}
     <div class="actions">
-      <button class="btn" data-action="replay">Replay chapter</button>
-      <button class="btn primary" data-action="home">Home</button>
+      ${chapter.number > 0 ? '<button class="btn" data-action="replay">Replay chapter</button>' : ''}
+      ${nextChapter
+        ? `<button class="btn primary" data-action="next-chapter">${chapterLabel(nextChapter)}: ${esc(nextChapter.title)} →</button>`
+        : '<button class="btn primary" data-action="new-saga">Start a new story</button>'}
     </div>
   </main>`;
 }
@@ -489,19 +599,24 @@ function renderResults() {
 // --- Profile and memories ---------------------------------------------------
 
 function renderProfile() {
+  setScene(null);
   const run = profile.run;
-  const stats = run && !run.complete ? run.stats : profile.lastStats ?? run?.stats;
-  const chapterNo = run && !run.complete ? run.chapterId : Math.min(C.story.totalChapters, profile.completedChapters.length || 1);
+  const chapter = run && currentChapter();
+  const stats = run?.stats ?? profile.lastStats;
   const row = (k, v) => `<div class="kv"><span>${k}</span><b>${v}</b></div>`;
+  const fallen = run ? fallenIn(run).map((id) => C.characters[id].name) : [];
   return `<main class="screen profile">
     ${topbar('Your story')}
     <section class="card">
-      ${row('Chapter', `${chapterNo}/${C.story.totalChapters}`)}
+      ${row('Playing as', run?.pov ? esc(C.characters[run.pov].fullName) : '—')}
+      ${row('Chapter', chapter ? `${chapter.number}/${C.story.totalChapters}` : '—')}
       ${row('Words Found', profile.wordsFound.length)}
       ${row('Trust', stats?.trust ?? '—')}
       ${row('Affection', stats?.affection ?? '—')}
       ${row('Reputation', stats?.reputation ?? '—')}
       ${row('Secrets Discovered', `${profile.secrets.length}/${C.story.totalSecrets}`)}
+      ${row('Endings seen', `${endingsSeen()}/${C.story.totalEndings}`)}
+      ${fallen.length ? row('Fallen', esc(fallen.join(', '))) : ''}
     </section>
     <section class="card">
       ${row('⭐ Stars', profile.stars)}
@@ -509,31 +624,30 @@ function renderProfile() {
       ${row('💡 Hints', profile.hints)}
       ${row('🔥 Best word streak', profile.bestStreak)}
       ${row('📅 Daily streak', profile.daily.streak)}
-      ${row('Endings seen', profile.endings.length)}
     </section>
     <button class="btn link danger" data-action="reset">Reset progress</button>
   </main>`;
 }
 
 function renderMemories() {
+  setScene(null);
   const cards = C.chapters.flatMap((ch) =>
     Object.entries(ch.memories || {}).map(([id, m]) =>
       profile.memories.includes(id)
-        ? `<figure class="memory bg-${esc(m.background)}"><figcaption><b>${esc(m.title)}</b><span>${esc(m.text)}</span></figcaption></figure>`
+        ? `<figure class="memory"><div class="memory-art">${sceneSVG(m.background)}</div><figcaption><b>${esc(m.title)}</b><span>${esc(m.text)}</span></figcaption></figure>`
         : `<figure class="memory locked"><figcaption><b>???</b><span>Keep playing to remember.</span></figcaption></figure>`,
     ),
   );
-  const found = C.chapters.flatMap((ch) =>
-    Object.entries(ch.secrets || {})
-      .filter(([id]) => profile.secrets.includes(id))
-      .map(([, s]) => `<li><b>${esc(s.title)}</b><span>${esc(s.text)}</span></li>`),
-  );
+  const found = (C.story.secretFlags || [])
+    .filter((id) => profile.secrets.includes(id))
+    .map((id) => secretById(id))
+    .map((s) => `<li><b>${esc(s.title)}</b><span>${esc(s.text)}</span></li>`);
   const hidden = C.story.totalSecrets - found.length;
   return `<main class="screen memories">
     ${topbar('Memories')}
     <div class="memory-grid">${cards.join('')}</div>
     <h3>Secrets <small>${found.length}/${C.story.totalSecrets}</small></h3>
-    <ul class="secrets">${found.join('')}${hidden > 0 ? `<li class="locked"><b>${hidden} still hidden</b><span>Some words hide more than they say.</span></li>` : ''}</ul>
+    <ul class="secrets">${found.join('')}${hidden > 0 ? `<li class="locked"><b>${hidden} still hidden</b><span>Some words hide more than they say. Find four in one story to unlock the secret ending.</span></li>` : ''}</ul>
   </main>`;
 }
 
@@ -551,26 +665,37 @@ function renderDaily() {
   const d = ui.daily;
   const e = d.entry;
   if (Progress.dailyDone(profile, d.key) && !ui.overlay) {
-    return `<main class="screen story bg-${esc(e.background)}">
+    setScene(e.background, 'full');
+    return `<main class="screen story">
       ${topbar('Daily Word')}
       <div class="stage"></div>
       <div class="dialogue narration"><p class="speaker">${esc(e.title)}</p>
         <p class="line">Today's story is told. Come back tomorrow for the next one.</p>
-        <p class="muted">🔥 ${profile.daily.streak} day streak</p>
+        <p class="muted-light">🔥 ${profile.daily.streak} day streak</p>
         <button class="btn primary" data-action="home">Home</button></div>
     </main>`;
   }
   if (d.phase === 'puzzle') {
+    setScene(e.background, 'dim');
     startPuzzle(`daily:${d.key}`, e.puzzle, 'daily');
     return renderPuzzle('Daily Word');
   }
-  return `<main class="screen story bg-${esc(e.background)}" data-action="daily-advance">
-    ${topbar('Daily Word')}
-    ${lineHTML(e.lines[d.lineIndex])}
+  setScene(e.background, 'full');
+  return `<main class="screen story" data-action="daily-advance">
+    ${topbar(`Daily Word · ${e.title}`)}
+    ${lineHTML(e.lines[d.lineIndex], null)}
   </main>`;
 }
 
 // --- Input ------------------------------------------------------------------
+
+function startNewSaga() {
+  profile.run = Story.newRun(C.chapters[0]);
+  profile.puzzleProgress = null;
+  ui.puzzle = null;
+  persist();
+  go('story');
+}
 
 const actions = {
   home: () => go('home'),
@@ -578,16 +703,23 @@ const actions = {
   memories: () => go('memories'),
   daily: openDaily,
   play() {
-    const chapter = currentChapter();
-    if (!profile.run || profile.run.complete) {
-      profile.run = Story.newRun(chapter);
-      ui.puzzle = null;
-      persist();
-    }
+    if (!profile.run) return startNewSaga();
+    go(profile.run.complete ? 'results' : 'story');
+  },
+  'new-saga': startNewSaga,
+  'next-chapter'() {
+    const run = profile.run;
+    const next = Story.nextChapter(C.story, run.chapterId, run);
+    if (!next) return;
+    profile.run = Story.newRun(chapterById(next.id), Story.carryFrom(run));
+    profile.puzzleProgress = null;
+    ui.puzzle = null;
+    persist();
     go('story');
   },
   replay() {
-    profile.run = Story.newRun(currentChapter());
+    const run = profile.run;
+    profile.run = Story.newRun(currentChapter(), run.carry);
     profile.puzzleProgress = null;
     ui.puzzle = null;
     persist();
@@ -606,12 +738,12 @@ const actions = {
     render();
   },
   choose(el) {
-    const chapter = currentChapter();
-    const { run, choice } = Story.choose(chapter, profile.run, el.dataset.id);
+    const { run, choice } = Story.choose(currentChapter(), profile.run, el.dataset.id);
     profile.run = run;
-    collectSecrets(chapter, run.flags);
+    collectSecrets(run.flags);
     persist();
     if (choice.echo) toast(choice.echo);
+    if (choice.pov) toast(`You are ${C.characters[choice.pov].fullName}.`);
     render();
   },
   'daily-advance'() {

@@ -73,6 +73,7 @@ export function validateChapter(chapter, { characters, puzzles }) {
       ids.add(c.id);
       checkLines(c.response, `${at}/${c.id}`);
       checkNextList(c.next, `${at}/${c.id}`);
+      if (c.pov && !characters[c.pov]) err(`${at}/${c.id}: unknown pov character "${c.pov}"`);
       for (const f of c.setFlags || []) {
         if (f.startsWith('s_') && !secrets[f]) err(`${at}/${c.id}: flag "${f}" looks like a secret but is not defined`);
       }
@@ -95,7 +96,9 @@ export function validateChapter(chapter, { characters, puzzles }) {
     reached.add(id);
     const s = scenes.get(id);
     const outs = [...targets(s.next), ...(s.choices || []).flatMap((c) => targets(c.next))];
+    const nexts = [s.next, ...(s.choices || []).map((c) => c.next)];
     if (s.next == null && !(s.choices || []).some((c) => c.next)) ends = true;
+    if (nexts.some((n) => Array.isArray(n) && n.some((r) => r.to == null))) ends = true;
     stack.push(...outs.filter((t) => t != null));
   }
   for (const id of scenes.keys()) if (!reached.has(id)) err(`scene "${id}" is unreachable`);
@@ -103,6 +106,23 @@ export function validateChapter(chapter, { characters, puzzles }) {
 
   const outcomes = chapter.outcomes || [];
   if (outcomes.length && outcomes[outcomes.length - 1].if) err('the last outcome must be unconditional');
+  return errors;
+}
+
+// Checks that span the whole saga: chapter conditions, and every secret flag
+// the manifest counts being defined by some chapter.
+export function validateStory(story, chapters, { characters }) {
+  const errors = [];
+  const ids = new Set(chapters.map((c) => c.id));
+  for (const entry of story.chapters) {
+    if (!ids.has(entry.id)) errors.push(`story: chapter "${entry.id}" has no file`);
+    for (const pov of [].concat(entry.if?.pov ?? [])) {
+      if (!characters[pov]) errors.push(`story: chapter "${entry.id}" conditions on unknown pov "${pov}"`);
+    }
+  }
+  const defined = new Set(chapters.flatMap((c) => Object.keys(c.secrets || {})));
+  for (const f of story.secretFlags || []) if (!defined.has(f)) errors.push(`story: secret "${f}" is not defined in any chapter`);
+  if ((story.secretFlags || []).length !== story.totalSecrets) errors.push('story: totalSecrets does not match secretFlags');
   return errors;
 }
 

@@ -1,0 +1,99 @@
+{
+  "id": "prologue",
+  "number": 0,
+  "title": "The Last Storm",
+  "place": "Port Harcourt, Rivers State",
+  "teaser": "A storm over the Bonny River. Four letters sealed in red wax. One old lion who won't see morning.",
+  "start": "pr_storm",
+  "initialStats": {"trust": 50, "affection": 50, "reputation": 50},
+  "scenes": [
+    {
+      "id": "pr_storm",
+      "background": "ph_night",
+      "memory": "m_storm",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Port Harcourt. The rain came in off the Bonny River like it had a grudge."
+        },
+        {
+          "speaker": "narrator",
+          "text": "In the big house on the waterfront, Chief Gideon Okoro sat alone with a cup of tea that had gone cold."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ships in the Delta. Tin on the Plateau. Cloth in Kano. Money in Lagos. Everything he touched became an empire."
+        },
+        {
+          "speaker": "gideon",
+          "mood": "worried",
+          "text": "Four rivers. One crown. And not one of them knows what I have done."
+        },
+        {
+          "speaker": "gideon",
+          "mood": "sad",
+          "text": "Forgive me, Kaneng. I should have come back for you. For both of you."
+        },
+        {
+          "speaker": "narrator",
+          "text": "He sealed four letters with red wax, pressed his ring into each one, and called for his driver."
+        },
+        {"speaker": "gideon", "text": "If I do not wake up, send them. All four. Before the vultures land."}
+      ],
+      "puzzle": "pr_crown",
+      "next": "pr_dawn"
+    },
+    {
+      "id": "pr_dawn",
+      "background": "ph_day",
+      "lines": [
+        {"speaker": "narrator", "text": "Chief Gideon Okoro did not wake up."},
+        {
+          "speaker": "narrator",
+          "text": "By dawn, four letters were racing across Nigeria: north to the granite rocks of Jos, south to the creeks of Bayelsa, up to the ancient walls of Kano, and west to Lagos, which never sleeps."
+        },
+        {"speaker": "narrator", "text": "Four houses. One crown. A death that started everything."}
+      ],
+      "prompt": "Whose story will you follow?",
+      "choices": [
+        {"id": "pick_nabyen", "pov": "nabyen", "text": "Nabyen Dalyop, House of the Rock"},
+        {"id": "pick_tari", "pov": "tari", "text": "Tari Ebiowei, House of the Creeks"},
+        {"id": "pick_hadiza", "pov": "hadiza", "text": "Hadiza Lawan, House of the Walls"},
+        {"id": "pick_kolade", "pov": "kolade", "text": "Kolade Balogun, House of the Lagoon"}
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "pro_nabyen",
+      "if": {"pov": "nabyen"},
+      "title": "The Daughter of the Rock",
+      "text": "You follow Nabyen. The letter in her hands has her name on it twice, and she doesn't yet know why."
+    },
+    {
+      "id": "pro_tari",
+      "if": {"pov": "tari"},
+      "title": "The Prince of the Creeks",
+      "text": "You follow Tari. The Chief pulled him from the river as a boy. Now the river wants something back."
+    },
+    {
+      "id": "pro_hadiza",
+      "if": {"pov": "hadiza"},
+      "title": "The Keeper of Ledgers",
+      "text": "You follow Hadiza. In Kano, the walls listen, and she has always listened better."
+    },
+    {
+      "id": "pro_kolade",
+      "title": "The Lagos Gambler",
+      "text": "You follow Kolade. He wants the crown. The only question is what he'll trade for it."
+    }
+  ],
+  "memories": {
+    "m_storm": {
+      "title": "The Last Storm",
+      "background": "ph_night",
+      "text": "Red wax, four letters, and a cold cup of tea."
+    }
+  }
+}

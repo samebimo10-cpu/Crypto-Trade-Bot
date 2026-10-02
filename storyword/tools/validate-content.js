@@ -4,7 +4,8 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { validateChapter, validateDaily, validatePuzzle } from '../src/engine/validate.js';
+import { validateChapter, validateDaily, validatePuzzle, validateStory } from '../src/engine/validate.js';
+import { missingWords } from './words.js';
 
 const contentDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'content');
 const read = async (f) => JSON.parse(await readFile(join(contentDir, f), 'utf8'));
@@ -20,11 +21,18 @@ export async function loadAll() {
 }
 
 export async function validateAll() {
-  const { characters, puzzleList, puzzles, chapters, daily } = await loadAll();
+  const { story, characters, puzzleList, puzzles, chapters, daily } = await loadAll();
+  const missing = [];
+  for (const p of [...puzzleList, ...daily.entries.map((e) => e.puzzle)]) {
+    const words = await missingWords(p);
+    if (words.length) missing.push(`${p.id}: real words not accepted: ${words.join(' ')} (run: node tools/words.js fill)`);
+  }
   return [
     ...puzzleList.flatMap((p) => validatePuzzle(p)),
     ...chapters.flatMap((c) => validateChapter(c, { characters, puzzles })),
+    ...validateStory(story, chapters, { characters }),
     ...validateDaily(daily, { characters }),
+    ...missing,
   ];
 }
 

@@ -1,0 +1,352 @@
+{
+  "id": "c4_alps",
+  "number": 4,
+  "title": "The Vault in the Alps",
+  "place": "Geneva and Zermatt, Switzerland",
+  "teaser": "A blue lake, a vault that only opens for blood, and a choice on the mountain that someone won't come back from.",
+  "start": "a1_geneva",
+  "scenes": [
+    {
+      "id": "a1_geneva",
+      "background": "geneva",
+      "memory": "m_geneva",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Geneva. A lake so blue it looks painted, and a fountain throwing water a hundred and forty metres into the sky."
+        },
+        {"speaker": "narrator", "text": "Banque Moreau is a grey stone building with no sign on the door."},
+        {
+          "speaker": "elise",
+          "mood": "smile",
+          "text": "Welcome. Elise Moreau. I was so sorry to hear about Mr Ashworth. London is a dangerous city."
+        },
+        {
+          "speaker": "elise",
+          "if": {"flags": ["betrayer"]},
+          "mood": "smile",
+          "text": "And Monsieur Balogun. How nice to see a familiar face."
+        },
+        {"speaker": "narrator", "if": {"flags": ["betrayer"]}, "text": "Every head turns toward Kolade."},
+        {
+          "speaker": "elise",
+          "text": "Chief Okoro's box requires his key and the blood of an Okoro. I'm afraid none of you qualify."
+        }
+      ],
+      "next": "a2_vault"
+    },
+    {
+      "id": "a2_vault",
+      "background": "vault",
+      "memory": "m_vault",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ten floors underground, a round steel door older than the bank above it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The brass key turns. The vault doesn't open. Beside the lock is a small glass plate, the size of a fingertip."
+        },
+        {"speaker": "nabyen", "mood": "worried", "text": "The blood of an Okoro..."},
+        {
+          "speaker": "narrator",
+          "text": "Nabyen presses her finger to the glass. A needle, a single drop of red, and the great door begins to turn."
+        },
+        {"speaker": "elise", "mood": "surprised", "text": "That's... impossible."},
+        {
+          "speaker": "narrator",
+          "text": "Inside: the second half of the will, half of a coral bracelet that matches Nabyen's exactly, and a ledger bound in black leather."
+        },
+        {
+          "speaker": "letter",
+          "text": "To my daughter Nabyen, and to the three children I chose: the crown belongs to whoever you choose, together. Elise Moreau has robbed me for ten years. The proof is in this book. — G.O."
+        },
+        {"speaker": "elise", "mood": "angry", "text": "Guards!"}
+      ],
+      "prompt": "Elise Moreau's guards are pounding down the stairs.",
+      "choices": [
+        {
+          "id": "c_grab",
+          "text": "Grab the ledger and run.",
+          "effects": {"reputation": 5},
+          "setFlags": ["has_ledger"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Up the stairs, through the lobby, out into the sunlight with alarms screaming."
+            }
+          ]
+        },
+        {
+          "id": "c_hold",
+          "text": "Hold the vault door so the others can get out.",
+          "effects": {"trust": 10, "reputation": 5},
+          "setFlags": ["has_ledger", "held_door"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Steel against shoulder, ten seconds that feel like ten years. Long enough."
+            }
+          ]
+        }
+      ],
+      "puzzle": "a_geneva",
+      "next": "a3_train"
+    },
+    {
+      "id": "a3_train",
+      "background": "alps",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The mountain train to Zermatt. Snow, pines, and a red carriage crawling up the edge of the world."
+        },
+        {"speaker": "narrator", "text": "Elise's men are two carriages behind them."},
+        {
+          "speaker": "hadiza",
+          "mood": "worried",
+          "text": "There's a footpath from the next station down to the police post at Täsch. Steep, and in this weather, deadly."
+        },
+        {
+          "speaker": "hadiza",
+          "text": "One person carries the ledger down. The rest of us lead them up the mountain."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["betrayer"]},
+          "text": "Kolade is texting. Elise's men know exactly which carriage they're in."
+        }
+      ],
+      "prompt": "Who carries the ledger down the mountain?",
+      "choices": [
+        {
+          "id": "c_send_tari",
+          "if": {"notPov": "tari"},
+          "text": "Tari. He's the strongest of us.",
+          "effects": {"trust": 5},
+          "setFlags": ["sent_tari", "dead_tari", "elise_caught"],
+          "echo": "Nobody says goodbye properly.",
+          "response": [{"speaker": "tari", "mood": "smile", "text": "Easy. It's only downhill."}]
+        },
+        {
+          "id": "c_send_hadiza",
+          "if": {"notPov": "hadiza"},
+          "text": "Hadiza. She knows exactly what the ledger proves.",
+          "effects": {"trust": 5},
+          "setFlags": ["sent_hadiza", "dead_hadiza", "elise_caught"],
+          "echo": "Nobody says goodbye properly.",
+          "response": [{"speaker": "hadiza", "text": "Page by page. Don't wait for me."}]
+        },
+        {
+          "id": "c_send_kolade",
+          "if": {"notPov": "kolade"},
+          "text": "Kolade. Lagos men run fast.",
+          "effects": {"trust": 5},
+          "setFlags": ["sent_kolade", "dead_kolade", "elise_caught"],
+          "echo": "Nobody says goodbye properly.",
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "Finally, a job that pays in glory."}]
+        },
+        {
+          "id": "c_send_self",
+          "text": "Carry it yourself.",
+          "effects": {"reputation": 10},
+          "setFlags": ["went_self", "elise_escaped"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "{pov} zips the ledger into a coat pocket and steps off the train into the white."
+            }
+          ]
+        }
+      ],
+      "puzzle": "a_snow",
+      "next": "a4_storm"
+    },
+    {
+      "id": "a4_storm",
+      "background": "alps_storm",
+      "memory": "m_storm_alps",
+      "lines": [
+        {"speaker": "narrator", "text": "The storm comes in off the Matterhorn like the end of the world."},
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["sent_tari"]},
+          "text": "Tari reaches the police post at Täsch with the ledger inside his jacket. The police find two bullets in him, and not one in the ledger."
+        },
+        {
+          "speaker": "tari",
+          "if": {"flags": ["sent_tari"]},
+          "mood": "sad",
+          "text": "Tell Nabyen... I owe her... a fish..."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["sent_tari"]},
+          "text": "Tari Ebiowei, Prince of the Creeks, dies in the snow, very far from the river."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["sent_hadiza"]},
+          "text": "Hadiza reaches the police post at Täsch an hour after dark, the ledger dry and every page in order. Then she sits down in the snow and doesn't get up."
+        },
+        {
+          "speaker": "hadiza",
+          "if": {"flags": ["sent_hadiza"]},
+          "mood": "sad",
+          "text": "Count it... properly... all of it..."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["sent_hadiza"]},
+          "text": "Hadiza Lawan, the sharpest mind in Kano, dies with the numbers balanced."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["sent_kolade"]},
+          "text": "Kolade reaches the police post at Täsch running on pride and nothing else. Elise's men reach it a minute later."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"flags": ["sent_kolade"]},
+          "mood": "sad",
+          "text": "Tell Lagos... I earned it..."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["sent_kolade"]},
+          "text": "Kolade Balogun dies with his phone still recording. The recording is enough to convict Elise twice over."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["elise_caught"]},
+          "text": "The Swiss police arrest Elise Moreau at her chalet before midnight. Her lawyers arrive by breakfast. It won't help her."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["went_self"]},
+          "text": "{pov} carries the ledger down alone. Frostbitten, half-blind, alive."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["went_self"]},
+          "text": "But by the time the police reach the chalet, Elise Moreau is gone. Everyone else came down the mountain."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["betrayer"]},
+          "text": "The others know now what Kolade did. Elise made sure of it, out of spite."
+        }
+      ],
+      "prompt": "The storm is passing.",
+      "choices": [
+        {
+          "id": "c_justice",
+          "if": {"flags": ["elise_caught"]},
+          "text": "Hand everything to the Swiss courts. Let the law have her.",
+          "effects": {"trust": 10},
+          "setFlags": ["justice"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Elise Moreau will spend the next twenty years looking at a very small piece of Swiss sky."
+            }
+          ]
+        },
+        {
+          "id": "c_deal",
+          "if": {"flags": ["elise_caught"]},
+          "text": "Offer Elise a deal: return every franc, and she walks.",
+          "effects": {"reputation": 10, "trust": -10},
+          "setFlags": ["deal_elise"],
+          "response": [
+            {"speaker": "elise", "mood": "smile", "text": "You're more like him than you know."},
+            {
+              "speaker": "narrator",
+              "text": "Forty million dollars comes home. The woman who stole it walks free."
+            }
+          ]
+        },
+        {
+          "id": "c_hunt",
+          "if": {"flags": ["elise_escaped"]},
+          "text": "\"Wherever she runs, we'll find her.\"",
+          "effects": {"reputation": 5},
+          "setFlags": ["vengeance"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Somewhere, a woman with pale hair is buying a ticket to somewhere warm."
+            }
+          ]
+        },
+        {
+          "id": "c_let",
+          "if": {"flags": ["elise_escaped"]},
+          "text": "Let her go. You have the truth, and everyone is alive.",
+          "effects": {"affection": 10},
+          "setFlags": ["mercy"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Everyone is alive. In this story, that's the rarest treasure of all."
+            }
+          ]
+        }
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "a_tari",
+      "if": {"flags": ["dead_tari"]},
+      "title": "The Prince Falls",
+      "text": "Tari carried the ledger down the mountain and gave his life for it. The creeks will sing about him for a hundred years."
+    },
+    {
+      "id": "a_hadiza",
+      "if": {"flags": ["dead_hadiza"]},
+      "title": "The Last Ledger",
+      "text": "Hadiza carried the proof down the mountain, every page in order. Kano has lost its sharpest mind."
+    },
+    {
+      "id": "a_kolade",
+      "if": {"flags": ["dead_kolade"]},
+      "title": "The Banker's Debt",
+      "text": "Kolade wanted to earn it. On the mountain, he paid in full."
+    },
+    {
+      "id": "a_self",
+      "title": "Alone on the Mountain",
+      "text": "You carried it yourself. Everyone lived. Elise escaped. Every choice has a price."
+    }
+  ],
+  "reflections": [
+    {"if": {"flags": ["held_door"]}, "text": "Ten seconds at the vault door. The others won't forget them."},
+    {"if": {"flags": ["deal_elise"]}, "text": "The money came home. Justice didn't."}
+  ],
+  "secrets": {
+    "s_wolf": {
+      "title": "Le Loup",
+      "text": "WOLF. In Banque Moreau's private files, Elise signed every stolen transfer 'Le Loup'. The wolf."
+    }
+  },
+  "memories": {
+    "m_geneva": {
+      "title": "The Blue Lake",
+      "background": "geneva",
+      "text": "A fountain touching the sky, and a bank with no sign."
+    },
+    "m_vault": {
+      "title": "Blood and Steel",
+      "background": "vault",
+      "text": "One drop of red, and a door that remembered who her father was."
+    },
+    "m_storm_alps": {
+      "title": "The Storm on the Pass",
+      "background": "alps_storm",
+      "text": "Somebody didn't come back down the mountain."
+    }
+  }
+}

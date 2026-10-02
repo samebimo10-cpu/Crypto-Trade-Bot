@@ -1,0 +1,233 @@
+{
+  "id": "c1_hadiza",
+  "number": 1,
+  "title": "The Long Game",
+  "place": "Kano, Kano State",
+  "teaser": "Indigo dye pits, a decade of ledgers, and four million dollars a year that vanished into Switzerland.",
+  "start": "h1_pits",
+  "scenes": [
+    {
+      "id": "h1_pits",
+      "background": "kano",
+      "memory": "m_kano",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Kano. The old city walls glow red in the morning, and the dye pits of Kofar Mata breathe indigo into the air."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Hadiza Lawan had her father's ledgers open on her knees when the letter came."
+        },
+        {
+          "speaker": "letter",
+          "text": "Hadiza. You always saw what I missed. Count the money. Someone has been counting it for me. — G.O."
+        },
+        {
+          "speaker": "hadiza",
+          "mood": "worried",
+          "text": "Count the money. You never asked me for anything, Chief. And now you're gone."
+        }
+      ],
+      "prompt": "The ledgers are heavy.",
+      "choices": [
+        {
+          "id": "c_audit",
+          "text": "Open every ledger tonight. All ten years.",
+          "effects": {"trust": 5},
+          "setFlags": ["audited"],
+          "response": [{"speaker": "hadiza", "mood": "smile", "text": "Bring me tea. A great deal of tea."}]
+        },
+        {
+          "id": "c_call_lagos",
+          "text": "Call Kolade in Lagos. Bankers know where money hides.",
+          "effects": {"reputation": 5},
+          "setFlags": ["ally_kolade"],
+          "response": [
+            {
+              "speaker": "kolade",
+              "mood": "smile",
+              "text": "Hadiza Lawan, calling me? I'm flattered. And suspicious."
+            }
+          ]
+        },
+        {
+          "id": "c_silent",
+          "text": "Tell no one. Not even family.",
+          "effects": {"trust": 5, "reputation": -5},
+          "setFlags": ["silent"],
+          "response": [{"speaker": "hadiza", "text": "In Kano, the walls listen. Then they talk."}]
+        }
+      ],
+      "puzzle": "h_ledger",
+      "next": "h2_market"
+    },
+    {
+      "id": "h2_market",
+      "background": "kano_market",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Midnight at Kurmi market, among the lanterns and bolts of bright cloth, she finds it."
+        },
+        {
+          "speaker": "hadiza",
+          "mood": "surprised",
+          "text": "Four million dollars a year. Every year. Out of Confluence Holdings and into a private bank in Geneva."
+        },
+        {
+          "speaker": "hadiza",
+          "text": "Banque Moreau. Someone has been bleeding the Chief for a decade, and nobody noticed."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"flags": ["ally_kolade"]},
+          "text": "Moreau? Very old, very private, very Swiss. Why do you ask?"
+        },
+        {"speaker": "narrator", "if": {"flags": ["ally_kolade"]}, "text": "He answers a little too smoothly."}
+      ],
+      "prompt": "This is either evidence or leverage.",
+      "choices": [
+        {
+          "id": "c_share",
+          "text": "Send it to the other heirs. Nobody wins a rigged game.",
+          "effects": {"trust": 10},
+          "setFlags": ["shared_ledger", "clue_moreau"],
+          "response": [{"speaker": "hadiza", "text": "Let them all see. Thieves hate the light."}]
+        },
+        {
+          "id": "c_leverage",
+          "text": "Keep it. Whoever holds this holds the crown.",
+          "effects": {"reputation": 10, "trust": -5},
+          "setFlags": ["leverage", "clue_moreau"],
+          "echo": "Knowledge is a blade.",
+          "response": [
+            {
+              "speaker": "hadiza",
+              "mood": "smile",
+              "text": "My father taught me: never show your best cloth on the first day of the market."
+            }
+          ]
+        },
+        {
+          "id": "c_for_nd",
+          "text": "Send it to one person only: the 'N.D.' in the margins.",
+          "effects": {"affection": 5, "trust": 5},
+          "setFlags": ["ally_nabyen", "clue_moreau"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "In the margin of the oldest ledger, in the Chief's handwriting: 'For N.D., if anything happens to me.'"
+            },
+            {"speaker": "hadiza", "text": "Nabyen Dalyop. Jos. Let's see who you are."}
+          ]
+        }
+      ],
+      "next": "h3_durbar"
+    },
+    {
+      "id": "h3_durbar",
+      "background": "kano_durbar",
+      "memory": "m_durbar",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Sallah Durbar. Horsemen in red and gold, trumpets, dust, the whole city cheering."
+        },
+        {"speaker": "narrator", "text": "And in the middle of it all, a man in a Lagos suit, sweating."},
+        {
+          "speaker": "kolade",
+          "mood": "smile",
+          "text": "Hadiza. I came all the way to Kano to make you an offer."
+        },
+        {
+          "speaker": "kolade",
+          "text": "You have the numbers. I have the bank. Together we walk into Port Harcourt already wearing the crown."
+        }
+      ],
+      "prompt": "Kolade Balogun, House of the Lagoon.",
+      "choices": [
+        {
+          "id": "c_shake",
+          "text": "Shake his hand.",
+          "effects": {"reputation": 5},
+          "setFlags": ["ally_kolade"],
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "A pleasure doing business."}]
+        },
+        {
+          "id": "c_refuse_k",
+          "text": "\"I don't share crowns, Kolade.\"",
+          "effects": {"reputation": 5, "trust": -5},
+          "setFlags": ["refused_kolade"],
+          "response": [{"speaker": "kolade", "text": "Then I'll see you on the other side of the table."}]
+        },
+        {
+          "id": "c_test",
+          "text": "Ask him about Banque Moreau. Watch his eyes.",
+          "effects": {"trust": 5},
+          "setFlags": ["suspects_kolade"],
+          "response": [
+            {"speaker": "narrator", "text": "He blinks. Once. Then he laughs."},
+            {"speaker": "kolade", "mood": "smile", "text": "Never heard of them."},
+            {"speaker": "narrator", "text": "Hadiza has played enough cards to know a bluff."}
+          ]
+        }
+      ],
+      "puzzle": "h_horses",
+      "next": "h4_south"
+    },
+    {
+      "id": "h4_south",
+      "background": "kano",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Evening. The last flight south out of Mallam Aminu Kano International."
+        },
+        {"speaker": "hadiza", "mood": "smile", "text": "Port Harcourt. Let's see who's lying."}
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "h_open",
+      "if": {"flags": ["shared_ledger"]},
+      "title": "Open Books",
+      "text": "Hadiza showed everyone the truth. Honest, brave, and now a target."
+    },
+    {
+      "id": "h_blade",
+      "if": {"flags": ["leverage"]},
+      "title": "The Blade",
+      "text": "Hadiza kept the proof to herself. In a game of thrones, the one who knows the most usually wins. Usually."
+    },
+    {
+      "id": "h_nd",
+      "title": "For N.D.",
+      "text": "Hadiza found a name in the Chief's margins and followed it. N.D. Nabyen Dalyop. Why did a billionaire write a gem trader into his ledgers?"
+    }
+  ],
+  "reflections": [
+    {"if": {"flags": ["suspects_kolade"]}, "text": "Kolade's laugh came a second too late."},
+    {"if": {"flags": ["ally_kolade"]}, "text": "Lagos and Kano have shaken hands. For now."}
+  ],
+  "secrets": {
+    "s_greed": {
+      "title": "Circled three times",
+      "text": "GREED, circled three times in red ink in the margin of the 2019 ledger, in the Chief's own hand. He knew, a year before he died."
+    }
+  },
+  "memories": {
+    "m_kano": {
+      "title": "Indigo Morning",
+      "background": "kano",
+      "text": "Red walls, indigo pits, and a letter that said: count the money."
+    },
+    "m_durbar": {
+      "title": "The Durbar",
+      "background": "kano_durbar",
+      "text": "Horsemen in red and gold, and a Lagos banker in the dust."
+    }
+  }
+}

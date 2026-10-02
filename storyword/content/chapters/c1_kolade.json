@@ -1,0 +1,203 @@
+{
+  "id": "c1_kolade",
+  "number": 1,
+  "title": "Lagos Never Sleeps",
+  "place": "Lagos, Lagos State",
+  "teaser": "Third Mainland traffic, a rooftop on Victoria Island, and a Swiss banker with a very dangerous offer.",
+  "start": "k1_bridge",
+  "scenes": [
+    {
+      "id": "k1_bridge",
+      "background": "lagos",
+      "memory": "m_lagos",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Lagos. Third Mainland Bridge at six in the evening. Nothing on it moves except the danfo drivers' mouths."
+        },
+        {
+          "speaker": "narrator",
+          "text": "In the back of his car, Kolade Balogun reads the letter for the third time."
+        },
+        {"speaker": "letter", "text": "Kolade. You wanted everything. Earn it. — G.O."},
+        {
+          "speaker": "kolade",
+          "mood": "smile",
+          "text": "Earn it. Old man, I've been earning it since I was sixteen."
+        },
+        {"speaker": "kolade", "mood": "sad", "text": "...You could have said goodbye."}
+      ],
+      "prompt": "The traffic hasn't moved in twenty minutes.",
+      "choices": [
+        {
+          "id": "c_widow",
+          "text": "Call the widow. Lock in the board votes before anyone else lands.",
+          "effects": {"reputation": 10, "trust": -5},
+          "setFlags": ["courted_ibiere"],
+          "response": [
+            {
+              "speaker": "ibiere",
+              "mood": "smile",
+              "text": "Kolade. You always were the practical one. Come and see me."
+            }
+          ]
+        },
+        {
+          "id": "c_research",
+          "text": "Look up the other names under the seal.",
+          "effects": {"trust": 5},
+          "setFlags": ["researched"],
+          "response": [
+            {
+              "speaker": "kolade",
+              "text": "Dalyop. Ebiowei. Lawan. And me. A gem trader, a boat captain, a Kano accountant and a banker. What were you building, Chief?"
+            }
+          ]
+        },
+        {
+          "id": "c_drink",
+          "text": "\"Driver. Victoria Island. I need a drink first.\"",
+          "effects": {"affection": 5},
+          "response": [{"speaker": "kolade", "mood": "sad", "text": "Grief can wait until the second bottle."}]
+        }
+      ],
+      "puzzle": "k_bridge",
+      "next": "k2_vi"
+    },
+    {
+      "id": "k2_vi",
+      "background": "lagos_night",
+      "lines": [
+        {"speaker": "narrator", "text": "Victoria Island. A rooftop bar, the whole city lit up like money."},
+        {
+          "speaker": "narrator",
+          "text": "A video call from a private number: a woman with pale hair and Lake Geneva behind her."
+        },
+        {
+          "speaker": "elise",
+          "mood": "smile",
+          "text": "Monsieur Balogun. Elise Moreau, Banque Moreau. I managed Chief Okoro's private accounts for many years."
+        },
+        {
+          "speaker": "elise",
+          "text": "His will is... complicated. Help me keep his accounts quiet for a few weeks, and I can make sure the crown goes to you."
+        },
+        {"speaker": "elise", "mood": "smile", "text": "Lagos deserves a king. Don't you think?"}
+      ],
+      "prompt": "The most dangerous offer of his life.",
+      "choices": [
+        {
+          "id": "c_accept",
+          "text": "\"Tell me more.\"",
+          "effects": {"reputation": 10, "trust": -10},
+          "setFlags": ["elise_deal"],
+          "echo": "Elise will remember this.",
+          "response": [{"speaker": "elise", "mood": "smile", "text": "I knew you were the clever one."}]
+        },
+        {
+          "id": "c_refuse_e",
+          "text": "\"He was my godfather. Find another fool.\"",
+          "effects": {"trust": 10},
+          "setFlags": ["refused_elise", "clue_moreau"],
+          "response": [{"speaker": "elise", "text": "A pity. Fools live longer, Monsieur."}]
+        },
+        {
+          "id": "c_spy",
+          "text": "Pretend to accept. Record every word.",
+          "effects": {"trust": 5, "reputation": 5},
+          "setFlags": ["double_agent", "clue_moreau"],
+          "response": [
+            {"speaker": "kolade", "mood": "smile", "text": "Of course, Madame. Let's talk numbers."},
+            {"speaker": "narrator", "text": "In his pocket, his phone is recording."}
+          ]
+        }
+      ],
+      "next": "k3_beach"
+    },
+    {
+      "id": "k3_beach",
+      "background": "lagos_beach",
+      "memory": "m_beach",
+      "lines": [
+        {"speaker": "narrator", "text": "Dawn on the beach at Lekki. The Atlantic doesn't care about crowns."},
+        {
+          "speaker": "kolade",
+          "text": "Two ways to play this. Fly straight to Port Harcourt and be first in the room."
+        },
+        {
+          "speaker": "kolade",
+          "text": "Or fly north to Jos and meet the woman whose name the old man wrote twice."
+        }
+      ],
+      "prompt": "Where does Kolade go first?",
+      "choices": [
+        {
+          "id": "c_to_jos",
+          "text": "Fly to Jos. Meet Nabyen Dalyop.",
+          "effects": {"affection": 5},
+          "setFlags": ["ally_nabyen", "spark_nabyen"],
+          "response": [{"speaker": "narrator", "text": "Later he'll tell everyone it was strategy. It wasn't."}]
+        },
+        {
+          "id": "c_to_ph",
+          "text": "Fly straight to Port Harcourt. Be first in the room.",
+          "effects": {"reputation": 5},
+          "setFlags": ["first_in_room"],
+          "response": [
+            {
+              "speaker": "kolade",
+              "mood": "smile",
+              "text": "In Lagos, the early bird doesn't just catch the worm. He buys the farm."
+            }
+          ]
+        }
+      ],
+      "puzzle": "k_lagos",
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "k_wolf",
+      "if": {"flags": ["elise_deal"]},
+      "title": "A Deal in the Dark",
+      "text": "Kolade said yes to Elise Moreau. Lagos might get its king. But kings who are made by other people can be unmade by them too."
+    },
+    {
+      "id": "k_two",
+      "if": {"flags": ["double_agent"]},
+      "title": "Two Faces",
+      "text": "Kolade smiled at the wolf and kept the tape running. A dangerous game, played well. So far."
+    },
+    {
+      "id": "k_not",
+      "title": "Not for Sale",
+      "text": "Kolade turned Elise down. For once, the man who wanted everything wouldn't sell anything."
+    }
+  ],
+  "reflections": [
+    {
+      "if": {"flags": ["spark_nabyen"]},
+      "text": "A Lagos banker is flying north for a woman he has never met."
+    },
+    {"if": {"flags": ["courted_ibiere"]}, "text": "The widow is in Kolade's pocket. Or he's in hers."}
+  ],
+  "secrets": {
+    "s_bride": {
+      "title": "A promised bride",
+      "text": "BRIDE. Thirty years ago, two fathers promised a Lagos boy a bride from the Plateau. The Chief tore the agreement up the day Nabyen was born."
+    }
+  },
+  "memories": {
+    "m_lagos": {
+      "title": "Third Mainland at Dusk",
+      "background": "lagos",
+      "text": "Yellow danfos, a gold lagoon, and two words: earn it."
+    },
+    "m_beach": {
+      "title": "Dawn at Lekki",
+      "background": "lagos_beach",
+      "text": "The Atlantic, a choice, and a woman he hadn't met yet."
+    }
+  }
+}

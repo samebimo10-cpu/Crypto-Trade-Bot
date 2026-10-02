@@ -1,0 +1,382 @@
+{
+  "id": "c3_london",
+  "number": 3,
+  "title": "Fog on the Thames",
+  "place": "London, United Kingdom",
+  "teaser": "Rain, red buses, a frightened solicitor, and a murder on the Embankment.",
+  "start": "l1_office",
+  "scenes": [
+    {
+      "id": "l1_office",
+      "background": "london",
+      "memory": "m_london",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "London. Rain that doesn't fall so much as hang in the air and wait for you."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Oliver Ashworth's office at Lincoln's Inn smells of old paper and older secrets."
+        },
+        {
+          "speaker": "oliver",
+          "mood": "worried",
+          "text": "Someone was here last night. They took nothing. Which means they were looking for something they didn't find."
+        },
+        {
+          "speaker": "oliver",
+          "text": "The first half of the will. And a key. The Chief said only his blood could open his box in Geneva."
+        },
+        {"speaker": "oliver", "text": "I never understood what he meant. Perhaps one of you does."},
+        {"speaker": "narrator", "text": "Nabyen's hand closes around the coral bracelet in her pocket."}
+      ],
+      "prompt": "Oliver looks like a man who hasn't slept in a week.",
+      "choices": [
+        {
+          "id": "c_invite",
+          "text": "\"Come with us to Geneva, Oliver. You're not safe here.\"",
+          "effects": {"trust": 5, "affection": 5},
+          "setFlags": ["invited_oliver"],
+          "response": [
+            {
+              "speaker": "oliver",
+              "mood": "smile",
+              "text": "That's... very kind. I have one thing to collect first. Meet me on the Embankment at nine."
+            }
+          ]
+        },
+        {
+          "id": "c_doubt",
+          "text": "\"How do we know you're not part of this?\"",
+          "effects": {"trust": -5, "reputation": 5},
+          "setFlags": ["doubted_oliver"],
+          "response": [
+            {"speaker": "oliver", "mood": "sad", "text": "You don't. That's rather the point of trust."},
+            {"speaker": "oliver", "text": "The Embankment, nine o'clock. There's something you need to see."}
+          ]
+        }
+      ],
+      "puzzle": "l_thames",
+      "next": "l2_embankment"
+    },
+    {
+      "id": "l2_embankment",
+      "background": "london_night",
+      "setFlags": ["dead_oliver"],
+      "lines": [
+        {"speaker": "narrator", "text": "Nine o'clock. Fog on the Embankment, and lamps like drowned moons."},
+        {
+          "speaker": "narrator",
+          "text": "Oliver is late. Then he isn't late. He's lying on the stone steps down to the river."
+        },
+        {"speaker": "oliver", "mood": "sad", "text": "...Moreau... it was always... Moreau..."},
+        {"speaker": "narrator", "text": "His hand opens. In his palm is a small brass key."},
+        {
+          "speaker": "narrator",
+          "text": "Footsteps, running. A shadow in a long coat is disappearing toward Waterloo Bridge."
+        }
+      ],
+      "prompt": "Oliver Ashworth is dying.",
+      "choices": [
+        {
+          "id": "c_stay_o",
+          "text": "Stay with Oliver.",
+          "effects": {"affection": 5, "trust": 5},
+          "setFlags": ["stayed_oliver", "clue_moreau"],
+          "response": [
+            {"speaker": "oliver", "mood": "sad", "text": "Tell the girl... her father... was so proud..."},
+            {
+              "speaker": "narrator",
+              "text": "Oliver Ashworth, solicitor, sixty-one years old, dies on the steps of the Thames as the fog closes over him."
+            }
+          ]
+        },
+        {
+          "id": "c_chase_s",
+          "text": "Chase the shadow.",
+          "effects": {"reputation": 10},
+          "setFlags": ["chased_shadow"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Down the Embankment, across the bridge, and into a black car with Swiss diplomatic plates."
+            },
+            {"speaker": "narrator", "text": "When the chase is over, so is Oliver."}
+          ]
+        },
+        {
+          "id": "c_police",
+          "text": "Call the police. Do this properly.",
+          "effects": {"trust": 10, "reputation": -5},
+          "setFlags": ["called_police"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "The Met arrive in eleven minutes. Oliver Ashworth has been dead for ten."
+            }
+          ]
+        }
+      ],
+      "puzzle": "l_murder",
+      "next": [{"if": {"pov": "kolade", "flags": ["elise_deal"]}, "to": "l3_dark"}, {"to": "l3_pub"}]
+    },
+    {
+      "id": "l3_pub",
+      "background": "london_night",
+      "lines": [
+        {"speaker": "narrator", "text": "A pub off the Strand, near closing. Nobody is drinking."},
+        {
+          "speaker": "narrator",
+          "if": {"notPov": "kolade", "flags": ["suspects_kolade"]},
+          "text": "Kolade keeps checking his phone. Every time it buzzes, he turns it face down."
+        },
+        {"speaker": "tari", "mood": "angry", "text": "They killed him for a key. For a KEY."},
+        {
+          "speaker": "hadiza",
+          "text": "They killed him because he knew where the money went. And now so do we."
+        }
+      ],
+      "prompt": "London has already taken one life.",
+      "choices": [
+        {
+          "id": "c_confront_k",
+          "if": {"notPov": "kolade", "flags": ["suspects_kolade"]},
+          "text": "\"Kolade. Who keeps calling you?\"",
+          "effects": {"trust": 5},
+          "setFlags": ["confronted_kolade"],
+          "response": [
+            {"speaker": "kolade", "mood": "surprised", "text": "My mother."},
+            {"speaker": "narrator", "text": "Nobody believes him. Nobody can prove otherwise, either."}
+          ]
+        },
+        {
+          "id": "c_vow",
+          "text": "\"We finish this. For the Chief, and for Oliver.\"",
+          "effects": {"trust": 5, "reputation": 5},
+          "setFlags": ["vowed"],
+          "response": [{"speaker": "hadiza", "text": "For Oliver."}, {"speaker": "tari", "text": "For the Chief."}]
+        },
+        {
+          "id": "c_lone",
+          "text": "Trust no one at this table.",
+          "effects": {"trust": -5, "reputation": 5},
+          "setFlags": ["lone_wolf"],
+          "response": [{"speaker": "narrator", "text": "In this game, the cautious ones live longest."}]
+        }
+      ],
+      "next": "l4_bridge"
+    },
+    {
+      "id": "l3_dark",
+      "background": "london_night",
+      "lines": [
+        {"speaker": "narrator", "text": "A pub off the Strand, near closing. Kolade's phone buzzes. Geneva."},
+        {
+          "speaker": "phone",
+          "text": "Unfortunate about the solicitor. Bring me the key, Monsieur Balogun. Then the crown is yours."
+        },
+        {"speaker": "tari", "mood": "angry", "text": "They killed him for a key. For a KEY."},
+        {"speaker": "narrator", "text": "Across the table, Nabyen is crying without making a sound."}
+      ],
+      "prompt": "Elise wants the key. The others are watching Kolade.",
+      "choices": [
+        {
+          "id": "c_confess",
+          "text": "Tell them everything about Elise's offer.",
+          "effects": {"trust": 15, "reputation": -10},
+          "setFlags": ["confessed"],
+          "response": [
+            {"speaker": "tari", "mood": "angry", "text": "You WHAT?"},
+            {"speaker": "hadiza", "text": "...Then she trusts him. That's useful. Very useful."},
+            {
+              "speaker": "nabyen",
+              "mood": "sad",
+              "text": "Thank you for telling us. Don't ever lie to me again."
+            }
+          ]
+        },
+        {
+          "id": "c_betray",
+          "text": "Say nothing. Text Elise one word: 'Soon.'",
+          "effects": {"reputation": 10, "trust": -15},
+          "setFlags": ["betrayer"],
+          "echo": "There is no undoing this.",
+          "response": [{"speaker": "narrator", "text": "Sent. Delivered. Read."}]
+        }
+      ],
+      "next": "l4_bridge"
+    },
+    {
+      "id": "l4_bridge",
+      "background": "london_night",
+      "memory": "m_bridge",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "if": {"notPov": "nabyen"},
+          "text": "Westminster Bridge, two in the morning. Nabyen has been crying, and is pretending she hasn't."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"notPov": "nabyen"},
+          "mood": "sad",
+          "text": "Everyone who gets close to this ends up dead."
+        },
+        {"speaker": "nabyen", "if": {"notPov": "nabyen"}, "text": "Maybe you should go home."},
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen", "flags": ["spark_tari"]},
+          "text": "Westminster Bridge, two in the morning. Tari found her, because Tari always finds her."
+        },
+        {
+          "speaker": "tari",
+          "if": {"pov": "nabyen", "flags": ["spark_tari"]},
+          "mood": "sad",
+          "text": "I'm not going home. Not without you."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen", "flags": ["spark_kolade"]},
+          "text": "Westminster Bridge, two in the morning. Kolade found her, with two cups of terrible coffee."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"pov": "nabyen", "flags": ["spark_kolade"]},
+          "mood": "smile",
+          "text": "Lagos can wait. You can't."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen", "notFlags": ["spark_tari", "spark_kolade"]},
+          "text": "Westminster Bridge, two in the morning. She's alone, and that's how she wanted it."
+        }
+      ],
+      "prompt": "Big Ben strikes two.",
+      "choices": [
+        {
+          "id": "c_kiss_n",
+          "if": {"notPov": "nabyen", "flags": ["spark_nabyen"]},
+          "text": "Kiss her.",
+          "effects": {"affection": 15},
+          "setFlags": ["romance_nabyen"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "The fog swallows the bridge, the river, the whole city. For a moment, there's nobody left in London but the two of them."
+            },
+            {"speaker": "nabyen", "mood": "smile", "text": "...Okay. So that happened."}
+          ]
+        },
+        {
+          "id": "c_stay_n",
+          "if": {"notPov": "nabyen"},
+          "text": "\"I'm not going anywhere.\"",
+          "effects": {"affection": 5, "trust": 5},
+          "setFlags": ["promised_nabyen"],
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Good. I'd hate to have to come and find you."}]
+        },
+        {
+          "id": "c_walk_back",
+          "if": {"notPov": "nabyen"},
+          "text": "Walk her back to the hotel without a word.",
+          "effects": {"trust": 5},
+          "response": [{"speaker": "narrator", "text": "Some silences say more than speeches. This is one of them."}]
+        },
+        {
+          "id": "c_kiss_tari",
+          "if": {"pov": "nabyen", "flags": ["spark_tari"]},
+          "text": "Kiss Tari.",
+          "effects": {"affection": 15},
+          "setFlags": ["romance_tari"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "He tastes like rain and the river. Big Ben strikes again, and neither of them hears it."
+            },
+            {"speaker": "tari", "mood": "smile", "text": "Twenty years I've wanted to do that."}
+          ]
+        },
+        {
+          "id": "c_kiss_kolade",
+          "if": {"pov": "nabyen", "flags": ["spark_kolade"]},
+          "text": "Kiss Kolade.",
+          "effects": {"affection": 15},
+          "setFlags": ["romance_kolade"],
+          "response": [
+            {"speaker": "narrator", "text": "The coffee goes into the Thames. Neither of them notices."},
+            {
+              "speaker": "kolade",
+              "mood": "smile",
+              "text": "For once in my life, I have nothing clever to say."
+            }
+          ]
+        },
+        {
+          "id": "c_call_mama",
+          "if": {"pov": "nabyen"},
+          "text": "Call Mama Kaneng in Jos.",
+          "effects": {"affection": 5, "trust": 5},
+          "response": [
+            {
+              "speaker": "kaneng",
+              "mood": "sad",
+              "text": "My daughter. Come home in one piece. That is all I'm asking."
+            }
+          ]
+        }
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "l_betray",
+      "if": {"flags": ["betrayer"]},
+      "title": "Thirty Pieces of Silver",
+      "text": "Kolade chose Elise. Nobody knows yet. Everybody will."
+    },
+    {
+      "id": "l_confess",
+      "if": {"flags": ["confessed"]},
+      "title": "The Confession",
+      "text": "Kolade told the truth when lying would have been easier. That's rarer than gold."
+    },
+    {
+      "id": "l_kiss",
+      "if": {"anyFlags": ["romance_nabyen", "romance_tari", "romance_kolade"]},
+      "title": "A Kiss in the Fog",
+      "text": "A man died tonight, and something else began. London is like that."
+    },
+    {
+      "id": "l_death",
+      "title": "Death on the Embankment",
+      "text": "Oliver Ashworth died for a brass key. The killers are already in Geneva."
+    }
+  ],
+  "reflections": [
+    {"if": {"flags": ["stayed_oliver"]}, "text": "Oliver's last words were for Nabyen."},
+    {
+      "if": {"flags": ["chased_shadow"]},
+      "text": "Swiss diplomatic plates. Whoever this is, they're protected."
+    }
+  ],
+  "secrets": {
+    "s_shame": {
+      "title": "Oliver's diary",
+      "text": "SHAME. From Oliver's diary, found in his coat: 'My shame: I knew about Geneva for two years and said nothing.'"
+    }
+  },
+  "memories": {
+    "m_london": {
+      "title": "Rain at Lincoln's Inn",
+      "background": "london",
+      "text": "Red buses, old paper, and a frightened man with a key."
+    },
+    "m_bridge": {
+      "title": "Westminster, 2 a.m.",
+      "background": "london_night",
+      "text": "Fog, lamplight, and Big Ben striking two."
+    }
+  }
+}

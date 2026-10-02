@@ -1,59 +1,248 @@
 {
   "puzzles": [
     {
-      "id": "p_train",
-      "level": 1,
-      "theme": "journey",
-      "prompt": "The rain followed you all the way home.",
-      "hint": "What the night was full of on the way back.",
-      "letters": ["T", "R", "A", "I", "N"],
-      "requiredWords": ["RAIN", "TRAIN", "AIR"],
-      "bonusWords": ["ANT", "TAN", "RAT", "TAR", "ART", "TIN", "RAN", "RANT", "NIT"],
-      "reward": {"coins": 2}
-    },
-    {
-      "id": "p_tale",
+      "id": "pr_crown",
       "level": 2,
-      "theme": "gossip",
-      "prompt": "Rosa slides a napkin across the counter. \"Every tale in this town starts late.\"",
-      "hint": "Stories, and the hour they're told.",
-      "letters": ["L", "A", "T", "E", "S"],
-      "requiredWords": ["LATE", "TALE", "LAST"],
-      "bonusWords": [
-        "SALT", "SLAT", "STALE", "TEAL", "TEAS", "SEAT", "EAST", "EATS", "LEST", "LETS", "ALES", "SEAL",
-        "SALE", "LEAST", "SLATE", "TALES", "STEAL", "SET", "SAT", "TEA", "EAT", "ATE", "ALE", "LET", "SEA"
-      ],
-      "secrets": [{"word": "STEAL", "id": "s_stolen"}],
+      "theme": "power",
+      "prompt": "The Chief's ring presses into the red wax, over and over.",
+      "hint": "What the four houses will fight for.",
+      "letters": ["C", "R", "O", "W", "N"],
+      "requiredWords": ["CROWN", "CROW", "WORN"],
+      "bonusWords": ["CON", "COR", "COW", "NOR", "NOW", "OWN", "ROC", "ROW", "WON", "CORN"],
       "reward": {"coins": 3}
     },
     {
-      "id": "p_heart",
+      "id": "n_stones",
+      "level": 2,
+      "theme": "plateau",
+      "prompt": "Granite hills, blue tourmaline, and a tray of gems in the morning sun.",
+      "hint": "What the Plateau is made of.",
+      "letters": ["S", "T", "O", "N", "E", "S"],
+      "requiredWords": ["STONE", "NOTES", "NEST"],
+      "bonusWords": [
+        "ESS", "EST", "NET", "NOS", "NOT", "ONE", "ONS", "SEN", "SET", "SON", "SOS", "TEN", "TES", "TOE",
+        "TON", "NESS", "NETS", "NOSE", "NOTE", "ONES", "SENT", "SETS", "SONS", "TENS", "TOES", "TONE", "TONS",
+        "TOSS", "ONSET", "TONES", "STONES"
+      ],
+      "reward": {"coins": 3}
+    },
+    {
+      "id": "n_plateau",
       "level": 3,
-      "theme": "romance",
-      "prompt": "\"I never told anyone,\" she says. Something still beats under all this silence.",
-      "hint": "Something connected to love.",
-      "letters": ["H", "E", "A", "R", "T"],
-      "requiredWords": ["HEART", "HEAR", "HEAT"],
+      "theme": "plateau",
+      "prompt": "Under the balancing rocks, Mama Kaneng tells the truth at last.",
+      "hint": "Home, high above everything.",
+      "letters": ["P", "L", "A", "T", "E", "A", "U"],
+      "requiredWords": ["PLATEAU", "PLATE", "TALE"],
       "bonusWords": [
-        "EARTH", "HATER", "RATE", "TEAR", "HARE", "HATE", "ART", "EAT", "TEA", "ATE", "ERA", "HAT", "HER",
-        "THE", "RAT", "TAR", "EAR", "ARE"
+        "ALA", "ALE", "ALT", "APE", "APT", "ATE", "EAT", "EAU", "ETA", "LAP", "LAT", "LEA", "LET", "LEU",
+        "PAL", "PAT", "PEA", "PET", "PUT", "TAP", "TAU", "TEA", "TEL", "LATE", "LEAP", "PALE", "PAUL", "PLAT",
+        "PLEA", "TAPE", "TEAL"
       ],
-      "reward": {"coins": 3}
+      "secrets": [{"word": "PLEA", "id": "s_plea"}],
+      "reward": {"coins": 4}
     },
     {
-      "id": "p_secret",
+      "id": "t_waters",
+      "level": 3,
+      "theme": "creeks",
+      "prompt": "Mist on the creeks. The river remembers every oath.",
+      "hint": "What the creeks are made of.",
+      "letters": ["W", "A", "T", "E", "R", "S"],
+      "requiredWords": ["WATER", "STAR", "WEST"],
+      "bonusWords": [
+        "ARE", "ARS", "ART", "ATE", "ATS", "AWE", "EAR", "EAS", "EAT", "ERA", "ERS", "EST", "ETA", "RAS",
+        "RAT", "RAW", "RES", "RET", "SAR", "SAT", "SAW", "SEA", "SER", "SET", "SEW", "TAR", "TAS", "TEA",
+        "TES", "WAR", "WAS", "WAT", "WET", "ARES", "ARTS", "EARS", "EAST", "EATS", "RATE", "RATS", "REST",
+        "SEAT", "STEW", "TEAR", "TEAS", "TRES", "WARE", "WARS", "WEAR", "RATES", "STARE", "STRAW", "SWEAR",
+        "SWEAT", "TEARS", "WASTE", "WEARS", "WATERS"
+      ],
+      "secrets": [{"word": "SWEAR", "id": "s_swear"}],
+      "reward": {"coins": 4}
+    },
+    {
+      "id": "t_rivers",
+      "level": 3,
+      "theme": "creeks",
+      "prompt": "Midnight. Bullets in the mangroves, and a man going under.",
+      "hint": "The roads of the Delta.",
+      "letters": ["R", "I", "V", "E", "R", "S"],
+      "requiredWords": ["RIVERS", "RIVER", "RISE"],
+      "bonusWords": ["ERR", "ERS", "IRE", "REI", "RES", "REV", "SER", "SIR", "SRI", "VIE", "VIS", "SIRE"],
+      "reward": {"coins": 4}
+    },
+    {
+      "id": "h_ledger",
+      "level": 3,
+      "theme": "kano",
+      "prompt": "Ten years of ledgers, and every number tells a story.",
+      "hint": "The book that never lies.",
+      "letters": ["L", "E", "D", "G", "E", "R"],
+      "requiredWords": ["LEDGER", "ELDER", "EDGE"],
+      "bonusWords": [
+        "DEE", "DEG", "DEL", "GED", "GEE", "GEL", "GER", "LED", "LEE", "LEG", "RED", "REG", "DEER", "REED",
+        "REEL", "GREED"
+      ],
+      "secrets": [{"word": "GREED", "id": "s_greed"}],
+      "reward": {"coins": 4}
+    },
+    {
+      "id": "h_horses",
+      "level": 3,
+      "theme": "kano",
+      "prompt": "Durbar. Trumpets, dust, and riders in red and gold.",
+      "hint": "Kano's pride, at full gallop.",
+      "letters": ["H", "O", "R", "S", "E", "S"],
+      "requiredWords": ["HORSE", "SHORE", "HERO"],
+      "bonusWords": [
+        "ERS", "ESS", "HER", "HES", "ORE", "ORS", "RES", "ROE", "SER", "SHE", "SOS", "HERS", "HOSE", "ROSE",
+        "SHOE", "SORE", "ROSES", "SHOES", "HORSES", "SHORES"
+      ],
+      "reward": {"coins": 4}
+    },
+    {
+      "id": "k_bridge",
+      "level": 3,
+      "theme": "lagos",
+      "prompt": "Third Mainland Bridge. Nothing moves except the danfo drivers' mouths.",
+      "hint": "Lagos's long road over the lagoon.",
+      "letters": ["B", "R", "I", "D", "G", "E"],
+      "requiredWords": ["BRIDGE", "RIDGE", "BIRD"],
+      "bonusWords": [
+        "BED", "BEG", "BID", "BIG", "DEB", "DEG", "DEI", "DIE", "DIG", "GED", "GER", "IDE", "IRE", "RED",
+        "REG", "REI", "RIB", "RID", "RIG", "BERG", "BRED", "DIRE", "GRID", "RIDE", "BRIDE"
+      ],
+      "secrets": [{"word": "BRIDE", "id": "s_bride"}],
+      "reward": {"coins": 4}
+    },
+    {
+      "id": "k_lagos",
+      "level": 3,
+      "theme": "lagos",
+      "prompt": "Dawn at Lekki. The letters of the city itself.",
+      "hint": "What every Lagos hustler is chasing.",
+      "letters": ["L", "A", "G", "O", "S"],
+      "requiredWords": ["GOAL", "GOALS", "ALSO"],
+      "bonusWords": ["AGO", "ALS", "GAL", "GAS", "GOA", "LAG", "LAS", "LOG", "LOS", "SAL", "SOL", "GALS", "LOGS"],
+      "reward": {"coins": 4}
+    },
+    {
+      "id": "f_funeral",
+      "level": 4,
+      "theme": "funeral",
+      "prompt": "White lilies and gold columns. Gas flares burning on the horizon.",
+      "hint": "A goodbye with three hundred witnesses.",
+      "letters": ["F", "U", "N", "E", "R", "A", "L"],
+      "requiredWords": ["FUNERAL", "FLARE", "LEARN"],
+      "bonusWords": [
+        "ALE", "ARE", "AUF", "EAN", "EAR", "EAU", "ELF", "ERA", "FAN", "FAR", "FLU", "FRA", "FUN", "FUR",
+        "LEA", "LEU", "NUR", "RAN", "REF", "REN", "RUE", "RUN", "URN", "EARL", "EARN", "FARE", "FEAR", "FERN",
+        "FLEA", "FRAU", "FUEL", "LANE", "LEAF", "LEAN", "LUNA", "LURE", "NEAL", "NEAR", "REAL", "RULE",
+        "LUNAR", "RENAL", "NEURAL", "UNREAL"
+      ],
+      "reward": {"coins": 5}
+    },
+    {
+      "id": "f_poison",
       "level": 4,
       "theme": "mystery",
-      "prompt": "Scratched into the lighthouse rail: every secret leaves a mark.",
-      "hint": "Something hidden. Something kept.",
-      "letters": ["S", "E", "C", "R", "E", "T"],
-      "requiredWords": ["SECRET", "REST", "TREE"],
+      "prompt": "The Chief's tea tray. One silver spoon gone black at the tip.",
+      "hint": "How an old lion was brought down.",
+      "letters": ["P", "O", "I", "S", "O", "N"],
+      "requiredWords": ["POISON", "SPIN", "SOON"],
       "bonusWords": [
-        "RESET", "SECT", "CREST", "ERECT", "TERSE", "STEER", "ESTER", "TREES", "SEER", "SEE", "TEE", "SET",
-        "TEES", "ERE"
+        "INS", "ION", "IOS", "ISO", "NIP", "NIS", "NOS", "ONS", "OPS", "PIN", "POS", "PSI", "SIN", "SIP",
+        "SON", "IONS", "OOPS", "PINS", "SNOOP", "SPOON"
       ],
-      "secrets": [{"word": "RESET", "id": "s_reset"}],
-      "reward": {"coins": 4}
+      "secrets": [{"word": "SPOON", "id": "s_spoon"}],
+      "reward": {"coins": 5}
+    },
+    {
+      "id": "l_thames",
+      "level": 4,
+      "theme": "london",
+      "prompt": "Rain over the Thames, and an old man's secrets.",
+      "hint": "London's river.",
+      "letters": ["T", "H", "A", "M", "E", "S"],
+      "requiredWords": ["THAMES", "STEAM", "HEAT"],
+      "bonusWords": [
+        "ASH", "ATE", "ATS", "EAS", "EAT", "EMS", "EST", "ETA", "HAM", "HAS", "HAT", "HEM", "HES", "HET",
+        "MAE", "MAS", "MAT", "MES", "MET", "SAM", "SAT", "SEA", "SET", "SHA", "SHE", "TAM", "TAS", "TEA",
+        "TES", "THE", "AMES", "EAST", "EATS", "HAST", "HATE", "HATS", "MAST", "MATE", "MATH", "MATS", "MEAT",
+        "MESA", "MESH", "META", "METH", "METS", "SAME", "SEAM", "SEAT", "SHEA", "STEM", "TEAM", "TEAS", "THEM",
+        "HATES", "MATES", "MATHS", "MEATS", "SHAME", "TEAMS"
+      ],
+      "secrets": [{"word": "SHAME", "id": "s_shame"}],
+      "reward": {"coins": 5}
+    },
+    {
+      "id": "l_murder",
+      "level": 4,
+      "theme": "london",
+      "prompt": "Fog on the Embankment, and a brass key in a dead man's hand.",
+      "hint": "What happened on the river steps.",
+      "letters": ["M", "U", "R", "D", "E", "R"],
+      "requiredWords": ["MURDER", "DRUM", "RUDE"],
+      "bonusWords": ["DUE", "EMU", "ERR", "MED", "MUD", "RED", "REM", "RUE", "RUM"],
+      "reward": {"coins": 5}
+    },
+    {
+      "id": "a_geneva",
+      "level": 5,
+      "theme": "switzerland",
+      "prompt": "A blue lake, a fountain in the sky, and a bank with no name on the door.",
+      "hint": "The city of quiet money.",
+      "letters": ["G", "E", "N", "E", "V", "A"],
+      "requiredWords": ["GENEVA", "EVEN", "GAVE"],
+      "bonusWords": ["AGE", "AVE", "EAN", "EEN", "ENG", "EVE", "GAN", "GEE", "GEN", "VAN", "GENE", "VEGA", "VEGAN"],
+      "reward": {"coins": 6}
+    },
+    {
+      "id": "a_snow",
+      "level": 5,
+      "theme": "switzerland",
+      "prompt": "The red train climbs. Snow falls. Somebody has to go down the mountain.",
+      "hint": "What the Alps throw at you.",
+      "letters": ["S", "N", "O", "W", "F", "A", "L", "L"],
+      "requiredWords": ["SNOWFALL", "SNOW", "FLOW"],
+      "bonusWords": [
+        "ALL", "ALS", "ANS", "FAN", "FAS", "LAS", "LAW", "LOS", "LOW", "NAS", "NOS", "NOW", "ONS", "OWL",
+        "OWN", "SAL", "SAN", "SAW", "SOL", "SON", "WAN", "WAS", "WON", "ALSO", "FALL", "FANS", "FLAW", "LAWN",
+        "LAWS", "LOAN", "LOWS", "OWLS", "OWNS", "SLOW", "SOFA", "SWAN", "WALL", "WOLF", "ALLOW", "FALLS",
+        "FLAWS", "FLOWN", "FLOWS", "LOANS", "SALON", "SLOAN", "WALLS", "ALLOWS"
+      ],
+      "secrets": [{"word": "WOLF", "id": "s_wolf"}],
+      "reward": {"coins": 6}
+    },
+    {
+      "id": "c_island",
+      "level": 5,
+      "theme": "caribbean",
+      "prompt": "Turquoise water, sugar sand, and a pink house on the hill.",
+      "hint": "Where the Chief's brother hid from the world.",
+      "letters": ["I", "S", "L", "A", "N", "D"],
+      "requiredWords": ["ISLAND", "LAND", "SAIL"],
+      "bonusWords": [
+        "ADS", "AID", "ALS", "AND", "ANS", "DAL", "DAN", "DAS", "DIN", "DIS", "IDS", "INS", "LAD", "LAS",
+        "LID", "LIN", "LIS", "NAS", "NIL", "NIS", "SAD", "SAL", "SAN", "SIN", "AIDS", "DANS", "DIAL", "LAID",
+        "NAIL", "SAID", "SAND", "SIND", "LANDS", "NAILS"
+      ],
+      "reward": {"coins": 6}
+    },
+    {
+      "id": "c_palms",
+      "level": 5,
+      "theme": "caribbean",
+      "prompt": "Sunset over Castara Bay. Lanterns in the palms, and the vote for the crown.",
+      "hint": "What sways over the beach tonight.",
+      "letters": ["P", "A", "L", "M", "S"],
+      "requiredWords": ["PALMS", "LAMPS", "PALM"],
+      "bonusWords": [
+        "ALS", "AMP", "ASP", "LAM", "LAP", "LAS", "MAL", "MAP", "MAS", "PAL", "PAM", "PAS", "SAL", "SAM",
+        "SAP", "SPA", "ALPS", "AMPS", "LAMP", "LAPS", "MAPS", "PALS", "SLAM", "SLAP", "SPAM", "PSALM"
+      ],
+      "secrets": [{"word": "PSALM", "id": "s_psalm"}],
+      "reward": {"coins": 6}
     }
   ]
 }

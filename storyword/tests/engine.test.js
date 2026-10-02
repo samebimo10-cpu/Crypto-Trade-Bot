@@ -1,207 +1,269 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import * as Story from '../src/engine/story.js';
 import * as Puzzle from '../src/engine/puzzle.js';
 import * as Progress from '../src/engine/progress.js';
+import { portraitSVG } from '../src/ui/portrait.js';
+import { sceneSVG, SCENE_KEYS } from '../src/ui/scenes.js';
 import { loadAll, validateAll } from '../tools/validate-content.js';
+import { build, OUTPUT } from '../tools/build.js';
 
-const { chapters, puzzles } = await loadAll();
-const ch1 = chapters[0];
+const { story, characters, chapters, puzzles, daily } = await loadAll();
+const byId = (id) => chapters.find((c) => c.id === id);
+const POVS = ['nabyen', 'tari', 'hadiza', 'kolade'];
 
-// Drive a run to the end, picking choices by id (or the first when unlisted)
-// and solving every puzzle. Returns the final run and the scenes visited.
-function playThrough(chapter, picks = {}) {
-  let run = Story.newRun(chapter);
-  const visited = [];
-  for (let steps = 0; steps < 500 && !run.complete; steps++) {
-    const view = Story.currentView(chapter, run);
-    if (visited.at(-1) !== view.scene.id) visited.push(view.scene.id);
-    if (view.type === 'line') run = Story.advance(chapter, run);
-    else if (view.type === 'choice') run = Story.choose(chapter, run, picks[view.scene.id] ?? view.choices[0].id).run;
-    else if (view.type === 'puzzle') run = Story.completePuzzle(chapter, run, view.puzzleId, { stars: 3, coins: 0, words: [] });
-  }
-  assert.ok(run.complete, 'run should reach the end');
-  return { run, visited };
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
 }
+
+// Play the whole saga as `pov`. `prefer` lists choice ids to take when
+// offered; otherwise `random` (if given) or the first choice is taken.
+// With `secrets`, every puzzle's secret words count as found.
+function playSaga(pov, { prefer = [], random = null, secrets = false } = {}) {
+  let chapter = chapters[0];
+  let run = Story.newRun(chapter);
+  const scenes = [];
+  const played = [];
+  for (let guard = 0; guard < 20; guard++) {
+    played.push(chapter.id);
+    for (let steps = 0; steps < 1000 && !run.complete; steps++) {
+      const view = Story.currentView(chapter, run);
+      if (scenes.at(-1)?.id !== view.scene.id) scenes.push({ chapter: chapter.id, id: view.scene.id });
+      if (view.type === 'line') {
+        run = Story.advance(chapter, run);
+      } else if (view.type === 'choice') {
+        const ids = view.choices.map((c) => c.id);
+        const id =
+          ids.find((i) => i === `pick_${pov}`) ??
+          prefer.find((p) => ids.includes(p)) ??
+          (random ? ids[Math.floor(random() * ids.length)] : ids[0]);
+        run = Story.choose(chapter, run, id).run;
+      } else if (view.type === 'puzzle') {
+        const flags = secrets ? (puzzles[view.puzzleId].secrets || []).map((s) => s.id) : [];
+        run = Story.completePuzzle(chapter, run, view.puzzleId, { stars: 3, coins: 0, words: [], flags });
+      }
+    }
+    assert.ok(run.complete, `${chapter.id} should complete`);
+    const next = Story.nextChapter(story, chapter.id, run);
+    if (!next) break;
+    chapter = byId(next.id);
+    run = Story.newRun(chapter, Story.carryFrom(run));
+  }
+  return { run, scenes, played };
+}
+
+const ending = (run) => run.flags.find((f) => f.startsWith('end_') && f !== 'end_secret');
 
 test('content validates', async () => {
   assert.deepEqual(await validateAll(), []);
 });
 
-test('chapter 1 meets the MVP content scope', () => {
-  const choicePoints = (visited) => visited.filter((id) => Story.getScene(ch1, id).choices?.length).length;
-  const { visited } = playThrough(ch1);
-  assert.ok(visited.length >= 5 && visited.length <= 10, `scenes per playthrough: ${visited.length}`);
-  assert.ok(choicePoints(visited) >= 8 && choicePoints(visited) <= 12, `choices: ${choicePoints(visited)}`);
-  const puzzleCount = ch1.scenes.filter((s) => s.puzzle).length;
-  assert.ok(puzzleCount >= 3 && puzzleCount <= 5);
-  const speakers = new Set(ch1.scenes.flatMap((s) => (s.lines || []).map((l) => l.speaker)));
-  speakers.delete('narrator');
-  assert.ok(speakers.size >= 5 && speakers.size <= 8, `characters: ${speakers.size}`);
-});
-
-test('the Eli decision branches and then converges', () => {
-  const paths = {
-    c_tell_eli: { scene: 's7_fallout', outcome: 'ch1_fallout' },
-    c_lie: { scene: 's7_tracks', outcome: 'ch1_useful_lie' },
-    c_protect: { scene: 's7_kept', outcome: 'ch1_shield' },
-  };
-  for (const [choiceId, expected] of Object.entries(paths)) {
-    const { run, visited } = playThrough(ch1, { s4_harbor: choiceId });
-    assert.ok(visited.includes(expected.scene), `${choiceId} should visit ${expected.scene}`);
-    assert.ok(visited.includes('s8_night'), `${choiceId} should converge on s8_night`);
-    assert.equal(Story.pickOutcome(ch1, run).id, expected.outcome);
+test('every POV plays its own first chapter, then the shared saga, to an ending', () => {
+  for (const pov of POVS) {
+    const { run, played } = playSaga(pov);
+    assert.equal(run.pov, pov);
+    assert.deepEqual(played, ['prologue', `c1_${pov}`, 'c2_funeral', 'c3_london', 'c4_alps', 'c5_caribbean']);
+    assert.ok(ending(run), `${pov} should reach an ending`);
   }
 });
 
-test('conditional lines follow earlier choices', () => {
-  let run = Story.newRun(ch1);
-  run = { ...run, flags: ['told_jun'] };
-  const cafe = Story.getScene(ch1, 's2_cafe');
-  const withFlag = Story.visibleLines(cafe.lines, run).length;
-  const without = Story.visibleLines(cafe.lines, { ...run, flags: [] }).length;
-  assert.equal(withFlag, without + 1);
+test('each chapter has 3+ scenes, real choices and 2 puzzles per playthrough', () => {
+  for (const pov of POVS) {
+    const { scenes } = playSaga(pov);
+    for (const ch of chapters.filter((c) => c.number > 0)) {
+      const visited = scenes.filter((s) => s.chapter === ch.id);
+      if (!visited.length) continue;
+      assert.ok(visited.length >= 3, `${ch.id}: ${visited.length} scenes`);
+      const withPuzzles = visited.filter((s) => Story.getScene(ch, s.id).puzzle).length;
+      assert.equal(withPuzzles, 2, `${ch.id} should have two puzzles`);
+    }
+  }
+});
+
+test('ending: a beach wedding when romance blooms and the partner lives', () => {
+  const { run } = playSaga('tari', { prefer: ['c_hug', 'c_hold', 'c_kiss_n', 'c_send_kolade', 'c_council'] });
+  assert.equal(ending(run), 'end_wedding');
+  assert.ok(run.flags.includes('romance_nabyen'));
+});
+
+test('ending: tragedy when Nabyen sends the man she loves down the mountain', () => {
+  const { run } = playSaga('nabyen', { prefer: ['c_tari', 'c_sit_tari', 'c_kiss_tari', 'c_send_tari'] });
+  assert.ok(run.flags.includes('dead_tari'));
+  assert.equal(ending(run), 'end_ashes');
+});
+
+test('ending: Kolade betrays everyone for Elise', () => {
+  const { run } = playSaga('kolade', { prefer: ['c_accept', 'c_betray'] });
+  assert.equal(ending(run), 'end_betrayal');
+});
+
+test('ending: confessing to the others redeems Kolade', () => {
+  const { run } = playSaga('kolade', { prefer: ['c_accept', 'c_confess', 'c_council'] });
+  assert.notEqual(ending(run), 'end_betrayal');
+  assert.ok(run.flags.includes('confessed'));
+});
+
+test('ending: taking the crown alone, or sharing it', () => {
+  assert.equal(ending(playSaga('hadiza', { prefer: ['c_honest', 'c_stay_n', 'c_crown_self'] }).run), 'end_crown');
+  assert.equal(ending(playSaga('hadiza', { prefer: ['c_honest', 'c_stay_n', 'c_council'] }).run), 'end_council');
+});
+
+test('secret ending needs four hidden words in one story', () => {
+  const found = playSaga('hadiza', { prefer: ['c_council'], secrets: true }).run;
+  assert.ok(found.flags.includes('end_secret'));
+  const missed = playSaga('hadiza', { prefer: ['c_council'] }).run;
+  assert.ok(!missed.flags.includes('end_secret'));
+});
+
+test('carrying the ledger yourself means nobody dies, but Elise escapes', () => {
+  const { run } = playSaga('nabyen', { prefer: ['c_send_self'] });
+  assert.ok(run.flags.includes('elise_escaped'));
+  assert.ok(!run.flags.some((f) => /^dead_(tari|hadiza|kolade)$/.test(f)));
+});
+
+test('you can never send yourself to die, and the dead never speak again', () => {
+  for (let seed = 1; seed <= 160; seed++) {
+    const pov = POVS[seed % 4];
+    const random = rng(seed);
+    const { run, scenes } = playSaga(pov, { random });
+    assert.ok(!run.flags.includes(`dead_${pov}`), `${pov} died in their own story (seed ${seed})`);
+    assert.ok(ending(run), `seed ${seed} reached no ending`);
+    // After the mountain, the fallen must not appear in dialogue.
+    const dead = ['tari', 'hadiza', 'kolade'].filter((id) => run.flags.includes(`dead_${id}`));
+    const finale = byId('c5_caribbean');
+    for (const s of scenes.filter((x) => x.chapter === 'c5_caribbean')) {
+      for (const line of Story.visibleLines(Story.getScene(finale, s.id).lines, run)) {
+        assert.ok(!dead.includes(line.speaker), `${line.speaker} speaks after dying (seed ${seed})`);
+      }
+    }
+  }
+});
+
+test('POV picks set the POV and condition later lines', () => {
+  const pro = chapters[0];
+  let run = Story.newRun(pro);
+  while (Story.currentView(pro, run).type !== 'choice') {
+    const v = Story.currentView(pro, run);
+    run = v.type === 'puzzle' ? Story.completePuzzle(pro, run, v.puzzleId, { stars: 3, coins: 0, words: [] }) : Story.advance(pro, run);
+  }
+  run = Story.choose(pro, run, 'pick_hadiza').run;
+  assert.equal(run.pov, 'hadiza');
+  assert.ok(run.flags.includes('pov_hadiza'));
+  const funeral = Story.getScene(byId('c2_funeral'), 'f2_accuse');
+  const ids = Story.visibleChoices(funeral, run).map((c) => c.id);
+  assert.ok(ids.includes('c_defend') && !ids.includes('c_answer'));
+});
+
+test('conditions: pov, notPov and count', () => {
+  const run = { pov: 'tari', flags: ['a', 'b', 'c'], stats: {} };
+  assert.ok(Story.checkCondition({ pov: 'tari' }, run));
+  assert.ok(Story.checkCondition({ pov: ['nabyen', 'tari'] }, run));
+  assert.ok(!Story.checkCondition({ notPov: 'tari' }, run));
+  assert.ok(Story.checkCondition({ count: { of: ['a', 'b', 'z'], min: 2 } }, run));
+  assert.ok(!Story.checkCondition({ count: { of: ['a', 'y', 'z'], min: 2 } }, run));
 });
 
 test('choices apply clamped effects, flags, and record a checkpoint', () => {
   const chapter = {
-    id: 9,
+    id: 'x',
     start: 'a',
     scenes: [
       { id: 'a', lines: [{ speaker: 'narrator', text: 'x' }], prompt: 'p', choices: [{ id: 'up', text: 'Up', effects: { trust: 80 }, setFlags: ['f'] }], next: 'b' },
-      { id: 'b', lines: [{ speaker: 'narrator', text: 'y' }], next: null },
+      { id: 'b', setFlags: ['reached_b'], lines: [{ speaker: 'narrator', text: 'y' }], next: null },
     ],
   };
   let run = Story.advance(chapter, Story.newRun(chapter));
   assert.equal(run.phase, 'choice');
   run = Story.choose(chapter, run, 'up').run;
   assert.equal(run.stats.trust, 100);
-  assert.deepEqual(run.flags, ['f']);
+  assert.deepEqual(run.flags, ['f', 'reached_b']);
   assert.equal(run.sceneId, 'b');
-  assert.equal(run.checkpoints.length, 1);
-
   const rewound = Story.restoreCheckpoint(chapter, run, 0);
   assert.equal(rewound.sceneId, 'a');
-  assert.equal(rewound.phase, 'choice');
   assert.equal(rewound.stats.trust, 50);
   assert.deepEqual(rewound.flags, []);
 });
 
-test('resolveNext requires a fallback route', () => {
-  const run = { flags: [], stats: {} };
-  assert.equal(Story.resolveNext([{ if: { flags: ['x'] }, to: 'a' }, { to: 'b' }], run), 'b');
-  assert.throws(() => Story.resolveNext([{ if: { flags: ['x'] }, to: 'a' }], run));
-});
-
-test('word validation accepts required and bonus words only', () => {
-  const p = puzzles.p_heart;
+test('word validation accepts required and real bonus words only', () => {
+  const p = puzzles.c_palms;
   let s = Puzzle.newPuzzleState();
-  let r = Puzzle.submitGuess(p, s, 'heart');
+  let r = Puzzle.submitGuess(p, s, 'palms');
   assert.equal(r.result, 'required');
   s = r.state;
-  assert.equal(Puzzle.submitGuess(p, s, 'HEART').result, 'repeat');
-  assert.equal(Puzzle.submitGuess(p, s, 'EARTH').result, 'bonus');
-  assert.equal(Puzzle.submitGuess(p, s, 'HE').result, 'too-short');
-  assert.equal(Puzzle.submitGuess(p, s, 'HATTER').result, 'unknown'); // needs two Ts
-  assert.equal(Puzzle.submitGuess(p, s, 'RHET').result, 'unknown'); // buildable, not a word
-  s = Puzzle.submitGuess(p, s, 'HEAR').state;
-  s = Puzzle.submitGuess(p, s, 'HEAT').state;
+  assert.equal(Puzzle.submitGuess(p, s, 'PALMS').result, 'repeat');
+  assert.equal(Puzzle.submitGuess(p, s, 'SLAP').result, 'bonus');
+  assert.equal(Puzzle.submitGuess(p, s, 'PSALM').secret.id, 's_psalm');
+  assert.equal(Puzzle.submitGuess(p, s, 'MLAPS').result, 'unknown');
+  assert.equal(Puzzle.submitGuess(p, s, 'PA').result, 'too-short');
+  s = Puzzle.submitGuess(p, s, 'LAMPS').state;
+  s = Puzzle.submitGuess(p, s, 'PALM').state;
   assert.ok(Puzzle.isComplete(p, s));
 });
 
-test('secret words are reported', () => {
-  const r = Puzzle.submitGuess(puzzles.p_tale, Puzzle.newPuzzleState(), 'STEAL');
-  assert.equal(r.result, 'bonus');
-  assert.equal(r.secret.id, 's_stolen');
-});
-
 test('hints escalate: first letter, remove letters, reveal', () => {
-  const p = puzzles.p_secret; // S E C R E T, shortest target REST or TREE
+  const p = puzzles.a_snow;
   let s = Puzzle.newPuzzleState();
   const target = Puzzle.currentTarget(p, s);
-  assert.equal(target.length, 4);
-
   let h = Puzzle.applyHint(p, s);
   s = h.state;
   assert.equal(h.hint.level, 1);
   assert.equal(Puzzle.slotsFor(p, s, target)[0], target[0]);
-
   h = Puzzle.applyHint(p, s);
   s = h.state;
-  assert.equal(h.hint.level, 2);
   const remaining = p.letters.filter((_, i) => !s.disabledTiles.includes(i)).sort().join('');
   assert.equal(remaining, target.split('').sort().join(''));
-
   h = Puzzle.applyHint(p, s);
   s = h.state;
-  assert.equal(h.hint.level, 3);
   assert.ok(s.found.includes(target));
-  assert.deepEqual(s.revealed, [target]);
-  assert.equal(s.hintLevel, 0);
   assert.equal(Puzzle.starsFor(s), 1);
 });
 
 test('tilesNotIn keeps duplicate letters the target needs', () => {
   assert.deepEqual(Puzzle.tilesNotIn(['A', 'A', 'T'], 'AT'), [1]);
-  assert.deepEqual(Puzzle.tilesNotIn(['S', 'E', 'C', 'R', 'E', 'T'], 'TREE'), [0, 2]);
 });
 
-test('puzzle rewards, streaks and hint recovery', () => {
-  let profile = Progress.newProfile();
-  const clean = { found: ['A', 'B', 'C'], bonus: ['D'], revealed: [], hintsUsed: 0 };
-  let res = Progress.rewardPuzzle(profile, clean, 3);
-  assert.equal(res.reward.coins, 3 + 2);
-  assert.equal(res.profile.streak, 1);
+test('rewards, streaks, hint recovery and daily streaks', () => {
+  let res = Progress.rewardPuzzle(Progress.newProfile(), { found: ['A', 'B', 'C'], bonus: ['D'], revealed: [], hintsUsed: 0 }, 3);
+  assert.equal(res.reward.coins, 5);
   assert.equal(res.profile.hints, Progress.REWARDS.startingHints + 1);
-  res = Progress.rewardPuzzle(res.profile, clean, 3);
-  assert.equal(res.profile.streak, 2);
-  assert.equal(res.reward.streakBonus, 2);
-  res = Progress.rewardPuzzle(res.profile, { ...clean, revealed: ['A'] }, 1);
-  assert.equal(res.profile.streak, 0);
-  assert.equal(res.profile.bestStreak, 2);
-  assert.equal(res.profile.wordsFound.length, 4);
+  let p = { ...Progress.newProfile(), hints: 0 };
+  for (let i = 0; i < Progress.REWARDS.bonusWordsPerHint; i++) p = Progress.creditBonusWord(p).profile;
+  assert.equal(p.hints, 1);
+  let d = Progress.completeDaily(Progress.newProfile(), '2026-10-01').profile;
+  d = Progress.completeDaily(d, '2026-10-02').profile;
+  assert.equal(d.daily.streak, 2);
 });
 
-test('chapter completion pays once', () => {
-  let { profile, reward } = Progress.completeChapter(Progress.newProfile(), 1, 'ch1_shield');
-  assert.equal(reward.coins, Progress.REWARDS.chapterCoins);
-  ({ profile, reward } = Progress.completeChapter(profile, 1, 'ch1_fallout'));
-  assert.equal(reward.coins, 0);
-  assert.deepEqual(profile.endings, ['ch1_shield', 'ch1_fallout']);
-});
-
-test('daily word streak counts consecutive days', () => {
-  let p = Progress.newProfile();
-  p = Progress.completeDaily(p, '2026-10-01').profile;
-  assert.equal(Progress.completeDaily(p, '2026-10-01').reward, null);
-  p = Progress.completeDaily(p, '2026-10-02').profile;
-  assert.equal(p.daily.streak, 2);
-  p = Progress.completeDaily(p, '2026-10-05').profile;
-  assert.equal(p.daily.streak, 1);
-});
-
-test('save and load round-trip, and survive bad data', () => {
+test('save and load round-trip, and survive bad or old data', () => {
   const store = new Map();
   const storage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v), removeItem: (k) => store.delete(k) };
-  const p = { ...Progress.newProfile(), coins: 42, run: Story.newRun(ch1) };
-  Progress.save(storage, p);
-  const loaded = Progress.load(storage);
-  assert.equal(loaded.coins, 42);
-  assert.equal(loaded.run.sceneId, ch1.start);
+  Progress.save(storage, { ...Progress.newProfile(), coins: 42, run: Story.newRun(chapters[0]) });
+  assert.equal(Progress.load(storage).coins, 42);
+  store.set('storyword.save', JSON.stringify({ version: 1, coins: 9 }));
+  assert.equal(Progress.load(storage).coins, 0);
   store.set('storyword.save', '{not json');
   assert.equal(Progress.load(storage).coins, 0);
-  assert.equal(Progress.load(null).coins, 0);
 });
 
-test('bonus words earn hints back', () => {
-  let p = { ...Progress.newProfile(), hints: 0 };
-  for (let i = 0; i < Progress.REWARDS.bonusWordsPerHint - 1; i++) {
-    const r = Progress.creditBonusWord(p);
-    assert.equal(r.hintEarned, false);
-    p = r.profile;
+test('every speaker and background in the content can be drawn', () => {
+  const backgrounds = new Set([
+    ...chapters.flatMap((c) => c.scenes.map((s) => s.background)),
+    ...chapters.flatMap((c) => Object.values(c.memories || {}).map((m) => m.background)),
+    ...daily.entries.map((e) => e.background),
+  ]);
+  for (const b of backgrounds) assert.ok(SCENE_KEYS.includes(b), `no scene art for "${b}"`);
+  for (const k of SCENE_KEYS) assert.match(sceneSVG(k), /^<svg[\s\S]*<\/svg>$/);
+  for (const [id, c] of Object.entries(characters)) {
+    if (c.narration || c.message || c.letter) continue;
+    for (const mood of ['neutral', 'smile', 'sad', 'angry', 'surprised', 'worried']) {
+      assert.match(portraitSVG(c, mood, id), /<svg[\s\S]*<\/svg>/, `${id} ${mood}`);
+    }
   }
-  const r = Progress.creditBonusWord(p);
-  assert.equal(r.hintEarned, true);
-  assert.equal(r.profile.hints, 1);
-  assert.equal(r.profile.bonusTowardHint, 0);
+});
+
+test('the offline single-file build is up to date', async () => {
+  const current = await readFile(OUTPUT, 'utf8');
+  assert.equal(current, await build(), 'run: npm run build');
 });

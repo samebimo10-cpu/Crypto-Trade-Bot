@@ -1,8 +1,22 @@
 {
   "title": "StoryWord",
   "season": 1,
-  "seasonTitle": "The Message",
-  "totalChapters": 10,
+  "seasonTitle": "Crown of the Confluence",
+  "tagline": "Four houses. One crown. A death that started everything.",
+  "heroine": "nabyen",
+  "totalChapters": 5,
   "totalSecrets": 8,
-  "chapters": [{"id": 1, "file": "chapters/ch1.json"}]
+  "totalEndings": 6,
+  "secretFlags": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+  "chapters": [
+    {"id": "prologue", "file": "chapters/prologue.json"},
+    {"id": "c1_nabyen", "file": "chapters/c1_nabyen.json", "if": {"pov": "nabyen"}},
+    {"id": "c1_tari", "file": "chapters/c1_tari.json", "if": {"pov": "tari"}},
+    {"id": "c1_hadiza", "file": "chapters/c1_hadiza.json", "if": {"pov": "hadiza"}},
+    {"id": "c1_kolade", "file": "chapters/c1_kolade.json", "if": {"pov": "kolade"}},
+    {"id": "c2_funeral", "file": "chapters/c2_funeral.json"},
+    {"id": "c3_london", "file": "chapters/c3_london.json"},
+    {"id": "c4_alps", "file": "chapters/c4_alps.json"},
+    {"id": "c5_caribbean", "file": "chapters/c5_caribbean.json"}
+  ]
 }

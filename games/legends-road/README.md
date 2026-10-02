@@ -17,14 +17,30 @@ history of the place and their story.
 
 ## Play
 
-Open `index.html` in any modern browser. Everything (cars, buildings,
-landmarks, skies, weather and sound) is drawn and synthesised in code, so the
-game needs no network connection and no installation.
+On a computer, open `index.html` in any modern browser. Everything (cars,
+buildings, landmarks, skies, weather and sound) is drawn and synthesised in
+code, so the game needs no network connection.
 
-To install it as an app that works offline, serve the folder over HTTP (for
-example `python3 -m http.server` from this folder) and use the browser's
-"Install" or "Add to Home Screen" option. The service worker caches the game
-on first load.
+## Install on a phone and play offline
+
+Phones will not run a game from a downloaded HTML file, and they only offer
+"Install" for a page served over HTTPS. So the game has to be hosted once;
+after the first visit it is cached on the phone and works with no connection.
+
+1. In the repository on GitHub, open **Settings > Pages** and set **Source** to
+   **GitHub Actions** (one time only).
+2. Merge this folder into `main`. The workflow
+   `.github/workflows/legends-road-pages.yml` publishes it to
+   `https://<user>.github.io/<repo>/`. You can also run it by hand from the
+   **Actions** tab.
+3. Open that address on the phone once, while online, and wait for the title
+   screen.
+   - **Android (Chrome):** menu > **Install app** (or **Add to Home screen**).
+   - **iPhone (Safari):** Share > **Add to Home Screen**.
+4. Launch it from the home-screen icon. It now works in airplane mode.
+
+To test locally on a computer: run `python3 -m http.server` in this folder and
+open `http://localhost:8000`.
 
 ## Controls
 

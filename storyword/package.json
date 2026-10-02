@@ -1,0 +1,13 @@
+{
+  "name": "storyword",
+  "version": "0.1.0",
+  "private": true,
+  "description": "StoryWord: a mobile story + word puzzle game (MVP, Season 1 Chapter 1).",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.js",
+    "test": "node --test tests/*.test.js",
+    "validate": "node tools/validate-content.js"
+  },
+  "engines": { "node": ">=20" }
+}

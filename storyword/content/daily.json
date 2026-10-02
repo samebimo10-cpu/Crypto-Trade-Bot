@@ -1,0 +1,78 @@
+{
+  "entries": [
+    {
+      "id": "d_cup",
+      "title": "The Full Cup",
+      "background": "cafe",
+      "lines": [
+        {"speaker": "narrator", "text": "Something strange happened at the café this morning…"},
+        {
+          "speaker": "rosa",
+          "mood": "worried",
+          "text": "Someone left a cup at the corner table. Full. Still hot. Nobody saw them come in."
+        }
+      ],
+      "puzzle": {
+        "id": "daily_steam",
+        "theme": "café",
+        "prompt": "Steam curls off a cup nobody ordered.",
+        "hint": "What rises off something hot.",
+        "letters": ["S", "T", "E", "A", "M"],
+        "requiredWords": ["STEAM", "TEAM", "MEAT"],
+        "bonusWords": [
+          "MATE", "TAME", "SEAM", "SAME", "MAST", "MATS", "EAST", "SEAT", "EATS", "TEAS", "MESA", "MATES",
+          "MEATS", "TEAMS", "TAMES", "MET", "MAT", "SAT", "SET", "SEA", "TEA", "EAT", "ATE"
+        ]
+      }
+    },
+    {
+      "id": "d_bottle",
+      "title": "Low Tide",
+      "background": "harbor",
+      "lines": [
+        {"speaker": "narrator", "text": "The tide brought something in overnight."},
+        {
+          "speaker": "hale",
+          "text": "A bottle. Note inside. Hasn't been opened. I thought you should be the one."
+        }
+      ],
+      "puzzle": {
+        "id": "daily_tide",
+        "theme": "sea",
+        "prompt": "The water pulls back and leaves things behind.",
+        "hint": "What comes in, and goes out.",
+        "letters": ["T", "I", "D", "E", "S"],
+        "requiredWords": ["TIDE", "SIDE", "EDIT"],
+        "bonusWords": [
+          "TIDES", "SITED", "DIET", "DIETS", "EDITS", "DIES", "TIES", "SITE", "DIE", "TIE", "SIT", "ITS",
+          "SET"
+        ]
+      }
+    },
+    {
+      "id": "d_note",
+      "title": "Pinned to the Door",
+      "background": "townhall",
+      "lines": [
+        {"speaker": "narrator", "text": "Jun found a note pinned to the Herald's door at dawn."},
+        {
+          "speaker": "jun",
+          "mood": "surprised",
+          "text": "No name. Just one line: \"Ask her about the stones.\""
+        }
+      ],
+      "puzzle": {
+        "id": "daily_stone",
+        "theme": "mystery",
+        "prompt": "\"Ask her about the stones.\"",
+        "hint": "Something written down, and something heavy.",
+        "letters": ["N", "O", "T", "E", "S"],
+        "requiredWords": ["NOTE", "STONE", "TONE"],
+        "bonusWords": [
+          "ONES", "NOSE", "NOTES", "ONSET", "TONES", "NETS", "NEST", "SENT", "TENS", "TONS", "TOES", "EONS",
+          "ONE", "NOT", "TON", "TEN", "NET", "SON", "SET", "TOE"
+        ]
+      }
+    }
+  ]
+}

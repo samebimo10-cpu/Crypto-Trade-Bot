@@ -1,0 +1,605 @@
+{
+  "id": 1,
+  "title": "Come Home",
+  "teaser": "Three years gone. One message from a number you don't know.",
+  "start": "s1_platform",
+  "initialStats": {"trust": 50, "affection": 50, "reputation": 50},
+  "scenes": [
+    {
+      "id": "s1_platform",
+      "background": "station",
+      "memory": "m_return",
+      "lines": [
+        {"speaker": "narrator", "text": "Three years. That's how long you've been gone from Harborview."},
+        {
+          "speaker": "narrator",
+          "text": "Tonight your phone lit up with a message from a number you didn't know."
+        },
+        {"speaker": "unknown", "text": "Come home. Maya needs you. Tell no one."},
+        {"speaker": "narrator", "text": "You were on the last train within the hour."},
+        {
+          "speaker": "narrator",
+          "text": "The platform is empty except for one figure under the lamp, holding a notebook over their head against the rain."
+        },
+        {"speaker": "jun", "mood": "smile", "text": "Well. Look what the tide dragged in."},
+        {"speaker": "jun", "text": "I'm at the Herald now. All four pages of it. So you know I have to ask."},
+        {"speaker": "jun", "mood": "surprised", "text": "What brings you back after three years?"}
+      ],
+      "prompt": "What do you tell Jun?",
+      "choices": [
+        {
+          "id": "c_truth",
+          "text": "Someone sent me a message. They said Maya needs me.",
+          "effects": {"trust": 5, "reputation": -5},
+          "setFlags": ["told_jun"],
+          "echo": "Jun will remember this.",
+          "response": [
+            {"speaker": "jun", "mood": "surprised", "text": "Maya? Huh."},
+            {"speaker": "jun", "mood": "smile", "text": "Don't worry. I won't print it. Probably."}
+          ]
+        },
+        {
+          "id": "c_visit",
+          "text": "Just visiting. It felt like time.",
+          "effects": {"reputation": 5},
+          "setFlags": ["kept_quiet"],
+          "response": [{"speaker": "jun", "mood": "smile", "text": "Sure. And I'm just here for the weather."}]
+        },
+        {
+          "id": "c_deflect",
+          "text": "Not tonight, Jun.",
+          "effects": {"trust": -5},
+          "setFlags": ["kept_quiet"],
+          "response": [
+            {"speaker": "jun", "text": "Fair. The Herald can wait."},
+            {"speaker": "jun", "mood": "smile", "text": "Welcome home, anyway."}
+          ]
+        }
+      ],
+      "next": "s2_cafe",
+      "puzzle": "p_train"
+    },
+    {
+      "id": "s2_cafe",
+      "background": "cafe",
+      "memory": "m_cafe",
+      "lines": [
+        {"speaker": "narrator", "text": "Morning. Rosa's café still smells like burnt sugar and sea salt."},
+        {"speaker": "rosa", "mood": "smile", "text": "Sit. You look like you slept on a train."},
+        {
+          "speaker": "rosa",
+          "mood": "worried",
+          "text": "You're here about Maya. Don't make that face. Everyone's here about Maya, eventually."
+        },
+        {
+          "speaker": "rosa",
+          "text": "She hasn't been in for a week. Ten years, and she's never missed a Tuesday."
+        },
+        {"speaker": "rosa", "text": "Daniel says she's just tired. Wedding nerves."},
+        {
+          "speaker": "rosa",
+          "mood": "angry",
+          "if": {"flags": ["told_jun"]},
+          "text": "And Jun was in here at seven telling anyone who'd listen that you got a 'mysterious message.'"
+        }
+      ],
+      "prompt": "Rosa refills your cup without asking.",
+      "choices": [
+        {
+          "id": "c_where",
+          "text": "Where can I find her?",
+          "effects": {"trust": 5},
+          "response": [{"speaker": "rosa", "text": "Same blue house by the harbor. Knock twice. She won't answer once."}]
+        },
+        {
+          "id": "c_wedding",
+          "text": "Wedding? Since when is Maya marrying Daniel?",
+          "effects": {"affection": 5},
+          "setFlags": ["jealous"],
+          "response": [
+            {"speaker": "rosa", "mood": "surprised", "text": "Since spring. You'd know if you'd called."},
+            {"speaker": "rosa", "text": "Blue house by the harbor. Go."}
+          ]
+        },
+        {
+          "id": "c_asked",
+          "text": "Has anyone else been asking about her?",
+          "effects": {"reputation": 5},
+          "setFlags": ["s_daniel_asked"],
+          "response": [
+            {
+              "speaker": "rosa",
+              "mood": "worried",
+              "text": "Funny you say that. Daniel was in here last month, asking whether you'd ever come back."
+            },
+            {"speaker": "rosa", "text": "I told him nobody comes back to Harborview. And then here you are."}
+          ]
+        }
+      ],
+      "puzzle": "p_tale",
+      "next": "s3_door"
+    },
+    {
+      "id": "s3_door",
+      "background": "house",
+      "memory": "m_door",
+      "lines": [
+        {"speaker": "narrator", "text": "The blue house. The paint is peeling now."},
+        {"speaker": "narrator", "text": "You knock twice."},
+        {"speaker": "maya", "mood": "surprised", "text": "I didn't expect you to come back."}
+      ],
+      "prompt": "Maya doesn't open the door any wider.",
+      "choices": [
+        {
+          "id": "c_for_her",
+          "text": "I came back because of you.",
+          "effects": {"affection": 10},
+          "setFlags": ["came_for_maya"],
+          "response": [
+            {"speaker": "maya", "mood": "sad", "text": "You don't get to say that. Not after three years."},
+            {"speaker": "maya", "text": "Come in before the neighbors see."}
+          ]
+        },
+        {
+          "id": "c_business",
+          "text": "I had unfinished business.",
+          "effects": {"trust": 5},
+          "response": [{"speaker": "maya", "text": "That makes two of us. Come in."}]
+        },
+        {
+          "id": "c_doubt",
+          "text": "Maybe I shouldn't have come back.",
+          "effects": {"affection": -5, "trust": 5},
+          "setFlags": ["doubtful"],
+          "response": [
+            {"speaker": "maya", "mood": "sad", "text": "Maybe."},
+            {"speaker": "maya", "text": "But you're here now. Come in."}
+          ]
+        }
+      ],
+      "next": "s3_inside"
+    },
+    {
+      "id": "s3_inside",
+      "background": "house",
+      "lines": [
+        {
+          "speaker": "maya",
+          "mood": "worried",
+          "text": "I didn't send it. Whatever you got. I don't even have your number anymore."
+        },
+        {"speaker": "maya", "text": "But I got one too. Last week."},
+        {"speaker": "narrator", "text": "She holds out her phone."},
+        {"speaker": "unknown", "text": "He knows what you did. Stay quiet and it stays buried."},
+        {
+          "speaker": "maya",
+          "mood": "worried",
+          "text": "And don't tell Eli. He'll do something stupid. He always does."
+        }
+      ],
+      "prompt": "Maya waits for you to say something.",
+      "choices": [
+        {
+          "id": "c_press",
+          "text": "What did you do, Maya?",
+          "effects": {"trust": -5, "reputation": 5},
+          "setFlags": ["pressed_maya"],
+          "response": [
+            {
+              "speaker": "maya",
+              "mood": "angry",
+              "text": "Something I'm not ready to talk about. Not even with you."
+            }
+          ]
+        },
+        {
+          "id": "c_here",
+          "text": "Whatever it is, I'm here.",
+          "effects": {"affection": 5, "trust": 5},
+          "response": [
+            {"speaker": "maya", "mood": "sad", "text": "That's what you said last time."},
+            {"speaker": "maya", "mood": "smile", "text": "But… thank you."}
+          ]
+        },
+        {
+          "id": "c_phone",
+          "text": "Give me the phone. I'll find who sent it.",
+          "effects": {"reputation": 5, "affection": -5},
+          "setFlags": ["has_phone"],
+          "response": [{"speaker": "maya", "text": "Fine. I doubt it'll do you any good."}]
+        }
+      ],
+      "puzzle": "p_heart",
+      "next": "s4_harbor"
+    },
+    {
+      "id": "s4_harbor",
+      "background": "harbor",
+      "lines": [
+        {"speaker": "narrator", "text": "You barely reach the end of the pier before someone grabs your arm."},
+        {"speaker": "eli", "mood": "angry", "text": "Stay away from my sister."},
+        {
+          "speaker": "eli",
+          "text": "Last time you left, she didn't leave the house for a month. I'm not watching that again."
+        },
+        {
+          "speaker": "eli",
+          "mood": "worried",
+          "text": "She's scared of something. I know she is. What did she tell you?"
+        }
+      ],
+      "prompt": "Eli wants to know what Maya told you.",
+      "choices": [
+        {
+          "id": "c_tell_eli",
+          "text": "She got a message. Someone's threatening her.",
+          "effects": {"trust": 10, "affection": -10},
+          "setFlags": ["told_eli"],
+          "echo": "Maya asked you not to.",
+          "response": [
+            {"speaker": "eli", "mood": "surprised", "text": "Threatening her? Who?"},
+            {"speaker": "eli", "mood": "angry", "text": "Never mind. I already know who."},
+            {"speaker": "narrator", "text": "He's gone before you can stop him."}
+          ]
+        },
+        {
+          "id": "c_protect",
+          "text": "Nothing. We just talked about old times.",
+          "effects": {"affection": 5, "trust": -10},
+          "setFlags": ["protected_maya"],
+          "echo": "Eli didn't believe you.",
+          "response": [
+            {"speaker": "eli", "text": "You're a bad liar. You always were."},
+            {"speaker": "eli", "mood": "sad", "text": "Fine. Keep her secrets. Just don't leave this time."}
+          ]
+        },
+        {
+          "id": "c_lie",
+          "text": "She told me to leave town. So I'm leaving.",
+          "effects": {"reputation": 5},
+          "setFlags": ["lied_eli"],
+          "echo": "Eli believed you.",
+          "response": [
+            {"speaker": "eli", "text": "…Good."},
+            {
+              "speaker": "eli",
+              "mood": "worried",
+              "text": "Look. If you're leaving anyway. I've seen Daniel's car at the old lighthouse. Midnight, three nights running."
+            },
+            {"speaker": "eli", "text": "Don't tell her I said that."}
+          ]
+        }
+      ],
+      "next": "s5_townhall"
+    },
+    {
+      "id": "s5_townhall",
+      "background": "townhall",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["told_eli"]},
+          "text": "Daniel has a fresh red mark across his jaw. He doesn't mention it."
+        },
+        {"speaker": "daniel", "mood": "smile", "text": "There they are. The one who got away."},
+        {
+          "speaker": "daniel",
+          "if": {"flags": ["told_jun"]},
+          "text": "Jun tells me you got a mysterious message. Exciting stuff, for a town like this."
+        },
+        {"speaker": "daniel", "text": "Maya's fine, by the way. In case you were wondering. Just tired."},
+        {"speaker": "daniel", "mood": "smile", "text": "So. What brings you back?"}
+      ],
+      "prompt": "Daniel's smile doesn't reach his eyes.",
+      "choices": [
+        {
+          "id": "c_friends",
+          "text": "Visiting old friends.",
+          "effects": {"reputation": 5},
+          "response": [
+            {
+              "speaker": "daniel",
+              "text": "Of course. Don't stay too long. Harborview has a way of keeping people."
+            }
+          ]
+        },
+        {
+          "id": "c_confront",
+          "text": "Someone's threatening Maya. Know anything about that?",
+          "effects": {"trust": 5, "reputation": -5},
+          "setFlags": ["confronted_daniel"],
+          "echo": "Daniel will remember this.",
+          "response": [
+            {"speaker": "daniel", "mood": "surprised", "text": "Threatening? That's a serious word."},
+            {"speaker": "daniel", "text": "Careful who you say it to. People here talk."}
+          ]
+        },
+        {
+          "id": "c_congrats",
+          "text": "Congratulations on the engagement.",
+          "effects": {"affection": -5, "reputation": 5},
+          "setFlags": ["congratulated"],
+          "response": [
+            {"speaker": "daniel", "mood": "smile", "text": "That's generous of you. Really."},
+            {"speaker": "daniel", "text": "She talks about you, you know. Less than she used to."}
+          ]
+        }
+      ],
+      "next": "s6_lighthouse"
+    },
+    {
+      "id": "s6_lighthouse",
+      "background": "lighthouse",
+      "memory": "m_lighthouse",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The old lighthouse hasn't been lit in years. Mr. Hale still climbs it every evening anyway."
+        },
+        {
+          "speaker": "hale",
+          "mood": "smile",
+          "text": "Thought you'd turn up. The tide always brings things back."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["lied_eli"]},
+          "text": "Fresh tire tracks in the gravel. Eli was right about the car."
+        },
+        {
+          "speaker": "hale",
+          "text": "Messages, is it? Words travel strange in this town. Somebody always wants a thing said, and somebody else wants it buried."
+        }
+      ],
+      "prompt": "Hale studies you over his pipe.",
+      "choices": [
+        {
+          "id": "c_accuse",
+          "text": "Did you send it, Mr. Hale?",
+          "effects": {"reputation": -5, "trust": 5},
+          "setFlags": ["accused_hale"],
+          "response": [
+            {"speaker": "hale", "mood": "smile", "text": "Me? I don't even own one of those telephones."},
+            {
+              "speaker": "hale",
+              "text": "But I know someone's been using the old one in the keeper's office. Late at night."
+            }
+          ]
+        },
+        {
+          "id": "c_who_gains",
+          "text": "Who gains if I come home?",
+          "effects": {"trust": 5},
+          "setFlags": ["asked_hale"],
+          "response": [
+            {"speaker": "hale", "text": "Now that's the right question."},
+            {
+              "speaker": "hale",
+              "mood": "worried",
+              "text": "Someone who needs a stranger to dig up what they can't touch themselves."
+            }
+          ]
+        },
+        {
+          "id": "c_riddles",
+          "text": "I don't have time for riddles.",
+          "effects": {"reputation": 5, "trust": -5},
+          "response": [{"speaker": "hale", "text": "Then you'll soon have time for nothing else."}]
+        }
+      ],
+      "puzzle": "p_secret",
+      "next": [
+        {"if": {"flags": ["told_eli"]}, "to": "s7_fallout"},
+        {"if": {"flags": ["lied_eli"]}, "to": "s7_tracks"},
+        {"to": "s7_kept"}
+      ]
+    },
+    {
+      "id": "s7_fallout",
+      "background": "porch",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "By evening the whole town has heard. Eli walked into the town hall and hit Daniel in front of half the council."
+        },
+        {"speaker": "maya", "mood": "angry", "text": "I asked you for one thing. One."},
+        {
+          "speaker": "maya",
+          "mood": "sad",
+          "text": "Eli's in a cell overnight, and now Daniel gets to be the victim. Do you understand what you've done?"
+        }
+      ],
+      "prompt": "Maya won't look at you.",
+      "choices": [
+        {
+          "id": "c_deserved",
+          "text": "He had a right to know.",
+          "effects": {"trust": 5, "affection": -5},
+          "response": [{"speaker": "maya", "text": "Maybe. But it wasn't your choice to make."}]
+        },
+        {
+          "id": "c_fix",
+          "text": "Then let me fix it.",
+          "effects": {"affection": 5, "reputation": -5},
+          "setFlags": ["vowed"],
+          "response": [{"speaker": "maya", "mood": "sad", "text": "You can't fix this town. Nobody can."}]
+        }
+      ],
+      "next": "s8_night"
+    },
+    {
+      "id": "s7_kept",
+      "background": "porch",
+      "lines": [
+        {"speaker": "narrator", "text": "Evening. Maya is waiting on the porch steps."},
+        {"speaker": "maya", "mood": "smile", "text": "Eli came by. He said you didn't tell him anything."},
+        {"speaker": "maya", "text": "He's furious with you. I'm… not."}
+      ],
+      "prompt": "She makes room for you on the step.",
+      "choices": [
+        {
+          "id": "c_come_around",
+          "text": "He'll come around.",
+          "effects": {"affection": 5},
+          "response": [{"speaker": "maya", "text": "He won't. But thank you for trying."}]
+        },
+        {
+          "id": "c_what_meant",
+          "text": "Maya. What did the message mean?",
+          "effects": {"trust": 5, "affection": -5},
+          "setFlags": ["asked_meaning"],
+          "response": [{"speaker": "maya", "mood": "worried", "text": "Tomorrow. I'll tell you tomorrow. I promise."}]
+        }
+      ],
+      "next": "s8_night"
+    },
+    {
+      "id": "s7_tracks",
+      "background": "porch",
+      "lines": [
+        {"speaker": "narrator", "text": "Evening. Maya is waiting on the porch steps."},
+        {"speaker": "maya", "text": "Eli says you're leaving town."},
+        {"speaker": "maya", "mood": "sad", "text": "You lied to him. Didn't you?"}
+      ],
+      "prompt": "There's no anger in it. Just tiredness.",
+      "choices": [
+        {
+          "id": "c_admit",
+          "text": "I did. He was about to do something stupid.",
+          "effects": {"trust": 5},
+          "response": [{"speaker": "maya", "text": "…He was. Thank you."}]
+        },
+        {
+          "id": "c_reveal_tracks",
+          "text": "He told me Daniel's been at the lighthouse at midnight.",
+          "effects": {"trust": 10, "affection": -5},
+          "setFlags": ["told_maya_tracks"],
+          "echo": "Eli asked you not to.",
+          "response": [
+            {"speaker": "maya", "mood": "surprised", "text": "The lighthouse?"},
+            {"speaker": "maya", "mood": "worried", "text": "That's where… no. Not yet. I can't."}
+          ]
+        }
+      ],
+      "next": "s8_night"
+    },
+    {
+      "id": "s8_night",
+      "background": "night",
+      "lines": [
+        {"speaker": "maya", "text": "It's late. You could stay."},
+        {"speaker": "maya", "mood": "smile", "text": "On the couch. Before you get ideas."}
+      ],
+      "prompt": "The harbor lights go out, one by one.",
+      "choices": [
+        {
+          "id": "c_stay",
+          "text": "I'll stay.",
+          "effects": {"affection": 5, "trust": 5},
+          "setFlags": ["stayed"],
+          "response": [{"speaker": "maya", "mood": "smile", "text": "Couch. I meant it."}]
+        },
+        {
+          "id": "c_watch",
+          "text": "I'll walk the harbor. Someone should keep watch.",
+          "effects": {"reputation": 5},
+          "setFlags": ["kept_watch"],
+          "response": [{"speaker": "maya", "mood": "worried", "text": "Be careful. This town is smaller than it looks."}]
+        }
+      ],
+      "next": "s9_message"
+    },
+    {
+      "id": "s9_message",
+      "background": "night",
+      "memory": "m_message",
+      "lines": [
+        {"speaker": "narrator", "text": "Past midnight, your phone lights up."},
+        {
+          "speaker": "unknown",
+          "if": {"anyFlags": ["told_jun", "told_eli"]},
+          "text": "You told someone. That was a mistake."
+        },
+        {"speaker": "unknown", "if": {"anyFlags": ["told_jun", "told_eli"]}, "text": "Now it's my turn."},
+        {"speaker": "unknown", "if": {"notFlags": ["told_jun", "told_eli"]}, "text": "Good. You kept quiet."},
+        {
+          "speaker": "unknown",
+          "if": {"notFlags": ["told_jun", "told_eli"]},
+          "text": "Lighthouse. Tomorrow. Midnight. Come alone."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["kept_watch"]},
+          "text": "Across the water, a light flickers at the top of the dead lighthouse. Once. Twice. Then dark."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["stayed"]},
+          "text": "Across the room, Maya's phone buzzes at the very same moment. She doesn't wake."
+        },
+        {"speaker": "narrator", "text": "To be continued…"}
+      ],
+      "next": null
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "ch1_fallout",
+      "if": {"flags": ["told_eli"]},
+      "title": "The Fallout",
+      "text": "You told Eli the truth. He did exactly what Maya feared, and now the whole town has a story, and Daniel has a reason."
+    },
+    {
+      "id": "ch1_useful_lie",
+      "if": {"flags": ["lied_eli"]},
+      "title": "The Useful Lie",
+      "text": "You lied to Eli, and he handed you something real in return. Somewhere, someone is keeping count of your lies."
+    },
+    {
+      "id": "ch1_shield",
+      "title": "The Shield",
+      "text": "You kept Maya's secret, even from her brother. She trusts you a little more. Eli doesn't trust you at all."
+    }
+  ],
+  "reflections": [
+    {"if": {"min": {"affection": 65}}, "text": "Maya is starting to let you back in."},
+    {"if": {"max": {"affection": 40}}, "text": "Maya is keeping you at arm's length."},
+    {"if": {"min": {"trust": 65}}, "text": "People are beginning to believe what you tell them."},
+    {"if": {"max": {"reputation": 40}}, "text": "Harborview is talking about you, and not kindly."},
+    {"if": {"flags": ["told_jun"]}, "text": "Jun didn't print it. Jun didn't need to."},
+    {"if": {"flags": ["has_phone"]}, "text": "Maya's phone is in your pocket. You haven't looked yet."}
+  ],
+  "secrets": {
+    "s_daniel_asked": {
+      "title": "Daniel was waiting",
+      "text": "A month before the message, Daniel asked Rosa whether you'd ever come back."
+    },
+    "s_stolen": {
+      "title": "Something stolen",
+      "text": "STEAL, hidden in Rosa's napkin. The week Maya stopped coming in, the journal she kept behind the counter went missing."
+    },
+    "s_reset": {
+      "title": "Wiped clean",
+      "text": "RESET, scratched into the lighthouse rail. Someone wiped Maya's phone the night the messages began."
+    }
+  },
+  "memories": {
+    "m_return": {
+      "title": "Last Train Home",
+      "background": "station",
+      "text": "Rain on the platform, and Jun under the only lamp."
+    },
+    "m_cafe": {
+      "title": "Rosa's Corner Table",
+      "background": "cafe",
+      "text": "Burnt sugar, sea salt, and a cup you didn't ask for."
+    },
+    "m_door": {"title": "The Blue Door", "background": "house", "text": "\"I didn't expect you to come back.\""},
+    "m_lighthouse": {
+      "title": "The Dark Lighthouse",
+      "background": "lighthouse",
+      "text": "It hasn't been lit in years. Somebody still climbs it."
+    },
+    "m_message": {"title": "Past Midnight", "background": "night", "text": "A second message, and the whole town asleep."}
+  }
+}

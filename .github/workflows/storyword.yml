@@ -1,0 +1,22 @@
+name: StoryWord
+on:
+  push:
+    paths: ["storyword/**", ".github/workflows/storyword.yml"]
+  pull_request:
+    paths: ["storyword/**", ".github/workflows/storyword.yml"]
+jobs:
+  storyword:
+    name: StoryWord game
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: storyword
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate content
+        run: npm run validate
+      - name: Engine tests
+        run: npm test

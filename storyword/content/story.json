@@ -1,0 +1,8 @@
+{
+  "title": "StoryWord",
+  "season": 1,
+  "seasonTitle": "The Message",
+  "totalChapters": 10,
+  "totalSecrets": 8,
+  "chapters": [{"id": 1, "file": "chapters/ch1.json"}]
+}

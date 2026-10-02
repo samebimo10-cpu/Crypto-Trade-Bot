@@ -1,0 +1,59 @@
+{
+  "puzzles": [
+    {
+      "id": "p_train",
+      "level": 1,
+      "theme": "journey",
+      "prompt": "The rain followed you all the way home.",
+      "hint": "What the night was full of on the way back.",
+      "letters": ["T", "R", "A", "I", "N"],
+      "requiredWords": ["RAIN", "TRAIN", "AIR"],
+      "bonusWords": ["ANT", "TAN", "RAT", "TAR", "ART", "TIN", "RAN", "RANT", "NIT"],
+      "reward": {"coins": 2}
+    },
+    {
+      "id": "p_tale",
+      "level": 2,
+      "theme": "gossip",
+      "prompt": "Rosa slides a napkin across the counter. \"Every tale in this town starts late.\"",
+      "hint": "Stories, and the hour they're told.",
+      "letters": ["L", "A", "T", "E", "S"],
+      "requiredWords": ["LATE", "TALE", "LAST"],
+      "bonusWords": [
+        "SALT", "SLAT", "STALE", "TEAL", "TEAS", "SEAT", "EAST", "EATS", "LEST", "LETS", "ALES", "SEAL",
+        "SALE", "LEAST", "SLATE", "TALES", "STEAL", "SET", "SAT", "TEA", "EAT", "ATE", "ALE", "LET", "SEA"
+      ],
+      "secrets": [{"word": "STEAL", "id": "s_stolen"}],
+      "reward": {"coins": 3}
+    },
+    {
+      "id": "p_heart",
+      "level": 3,
+      "theme": "romance",
+      "prompt": "\"I never told anyone,\" she says. Something still beats under all this silence.",
+      "hint": "Something connected to love.",
+      "letters": ["H", "E", "A", "R", "T"],
+      "requiredWords": ["HEART", "HEAR", "HEAT"],
+      "bonusWords": [
+        "EARTH", "HATER", "RATE", "TEAR", "HARE", "HATE", "ART", "EAT", "TEA", "ATE", "ERA", "HAT", "HER",
+        "THE", "RAT", "TAR", "EAR", "ARE"
+      ],
+      "reward": {"coins": 3}
+    },
+    {
+      "id": "p_secret",
+      "level": 4,
+      "theme": "mystery",
+      "prompt": "Scratched into the lighthouse rail: every secret leaves a mark.",
+      "hint": "Something hidden. Something kept.",
+      "letters": ["S", "E", "C", "R", "E", "T"],
+      "requiredWords": ["SECRET", "REST", "TREE"],
+      "bonusWords": [
+        "RESET", "SECT", "CREST", "ERECT", "TERSE", "STEER", "ESTER", "TREES", "SEER", "SEE", "TEE", "SET",
+        "TEES", "ERE"
+      ],
+      "secrets": [{"word": "RESET", "id": "s_reset"}],
+      "reward": {"coins": 4}
+    }
+  ]
+}

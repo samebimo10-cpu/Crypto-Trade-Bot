@@ -1,0 +1,25 @@
+{
+  "narrator": {"name": "", "narration": true},
+  "you": {"name": "You", "skin": "#e8b996", "hair": "#2f2a28", "hairStyle": "short", "accent": "#7c8cff"},
+  "maya": {"name": "Maya", "skin": "#c98e6b", "hair": "#3a2318", "hairStyle": "long", "accent": "#e07a8b"},
+  "jun": {
+    "name": "Jun",
+    "skin": "#efc9a4",
+    "hair": "#141414",
+    "hairStyle": "short",
+    "accent": "#4fb3a9",
+    "glasses": true
+  },
+  "rosa": {"name": "Rosa", "skin": "#a8714f", "hair": "#8b8b8b", "hairStyle": "bun", "accent": "#e3a64b"},
+  "eli": {"name": "Eli", "skin": "#c98e6b", "hair": "#3a2318", "hairStyle": "messy", "accent": "#d0623f"},
+  "daniel": {"name": "Daniel", "skin": "#f1d0b5", "hair": "#c49a5a", "hairStyle": "neat", "accent": "#5d7bd6"},
+  "hale": {
+    "name": "Mr. Hale",
+    "skin": "#d9a882",
+    "hair": "#e8e8e8",
+    "hairStyle": "bald",
+    "accent": "#8a9a5b",
+    "beard": true
+  },
+  "unknown": {"name": "Unknown number", "message": true}
+}

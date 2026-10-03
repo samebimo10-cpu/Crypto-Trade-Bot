@@ -305,3 +305,32 @@ export function nextChapter(story, chapterId, run) {
 export function carryFrom(run) {
   return { stats: { ...run.stats }, flags: [...run.flags], pov: run.pov, rel: structuredClone(run.rel ?? {}) };
 }
+
+// Merge the unlocked 18+ content into the chapters. The bundle adds choices
+// to existing scenes, whole new scenes, routes checked before a scene's own
+// `next`, outcomes and reflections. Added scenes and choices are marked
+// `plus: true`. Returns new chapter objects; the originals are untouched.
+export function applyPlus(chapters, plus) {
+  const out = structuredClone(chapters);
+  const byId = Object.fromEntries(out.map((c) => [c.id, c]));
+  const find = (path) => {
+    const [cid, sid] = path.split('/');
+    const scene = byId[cid]?.scenes.find((s) => s.id === sid);
+    if (!scene) throw new Error(`18+ content targets unknown scene "${path}"`);
+    return scene;
+  };
+  for (const { chapter, scene } of plus.scenes || []) byId[chapter].scenes.push({ ...scene, plus: true });
+  for (const { at, choice } of plus.choices || []) (find(at).choices ??= []).push({ ...choice, plus: true });
+  for (const { at, routes } of plus.routes || []) {
+    const scene = find(at);
+    const base = Array.isArray(scene.next) ? scene.next : [{ to: scene.next ?? null }];
+    scene.next = [...routes, ...base];
+  }
+  for (const { chapter, outcome, before } of plus.outcomes || []) {
+    const list = (byId[chapter].outcomes ??= []);
+    const i = list.findIndex((o) => o.id === before);
+    list.splice(i < 0 ? 0 : i, 0, outcome);
+  }
+  for (const { chapter, reflection } of plus.reflections || []) (byId[chapter].reflections ??= []).unshift(reflection);
+  return out;
+}

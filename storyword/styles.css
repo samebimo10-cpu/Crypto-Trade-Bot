@@ -443,3 +443,20 @@ body[data-scene='full'] #scene { filter: saturate(0.85) contrast(1.05) brightnes
   .flash { opacity: 0; }
 }
 .icon-btn.sound.off { opacity: 0.45; text-decoration: line-through; }
+
+/* 18+ Pass */
+.plus-sheet { text-align: left; gap: 8px; }
+.plus-sheet h2 { text-align: center; }
+.plus-sheet label { font-size: 0.8rem; letter-spacing: 0.06em; color: var(--gold); }
+.plus-sheet input[type='password'], .plus-sheet input:not([type]) {
+  font: inherit; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.35); color: var(--ink); width: 100%;
+}
+.plus-sheet input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.plus-sheet .check { display: flex; gap: 10px; align-items: center; color: var(--ink); font-size: 0.9rem; letter-spacing: 0; margin-top: 4px; }
+.form-error { color: #ff8a8f; font-size: 0.9rem; }
+.plus-card .plus-state { margin: 6px 0 10px; font-weight: 700; color: var(--ink); }
+.plus-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.plus-pill { color: #ff8a8f; border-color: rgba(194, 56, 90, 0.6); }
+.choice .choice-risk:is(:empty) { display: none; }
+.locked-scene { gap: 14px; }

@@ -12,6 +12,7 @@ import * as Progress from './engine/progress.js';
 import { portraitSVG } from './ui/portrait.js';
 import { sceneSVG } from './ui/scenes.js';
 import * as Audio from './ui/audio.js';
+import * as Vault from './engine/vault.js';
 
 const app = document.getElementById('app');
 const sceneLayer = document.getElementById('scene');
@@ -29,6 +30,7 @@ const ui = {
   shake: false,
   scene: null, // background currently drawn
   lastLine: null, // the line whose sound effect already played
+  plus: { key: null, content: null, busy: false, error: '' }, // 18+ Pass: unlocked only in memory
   atmosphere: null, // particle overlay currently drawn
   lastSpeaker: null,
 };
@@ -88,11 +90,14 @@ async function loadContent() {
     get('daily.json'),
   ]);
   const chapters = await Promise.all(story.chapters.map((c) => get(c.file)));
+  const plusBundle = await get('plus.enc.json').catch(() => null);
   return {
     story,
     characters,
     daily,
     chapters,
+    base: chapters,
+    plusBundle,
     puzzles: Object.fromEntries(puzzles.puzzles.map((p) => [p.id, p])),
   };
 }
@@ -222,6 +227,136 @@ function topbar(label, { hints = false, tools = false } = {}) {
   </header>`;
 }
 
+// --- 18+ Pass ---------------------------------------------------------------
+// The mature content is encrypted in the game file. A one-time setup code
+// (given to the owner) unlocks it once and sets a personal password; only a
+// copy of the content key wrapped with that password is kept on the device.
+// Unlocked content lives in memory only, so reopening the game locks it.
+
+const PLUS_STORE = 'storyword.plus';
+
+function plusStored() {
+  try {
+    return JSON.parse(storage?.getItem(PLUS_STORE) ?? 'null');
+  } catch {
+    return null;
+  }
+}
+
+function plusUnlocked() {
+  return Boolean(ui.plus.content);
+}
+
+async function activatePlus(rawKey) {
+  const content = await Vault.openBundle(C.plusBundle, rawKey);
+  ui.plus.key = rawKey;
+  ui.plus.content = content;
+  C.chapters = Story.applyPlus(C.base, content);
+}
+
+function lockPlus() {
+  ui.plus.key = null;
+  ui.plus.content = null;
+  C.chapters = C.base;
+}
+
+const field = (id) => app.querySelector(`#${id}`)?.value ?? '';
+
+async function plusSubmit(kind) {
+  if (ui.plus.busy) return;
+  // Show errors and the busy state in place: re-rendering the form would
+  // wipe what the player typed.
+  const sheet = app.querySelector('.plus-sheet');
+  const button = sheet?.querySelector('[data-action=plus-submit]');
+  const setBusy = (on) => {
+    ui.plus.busy = on;
+    if (button) {
+      button.disabled = on;
+      button.textContent = on ? 'Unlocking…' : kind === 'change' ? 'Save password' : 'Unlock';
+    }
+  };
+  const fail = (msg) => {
+    ui.plus.error = msg;
+    setBusy(false);
+    let el = sheet?.querySelector('.form-error');
+    if (sheet && !el) {
+      el = document.createElement('p');
+      el.className = 'form-error';
+      el.setAttribute('role', 'alert');
+      button.before(el);
+    }
+    if (el) el.textContent = msg;
+  };
+  const pw = field('plus-pw');
+  const pw2 = field('plus-pw2');
+  if (kind !== 'unlock') {
+    if (pw.length < 8) return fail('Use at least 8 characters for your password.');
+    if (pw !== pw2) return fail("The two passwords don't match.");
+  }
+  if (kind === 'setup' && !app.querySelector('#plus-age')?.checked) return fail('Confirm you are 18 or older to continue.');
+  const code = field('plus-code');
+  ui.plus.error = '';
+  setBusy(true);
+  try {
+    if (kind === 'setup') {
+      const raw = await Vault.unlockWithSetupCode(C.plusBundle, code).catch(() => null);
+      if (!raw) return fail("That setup code isn't right. Check it and try again.");
+      storage?.setItem(PLUS_STORE, JSON.stringify(await Vault.wrapKey(raw, pw)));
+      await activatePlus(raw);
+    } else if (kind === 'unlock') {
+      const stored = plusStored();
+      const raw = stored && (await Vault.unwrapKey(stored, pw).catch(() => null));
+      if (!raw) return fail('Wrong password.');
+      await activatePlus(raw);
+    } else if (kind === 'change') {
+      storage?.setItem(PLUS_STORE, JSON.stringify(await Vault.wrapKey(ui.plus.key, pw)));
+    }
+  } catch {
+    return fail("Couldn't open the 18+ content on this device.");
+  }
+  setBusy(false);
+  ui.overlay = null;
+  toast(kind === 'change' ? '18+ password changed' : '18+ Pass unlocked');
+  Audio.sfx('secret');
+  render();
+}
+
+function plusOverlay(kind) {
+  const busy = ui.plus.busy ? 'disabled' : '';
+  const err = ui.plus.error ? `<p class="form-error" role="alert">${esc(ui.plus.error)}</p>` : '';
+  const pwFields = `
+    <label for="plus-pw">${kind === 'unlock' ? 'Password' : 'New password'}</label>
+    <input id="plus-pw" type="password" autocomplete="${kind === 'unlock' ? 'current-password' : 'new-password'}" />
+    ${kind === 'unlock' ? '' : '<label for="plus-pw2">Repeat password</label><input id="plus-pw2" type="password" autocomplete="new-password" />'}`;
+  const body = {
+    setup: `<p class="muted">Enter the setup code you were given, then choose your own password. Only you will know it; it is never stored anywhere readable.</p>
+      <label for="plus-code">Setup code</label><input id="plus-code" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+      ${pwFields}
+      <label class="check"><input id="plus-age" type="checkbox" /> I confirm I am 18 or older</label>`,
+    unlock: `<p class="muted">Enter your 18+ password. The game locks again whenever it is closed.</p>${pwFields}`,
+    change: `<p class="muted">Choose a new 18+ password for this device.</p>${pwFields}`,
+  }[kind];
+  return `<div class="overlay"><form class="sheet pop plus-sheet" data-plus="${kind}" onsubmit="return false">
+    <h2>18+ Pass</h2>${body}${err}
+    <button class="btn primary" type="submit" data-action="plus-submit" data-kind="${kind}" ${busy}>${ui.plus.busy ? 'Unlocking…' : kind === 'change' ? 'Save password' : 'Unlock'}</button>
+    <button class="btn" type="button" data-action="overlay-close">Cancel</button>
+  </form></div>`;
+}
+
+function plusCard() {
+  if (!C.plusBundle) return '';
+  const stored = plusStored();
+  const state = plusUnlocked() ? 'Unlocked for this session' : stored ? 'Locked' : 'Not set up on this device';
+  const buttons = plusUnlocked()
+    ? `<button class="btn" data-action="plus-lock">Lock now</button><button class="btn" data-action="plus-open" data-kind="change">Change password</button>`
+    : stored
+      ? `<button class="btn primary" data-action="plus-open" data-kind="unlock">Unlock</button><button class="btn link" data-action="plus-open" data-kind="setup">Forgot password? Use setup code</button>`
+      : `<button class="btn primary" data-action="plus-open" data-kind="setup">Set up 18+ Pass</button>`;
+  return `<section class="card plus-card"><h3 class="card-title">18+ Pass</h3>
+    <p class="muted">Steamier nights, darker choices, two extra endings. Adults only, password protected.</p>
+    <p class="plus-state">${state}</p><div class="plus-actions">${buttons}</div></section>`;
+}
+
 // --- Rendering --------------------------------------------------------------
 
 function render() {
@@ -237,7 +372,8 @@ function renderHome() {
   const run = profile.run;
   const chapter = currentChapter();
   const inProgress = run && !run.complete;
-  const sceneKey = run ? Story.getScene(chapter, run.sceneId).background : 'jos';
+  const saved = run && chapter.scenes.find((sc) => sc.id === run.sceneId);
+  const sceneKey = saved ? saved.background : run ? Story.getScene(chapter, chapter.start).background : 'jos';
   setScene(sceneKey, 'dim', { music: 'title', ambience: null });
   const heroine = C.characters[C.story.heroine];
   const today = Progress.dateKey();
@@ -251,6 +387,7 @@ function renderHome() {
     <header class="topbar">
       <span class="pill">⭐ ${profile.stars}</span>
       <span class="pill">🪙 ${profile.coins}</span>
+      ${plusUnlocked() ? '<button class="pill pill-btn plus-pill" data-action="profile" aria-label="18+ Pass unlocked">18+</button>' : ''}
       ${soundButton()}
       <button class="icon-btn" data-action="profile" aria-label="Your progress">☰</button>
     </header>
@@ -310,6 +447,15 @@ function renderStory() {
     finishChapter();
     ui.screen = 'results';
     return renderResults();
+  }
+  if (!chapter.scenes.some((sc) => sc.id === run.sceneId)) {
+    setScene(null, 'none', { music: 'night' });
+    return `<main class="screen center locked-scene">
+      <h2>This part of your story is 18+</h2>
+      <p class="muted">Unlock the 18+ Pass to continue, or replay the chapter without it.</p>
+      ${plusStored() ? '<button class="btn primary" data-action="plus-open" data-kind="unlock">Unlock</button>' : '<button class="btn primary" data-action="plus-open" data-kind="setup">Set up 18+ Pass</button>'}
+      <button class="btn" data-action="replay">Replay chapter</button>
+    </main>`;
   }
   // Keep the solved puzzle under its results sheet; the next scene appears
   // only once the player taps continue.
@@ -651,6 +797,7 @@ function renderOverlay() {
       <button class="btn primary" data-action="overlay-continue">${o.context === 'story' ? 'Continue the story' : 'Done'}</button>
     </div></div>`;
   }
+  if (o.type === 'plus') return plusOverlay(o.kind);
   if (o.type === 'leverage') {
     const ids = C.story.secretFlags || [];
     const run = profile.run;
@@ -720,6 +867,7 @@ function statBar(name, value) {
 
 const FALLEN = ['tari', 'hadiza', 'kolade'];
 const fallenIn = (run) => FALLEN.filter((id) => run.flags.includes(`dead_${id}`));
+const totalEndings = () => C.story.totalEndings + (plusUnlocked() ? ui.plus.content.extraEndings ?? 0 : 0);
 const endingsSeen = () => profile.endings.filter((e) => e.startsWith('end_')).length;
 
 function renderResults() {
@@ -760,7 +908,7 @@ function renderResults() {
         .map((c, i) => `<li><div><span>${fmt(c.text)}</span><button class="mini" data-action="rewind" data-i="${i}" aria-label="Replay from this choice">↺</button></div></li>`)
         .join('')}</ol>
     </section>` : ''}
-    ${isFinale ? `<p class="muted center">Endings seen: ${endingsSeen()} of ${C.story.totalEndings}. Play as another house to see the rest.</p>` : ''}
+    ${isFinale ? `<p class="muted center">Endings seen: ${endingsSeen()} of ${totalEndings()}. Play as another house to see the rest.</p>` : ''}
     <div class="actions">
       ${chapter.number > 0 ? '<button class="btn" data-action="replay">Replay chapter</button>' : ''}
       ${nextChapter
@@ -789,7 +937,7 @@ function renderProfile() {
       ${row('Reputation', stats?.reputation ?? '—')}
       ${row('Secrets Discovered', `${profile.secrets.length}/${C.story.totalSecrets}`)}
       ${row('Keepsakes', (profile.keepsakes || []).length)}
-      ${row('Endings seen', `${endingsSeen()}/${C.story.totalEndings}`)}
+      ${row('Endings seen', `${endingsSeen()}/${totalEndings()}`)}
       ${fallen.length ? row('Fallen', esc(fallen.join(', '))) : ''}
     </section>
     ${run ? `<section class="card">${axesHTML(stats)}</section><section class="card">${relHTML(run)}</section>` : ''}
@@ -800,6 +948,7 @@ function renderProfile() {
       ${row('🔥 Best word streak', profile.bestStreak)}
       ${row('📅 Daily streak', profile.daily.streak)}
     </section>
+    ${plusCard()}
     <button class="btn link danger" data-action="reset">Reset progress</button>
   </main>`;
 }
@@ -892,6 +1041,20 @@ const actions = {
     go(profile.run.complete ? 'results' : 'story');
   },
   'new-saga': startNewSaga,
+  'plus-open'(el) {
+    ui.plus.error = '';
+    ui.overlay = { type: 'plus', kind: el.dataset.kind };
+    render();
+    app.querySelector('.plus-sheet input')?.focus();
+  },
+  'plus-submit'(el) {
+    plusSubmit(el.dataset.kind);
+  },
+  'plus-lock'() {
+    lockPlus();
+    toast('18+ Pass locked');
+    render();
+  },
   leverage() {
     ui.overlay = { type: 'leverage' };
     render();

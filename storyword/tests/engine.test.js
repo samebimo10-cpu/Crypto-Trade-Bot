@@ -21,8 +21,9 @@ function rng(seed) {
 // Play the whole saga as `pov`. `prefer` lists choice ids to take when
 // offered; otherwise `random` (if given) or the first choice is taken.
 // With `secrets`, every puzzle's secret words count as found.
-function playSaga(pov, { prefer = [], random = null, secrets = false } = {}) {
-  let chapter = chapters[0];
+function playSaga(pov, { prefer = [], random = null, secrets = false, chapters: chs = chapters } = {}) {
+  const byId = (id) => chs.find((c) => c.id === id);
+  let chapter = chs[0];
   let run = Story.newRun(chapter);
   const scenes = [];
   const played = [];
@@ -352,5 +353,44 @@ test('every scene, line and choice sound name exists in the audio engine', async
         if (l.sfx) assert.ok(SFX.includes(l.sfx), `${s.id}: ${l.sfx}`);
       }
     }
+  }
+});
+
+test('18+ vault: encryption round trip, wrong secrets rejected', async () => {
+  const Vault = await import('../src/engine/vault.js');
+  const secret = { hello: 'world', n: [1, 2, 3] };
+  const bundle = await Vault.sealBundle(secret, 'abcd-efgh', 1000);
+  const raw = await Vault.unlockWithSetupCode(bundle, 'ABCD EFGH');
+  assert.deepEqual(await Vault.openBundle(bundle, raw), secret);
+  await assert.rejects(Vault.unlockWithSetupCode(bundle, 'nope'));
+  const personal = await Vault.wrapKey(raw, 'my own password', 1000);
+  assert.deepEqual(await Vault.openBundle(bundle, await Vault.unwrapKey(personal, 'my own password')), secret);
+  await assert.rejects(Vault.unwrapKey(personal, 'my own passwore'));
+});
+
+test('the shipped 18+ bundle is ciphertext only', async () => {
+  const raw = await readFile(new URL('../content/plus.enc.json', import.meta.url), 'utf8');
+  const bundle = JSON.parse(raw);
+  assert.equal(bundle.v, 1);
+  assert.ok(bundle.setup.iter >= 200000);
+  for (const word of ['Kolade', 'Nabyen', 'thallium', 'shepherd', 'night']) assert.ok(!raw.includes(word), `plaintext "${word}" leaked`);
+});
+
+const PLUS_KEY = process.env.STORYWORD_PLUS_KEY;
+test('18+ content merges, validates and reaches its endings', { skip: !PLUS_KEY && 'set STORYWORD_PLUS_KEY to check the 18+ content' }, async () => {
+  const { openWithCode } = await import('../tools/plus.js');
+  const { validateChapter } = await import('../src/engine/validate.js');
+  const plus = await openWithCode(PLUS_KEY);
+  const merged = Story.applyPlus(chapters, plus);
+  assert.deepEqual(merged.flatMap((c) => validateChapter(c, { characters, puzzles })), []);
+  const blood = playSaga('hadiza', { chapters: merged, prefer: ['c_silent', 'c_leverage', 'p_execute', 'c_crown_self'] }).run;
+  assert.ok(blood.flags.includes('end_blood_crown'));
+  const seducer = playSaga('nabyen', { chapters: merged, prefer: ['c_jet', 'p_upstairs_kolade', 'p_lock_door', 'c_council'] }).run;
+  assert.ok(seducer.flags.includes('night_kolade'));
+  const two = playSaga('kolade', { chapters: merged, prefer: ['p_geneva_night', 'c_to_jos', 'p_leave_nabyen', 'c_council'] }).run;
+  assert.ok(two.flags.includes('end_seducer'));
+  for (let seed = 1; seed <= 60; seed++) {
+    const r = playSaga(POVS[seed % 4], { chapters: merged, random: rng(seed * 7) }).run;
+    assert.ok(r.flags.some((f) => f.startsWith('end_')), `18+ seed ${seed} reached no ending`);
   }
 });

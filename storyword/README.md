@@ -100,6 +100,27 @@ reframed as decoding.
     expressions
   - Daily Word, rewinding to any decision, and saving on the device
 
+## 18+ Pass
+
+There's optional mature content: steamier nights that fade to black, darker and more
+violent choices, and two extra endings (*Blood Crown* and *The Seducer*). It's locked
+behind a password.
+
+- **Encrypted, not hidden.** The 18+ content ships only as ciphertext
+  (`content/plus.enc.json`, AES-256-GCM). Nothing in the game file or this repository
+  reveals it without a secret.
+- **Setup code, then your password.** The owner gets a one-time setup code. Entering it
+  in *Your story → 18+ Pass* (with an 18+ confirmation) unlocks the content once and sets
+  a personal password. The device keeps only a password-encrypted copy of the key,
+  derived with PBKDF2 at 250k iterations.
+- **Locks itself.** The unlocked content lives in memory only, so reopening the game
+  locks it again. *Lock now* locks it immediately.
+- **Editing it.** To change the content, run
+  `STORYWORD_PLUS_KEY=<setup code> node tools/plus.js open`. Edit
+  `content-plus/plus.json` (git ignores it), then run `node tools/plus.js seal
+  content-plus/plus.json` and `npm run build`. With `STORYWORD_PLUS_KEY` set, `npm test`
+  also validates the 18+ story.
+
 ## How it's built
 
 ```

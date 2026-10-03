@@ -54,6 +54,8 @@ async function content() {
   const files = ['story.json', 'characters.json', 'puzzles.json', 'daily.json', ...story.chapters.map((c) => c.file)];
   const out = {};
   for (const f of files) out[f] = await read(f);
+  out['plus.enc.json'] = await read('plus.enc.json').catch(() => undefined);
+  if (!out['plus.enc.json']) delete out['plus.enc.json'];
   return out;
 }
 

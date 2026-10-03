@@ -1,2 +1,3 @@
 content-plus/
 *.plain.json
+node_modules/

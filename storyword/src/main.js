@@ -42,13 +42,14 @@ async function boot() {
     C = await loadContent();
   } catch (e) {
     app.innerHTML = `<main class="screen center"><p>Couldn't load the story.</p><p class="muted">${esc(e.message)}</p>
-      <p class="muted">Open the single-file build (dist/storyword.html), or serve this folder with <code>npm start</code>.</p></main>`;
+      <p class="muted">Open the single-file build (offline/StoryWord.html), or serve this folder with <code>npm start</code>.</p></main>`;
     return;
   }
   profile = migrate(Progress.load(storage));
   app.addEventListener('click', onClick);
   document.addEventListener('keydown', onKey);
   render();
+  globalThis.STORYWORD_STARTED = true; // the offline build's boot check
   registerOffline();
 }
 

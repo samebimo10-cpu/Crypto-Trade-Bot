@@ -33,8 +33,22 @@ There are three ways to play.
   *Add to Home Screen*. After that it works with no connection.
 - **Development.** Run `npm start`, then open http://localhost:8080.
 
+### If it won't open on a phone
+
+The offline file runs on Android Chrome 61+ and iOS Safari 11+ (iPhone 5s and newer). If
+the game can't start, it shows a help screen instead of hanging on "Loading…".
+
+- **Open it in a real browser.** WhatsApp, Gmail and file-manager previews often show
+  HTML files without running them. Save the file, then open it with **Chrome** on
+  Android. On iPhone, open it from **Files**, then Share → **Safari**.
+- **Update the browser** if the help screen still appears.
+- **Use the file, not the claude.ai link.** The artifact link is private to its owner.
+
+### Development
+
 ```sh
 cd storyword
+npm install        # once: installs esbuild, used by the offline build
 npm start          # local server on port 8080
 npm test           # engine, content, story-path and build tests
 npm run validate   # check content after editing

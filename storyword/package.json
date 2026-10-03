@@ -11,5 +11,10 @@
     "build": "node tools/build.js",
     "words": "node tools/words.js"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
 }

@@ -96,7 +96,7 @@
       "secrets": [{"word": "GREED", "id": "s_greed"}],
       "reward": {"coins": 4},
       "frame": {"kind": "ledger", "label": "A coded ledger margin"},
-      "decoded": "BM-GVA. 4,000,000. Approved: E.M."
+      "decoded": "BM-GVA. 4,000,000. Approved: E.M. Countersigned: B."
     },
     {
       "id": "h_horses",
@@ -242,7 +242,7 @@
       "secrets": [{"word": "WOLF", "id": "s_wolf"}],
       "reward": {"coins": 6},
       "frame": {"kind": "intercept", "label": "Radio on the mountain train"},
-      "decoded": "Le Loup to all units: the ledger must not reach Täsch."
+      "decoded": "Le Loup to Le Berger: the ledger must not reach Täsch."
     },
     {
       "id": "c_island",

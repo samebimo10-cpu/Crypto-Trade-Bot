@@ -321,3 +321,36 @@ test('ending: solitary empress', () => {
   });
   assert.equal(ending2(run), 'end_empress');
 });
+
+test('every story reaches Montreux and the shepherd twist', () => {
+  for (const pov of POVS) {
+    const { scenes } = playSaga(pov);
+    const ids = scenes.map((s) => s.id);
+    assert.ok(ids.includes('a0_montreux'), `${pov} skips Montreux`);
+    assert.ok(ids.includes('c4_shepherd'), `${pov} skips the twist`);
+  }
+});
+
+test('finding PSALM lets you unmask Le Berger', () => {
+  const { run } = playSaga('kolade', { prefer: ['c_lev_psalm'], secrets: true });
+  assert.ok(run.flags.includes('shepherd_exposed'));
+  assert.ok(run.flags.includes('spent_s_psalm'));
+});
+
+test('you cannot shield a lover who already died on the mountain', () => {
+  const { run } = playSaga('nabyen', { prefer: ['c_tari', 'c_sit_tari', 'c_kiss_tari', 'c_send_tari', 'c_shield'] });
+  assert.ok(run.flags.includes('dead_tari'));
+  assert.ok(!run.flags.includes('shielded_partner'));
+});
+
+test('every scene, line and choice sound name exists in the audio engine', async () => {
+  const { MUSIC, SFX } = await import('../src/ui/audio.js');
+  for (const ch of chapters) {
+    for (const s of ch.scenes) {
+      if (s.music) assert.ok(MUSIC.includes(s.music), `${s.id}: ${s.music}`);
+      for (const l of [...(s.lines || []), ...(s.choices || []).flatMap((c) => c.response || [])]) {
+        if (l.sfx) assert.ok(SFX.includes(l.sfx), `${s.id}: ${l.sfx}`);
+      }
+    }
+  }
+});

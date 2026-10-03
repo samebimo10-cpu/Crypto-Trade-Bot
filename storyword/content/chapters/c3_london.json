@@ -29,6 +29,11 @@
           "text": "The first half of the will. And a key. The Chief said only his blood could open his box in Geneva."
         },
         {"speaker": "oliver", "text": "I never understood what he meant. Perhaps one of you does."},
+        {
+          "speaker": "oliver",
+          "mood": "worried",
+          "text": "And one more thing. Near the end, the Chief told me Elise Moreau was never working alone. 'Every wolf has a shepherd,' he said. I thought he was being poetic."
+        },
         {"speaker": "narrator", "text": "Nabyen's hand closes around the coral bracelet in her pocket."}
       ],
       "prompt": "Oliver looks like a man who hasn't slept in a week.",
@@ -60,7 +65,8 @@
         }
       ],
       "puzzle": "l_thames",
-      "next": "l2_embankment"
+      "next": "l2_embankment",
+      "music": "calm"
     },
     {
       "id": "l2_embankment",
@@ -70,13 +76,15 @@
         {"speaker": "narrator", "text": "Nine o'clock. Fog on the Embankment, and lamps like drowned moons."},
         {
           "speaker": "narrator",
-          "text": "Oliver is late. Then he isn't late. He's lying on the stone steps down to the river."
+          "text": "Oliver is late. Then he isn't late. He's lying on the stone steps down to the river.",
+          "sfx": "sting_reveal"
         },
-        {"speaker": "oliver", "mood": "sad", "text": "...Moreau... it was always... Moreau..."},
+        {"speaker": "oliver", "mood": "sad", "text": "...Moreau... and the shepherd... the shepherd..."},
         {"speaker": "narrator", "text": "His hand opens. In his palm is a small brass key."},
         {
           "speaker": "narrator",
-          "text": "Footsteps, running. A shadow in a long coat is disappearing toward Waterloo Bridge."
+          "text": "Footsteps, running. A shadow in a long coat is disappearing toward Waterloo Bridge.",
+          "sfx": "heartbeat"
         }
       ],
       "prompt": "Oliver Ashworth is dying.",
@@ -90,7 +98,8 @@
             {"speaker": "oliver", "mood": "sad", "text": "Tell the girl... her father... was so proud..."},
             {
               "speaker": "narrator",
-              "text": "Oliver Ashworth, solicitor, sixty-one years old, dies on the steps of the Thames as the fog closes over him."
+              "text": "Oliver Ashworth, solicitor, sixty-one years old, dies on the steps of the Thames as the fog closes over him.",
+              "sfx": "sting_death"
             }
           ],
           "tag": "LOYALTY"
@@ -103,7 +112,8 @@
           "response": [
             {
               "speaker": "narrator",
-              "text": "Down the Embankment, across the bridge, and into a black car with Swiss diplomatic plates."
+              "text": "Down the Embankment, across the bridge, and into a black car with Swiss diplomatic plates.",
+              "sfx": "engine"
             },
             {"speaker": "narrator", "text": "When the chase is over, so is Oliver."}
           ],
@@ -117,7 +127,8 @@
           "response": [
             {
               "speaker": "narrator",
-              "text": "The Met arrive in eleven minutes. Oliver Ashworth has been dead for ten."
+              "text": "The Met arrive in eleven minutes. Oliver Ashworth has been dead for ten.",
+              "sfx": "sting_death"
             }
           ],
           "tag": "CONTROL"
@@ -126,7 +137,8 @@
       "puzzle": "l_murder",
       "next": [{"if": {"pov": "kolade", "flags": ["elise_deal"]}, "to": "l3_dark"}, {"to": "l3_pub"}],
       "tension": true,
-      "keepsake": "k_voice_oliver"
+      "keepsake": "k_voice_oliver",
+      "music": "tension"
     },
     {
       "id": "l3_pub",
@@ -200,7 +212,8 @@
           ]
         }
       ],
-      "next": "l4_bridge"
+      "next": "l4_bridge",
+      "music": "night"
     },
     {
       "id": "l3_dark",
@@ -243,7 +256,8 @@
         }
       ],
       "next": "l4_bridge",
-      "tension": true
+      "tension": true,
+      "music": "tension"
     },
     {
       "id": "l4_bridge",
@@ -301,14 +315,15 @@
           "response": [
             {
               "speaker": "narrator",
-              "text": "The fog swallows the bridge, the river, the whole city. For a moment, there's nobody left in London but the two of them."
+              "text": "Her mouth tastes of rain and London and something like home. The fog swallows the bridge, the river, the whole city, until there is nobody left in London but the two of you."
             },
             {"speaker": "nabyen", "mood": "smile", "text": "...Okay. So that happened."}
           ],
           "tag": "DESIRE",
           "rel": {"nabyen": {"intimacy": 20, "tension": 5}},
           "gate": {"if": {"rel": {"nabyen": {"minIntimacy": 30}}}, "label": "Requires intimacy 30+ with Nabyen"},
-          "risk": "High risk"
+          "risk": "High risk",
+          "sfx": "sting_romance"
         },
         {
           "id": "c_stay_n",
@@ -338,14 +353,15 @@
           "response": [
             {
               "speaker": "narrator",
-              "text": "He tastes like rain and the river. Big Ben strikes again, and neither of them hears it."
+              "text": "He kisses her like a man who has waited twenty years and is done waiting. Big Ben strikes again. Neither of them hears it."
             },
             {"speaker": "tari", "mood": "smile", "text": "Twenty years I've wanted to do that."}
           ],
           "tag": "DESIRE",
           "rel": {"tari": {"intimacy": 20}},
           "gate": {"if": {"rel": {"tari": {"minIntimacy": 30}}}, "label": "Requires intimacy 30+ with Tari"},
-          "risk": "High risk"
+          "risk": "High risk",
+          "sfx": "sting_romance"
         },
         {
           "id": "c_kiss_kolade",
@@ -354,7 +370,10 @@
           "effects": {"affection": 15, "desire": 15},
           "setFlags": ["romance_kolade"],
           "response": [
-            {"speaker": "narrator", "text": "The coffee goes into the Thames. Neither of them notices."},
+            {
+              "speaker": "narrator",
+              "text": "The coffee goes into the Thames. His hand at the small of her back, careful, as if she might vanish. For once, Kolade Balogun isn't performing for anyone."
+            },
             {
               "speaker": "kolade",
               "mood": "smile",
@@ -364,7 +383,8 @@
           "tag": "DESIRE",
           "rel": {"kolade": {"intimacy": 20, "tension": -5}},
           "gate": {"if": {"rel": {"kolade": {"minIntimacy": 30}}}, "label": "Requires intimacy 30+ with Kolade"},
-          "risk": "High risk"
+          "risk": "High risk",
+          "sfx": "sting_romance"
         },
         {
           "id": "c_call_mama",
@@ -382,7 +402,8 @@
         }
       ],
       "next": null,
-      "tension": true
+      "tension": true,
+      "music": "romance"
     }
   ],
   "outcomes": [

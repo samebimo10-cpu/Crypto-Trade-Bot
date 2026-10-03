@@ -78,13 +78,14 @@
         }
       ],
       "puzzle": "t_waters",
-      "next": "t2_call"
+      "next": "t2_call",
+      "music": "night"
     },
     {
       "id": "t2_call",
       "background": "bayelsa",
       "lines": [
-        {"speaker": "narrator", "text": "His phone rings. Port Harcourt. The widow."},
+        {"speaker": "narrator", "text": "His phone rings. Port Harcourt. The widow.", "sfx": "phone"},
         {
           "speaker": "ibiere",
           "mood": "angry",
@@ -129,7 +130,8 @@
           "tag": "CONTROL"
         }
       ],
-      "next": "t3_night"
+      "next": "t3_night",
+      "music": "tension"
     },
     {
       "id": "t3_night",
@@ -137,13 +139,18 @@
       "memory": "m_night_creek",
       "lines": [
         {"speaker": "narrator", "text": "Midnight on the creeks. No moon cover, no engines but his own."},
-        {"speaker": "narrator", "text": "Then another engine. Fast. Lights off."},
-        {"speaker": "tari", "mood": "angry", "text": "DOWN!"},
+        {"speaker": "narrator", "text": "Then another engine. Fast. Lights off.", "sfx": "engine"},
+        {"speaker": "tari", "mood": "angry", "text": "DOWN!", "sfx": "gunshot"},
         {
           "speaker": "narrator",
-          "text": "Bullets chew the mangroves. A speedboat swings past, and something heavy splashes into the water beside him."
+          "text": "Bullets chew the mangroves. A speedboat swings past, and something heavy splashes into the water beside him.",
+          "sfx": "gunshot"
         },
-        {"speaker": "narrator", "text": "One of the attackers has gone overboard. He can't swim."}
+        {
+          "speaker": "narrator",
+          "text": "One of the attackers has gone overboard. He can't swim.",
+          "sfx": "splash"
+        }
       ],
       "prompt": "The speedboat is getting away. The man in the water is going under.",
       "choices": [
@@ -179,7 +186,9 @@
         }
       ],
       "puzzle": "t_rivers",
-      "next": "t4_dawn"
+      "next": "t4_dawn",
+      "music": "danger",
+      "tension": true
     },
     {
       "id": "t4_dawn",
@@ -229,7 +238,8 @@
           "rel": {"nabyen": {"tension": 10}}
         }
       ],
-      "next": null
+      "next": null,
+      "music": "romance"
     }
   ],
   "outcomes": [

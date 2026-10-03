@@ -4,8 +4,158 @@
   "title": "The Vault in the Alps",
   "place": "Geneva and Zermatt, Switzerland",
   "teaser": "A blue lake, a vault that only opens for blood, and a choice on the mountain that someone won't come back from.",
-  "start": "a1_geneva",
+  "start": "a0_montreux",
   "scenes": [
+    {
+      "id": "a0_montreux",
+      "background": "montreux_night",
+      "music": "romance",
+      "tension": true,
+      "memory": "m_montreux",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Montreux. The night before the bank. A grand old hotel on the lake, and nobody can sleep."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"notPov": "nabyen"},
+          "text": "Nabyen is on the balcony in borrowed silk, barefoot, watching the lights shiver on the water."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"notPov": "nabyen"},
+          "mood": "intimate",
+          "text": "Tomorrow we walk into the bank that killed my father. Tonight, I just want to pretend we are two people on holiday."
+        },
+        {
+          "speaker": "tari",
+          "if": {"pov": "nabyen", "anyFlags": ["spark_tari", "romance_tari"]},
+          "mood": "intimate",
+          "text": "I used to dream about this. Not the bank. You, somewhere quiet, not running."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"pov": "nabyen", "anyFlags": ["spark_kolade", "romance_kolade"]},
+          "mood": "intimate",
+          "text": "I booked the suite with the best view. Don't look at me like that. I booked two."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen", "notFlags": ["spark_tari", "romance_tari", "spark_kolade", "romance_kolade"]},
+          "text": "Nabyen is alone on the balcony. Someone has left a single red rose on the railing. No card."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Then, from the corridor, a sound. A key card trying the door. Once. Twice.",
+          "sfx": "knock"
+        }
+      ],
+      "prompt": "Someone is trying the door.",
+      "choices": [
+        {
+          "id": "c_dance_n",
+          "if": {"notPov": "nabyen"},
+          "tag": "DESIRE",
+          "risk": "High risk",
+          "sfx": "sting_romance",
+          "text": "Ignore it. Pull her close and dance to the music drifting up from the lobby.",
+          "effects": {"desire": 15, "control": -5},
+          "rel": {"nabyen": {"intimacy": 15, "tension": 5}},
+          "setFlags": ["spark_nabyen", "danced"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Slow, barefoot, the lake glittering below. Her head on your shoulder. The handle stops turning."
+            },
+            {"speaker": "nabyen", "mood": "intimate", "text": "Whoever it was will come back."},
+            {"speaker": "nabyen", "mood": "smile", "text": "Let them. Not yet. Not tonight."}
+          ]
+        },
+        {
+          "id": "c_dance_t",
+          "if": {"pov": "nabyen", "anyFlags": ["spark_tari", "romance_tari"]},
+          "tag": "DESIRE",
+          "risk": "High risk",
+          "sfx": "sting_romance",
+          "text": "Ignore it. Take Tari's hands and dance on the balcony.",
+          "effects": {"desire": 15, "control": -5},
+          "rel": {"tari": {"intimacy": 15}},
+          "setFlags": ["danced"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "He dances like a man who learned on a riverboat, which he did. She laughs for the first time since the funeral. The handle stops turning."
+            },
+            {"speaker": "tari", "mood": "intimate", "text": "Whoever it was, they can wait until morning."}
+          ]
+        },
+        {
+          "id": "c_dance_k",
+          "if": {"pov": "nabyen", "anyFlags": ["spark_kolade", "romance_kolade"]},
+          "tag": "DESIRE",
+          "risk": "High risk",
+          "sfx": "sting_romance",
+          "text": "Ignore it. Let Kolade lead her into a slow dance.",
+          "effects": {"desire": 15, "control": -5},
+          "rel": {"kolade": {"intimacy": 15, "tension": 5}},
+          "setFlags": ["danced"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "He is a beautiful dancer, of course he is. His heartbeat, though, is not as calm as his smile. The handle stops turning."
+            },
+            {
+              "speaker": "kolade",
+              "mood": "intimate",
+              "text": "I have never been afraid of anything in my life. I am afraid of how much I want this."
+            }
+          ]
+        },
+        {
+          "id": "c_fight_door",
+          "tag": "CONTROL",
+          "risk": "High risk",
+          "sfx": "door",
+          "text": "Grab the iron poker from the fireplace. Throw the door open.",
+          "effects": {"control": 10, "desire": 5},
+          "setFlags": ["fought_intruder"],
+          "keepsake": "k_syringe",
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "A man in a hotel uniform, a syringe in his gloved hand. The poker finds his wrist first.",
+              "sfx": "glass"
+            },
+            {
+              "speaker": "narrator",
+              "text": "Glass, shouting, footsteps pounding down the service stairs. He is gone. The syringe is not."
+            },
+            {
+              "speaker": "narrator",
+              "text": "It smells of nothing at all. Like thallium. Like the Chief's tea.",
+              "sfx": "sting_reveal"
+            }
+          ]
+        },
+        {
+          "id": "c_hide",
+          "tag": "LOYALTY",
+          "sfx": "heartbeat",
+          "text": "Kill the lights. Stay very still. Very close.",
+          "effects": {"loyalty": 10, "desire": 5},
+          "setFlags": ["hid_together"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "In the dark, two heartbeats, far too loud. The handle turns. Stops. Footsteps walk slowly away."
+            },
+            {"speaker": "narrator", "text": "Nobody moves for a long time. Nobody wants to."}
+          ]
+        }
+      ],
+      "next": "a1_geneva"
+    },
     {
       "id": "a1_geneva",
       "background": "geneva",
@@ -33,7 +183,8 @@
           "text": "Chief Okoro's box requires his key and the blood of an Okoro. I'm afraid none of you qualify."
         }
       ],
-      "next": "a2_vault"
+      "next": "a2_vault",
+      "music": "calm"
     },
     {
       "id": "a2_vault",
@@ -51,7 +202,8 @@
         {"speaker": "nabyen", "mood": "worried", "text": "The blood of an Okoro..."},
         {
           "speaker": "narrator",
-          "text": "Nabyen presses her finger to the glass. A needle, a single drop of red, and the great door begins to turn."
+          "text": "Nabyen presses her finger to the glass. A needle, a single drop of red, and the great door begins to turn.",
+          "sfx": "door"
         },
         {"speaker": "elise", "mood": "surprised", "text": "That's... impossible."},
         {
@@ -62,7 +214,12 @@
           "speaker": "letter",
           "text": "To my daughter Nabyen, and to the three children I chose: the crown belongs to whoever you choose, together. Elise Moreau has robbed me for ten years. The proof is in this book. — G.O."
         },
-        {"speaker": "elise", "mood": "angry", "text": "Guards!"}
+        {
+          "speaker": "narrator",
+          "text": "On the last page of the ledger, under every stolen transfer, two initials: E.M. And beneath them, smaller, a single letter in a different hand: B.",
+          "sfx": "sting_reveal"
+        },
+        {"speaker": "elise", "mood": "angry", "text": "Guards!", "sfx": "sting_reveal"}
       ],
       "prompt": "Elise Moreau's guards are pounding down the stairs.",
       "choices": [
@@ -96,7 +253,8 @@
       "puzzle": "a_geneva",
       "next": "a3_train",
       "tension": true,
-      "keepsake": "k_coral_whole"
+      "keepsake": "k_coral_whole",
+      "music": "tension"
     },
     {
       "id": "a3_train",
@@ -107,6 +265,12 @@
           "text": "The mountain train to Zermatt. Snow, pines, and a red carriage crawling up the edge of the world."
         },
         {"speaker": "narrator", "text": "Elise's men are two carriages behind them."},
+        {"speaker": "narrator", "text": "Two carriages back, a window shatters.", "sfx": "glass"},
+        {
+          "speaker": "narrator",
+          "text": "A shot whines off the steel rail beside your head.",
+          "sfx": "gunshot"
+        },
         {
           "speaker": "hadiza",
           "mood": "worried",
@@ -170,18 +334,24 @@
       ],
       "puzzle": "a_snow",
       "next": "a4_storm",
-      "tension": true
+      "tension": true,
+      "music": "danger"
     },
     {
       "id": "a4_storm",
       "background": "alps_storm",
       "memory": "m_storm_alps",
       "lines": [
-        {"speaker": "narrator", "text": "The storm comes in off the Matterhorn like the end of the world."},
+        {
+          "speaker": "narrator",
+          "text": "The storm comes in off the Matterhorn like the end of the world.",
+          "sfx": "thunder"
+        },
         {
           "speaker": "narrator",
           "if": {"flags": ["sent_tari"]},
-          "text": "Tari reaches the police post at Täsch with the ledger inside his jacket. The police find two bullets in him, and not one in the ledger."
+          "text": "Tari reaches the police post at Täsch with the ledger inside his jacket. The police find two bullets in him, and not one in the ledger.",
+          "sfx": "gunshot"
         },
         {
           "speaker": "tari",
@@ -192,7 +362,8 @@
         {
           "speaker": "narrator",
           "if": {"flags": ["sent_tari"]},
-          "text": "Tari Ebiowei, Prince of the Creeks, dies in the snow, very far from the river."
+          "text": "Tari Ebiowei, Prince of the Creeks, dies in the snow, very far from the river.",
+          "sfx": "sting_death"
         },
         {
           "speaker": "narrator",
@@ -208,12 +379,14 @@
         {
           "speaker": "narrator",
           "if": {"flags": ["sent_hadiza"]},
-          "text": "Hadiza Lawan, the sharpest mind in Kano, dies with the numbers balanced."
+          "text": "Hadiza Lawan, the sharpest mind in Kano, dies with the numbers balanced.",
+          "sfx": "sting_death"
         },
         {
           "speaker": "narrator",
           "if": {"flags": ["sent_kolade"]},
-          "text": "Kolade reaches the police post at Täsch running on pride and nothing else. Elise's men reach it a minute later."
+          "text": "Kolade reaches the police post at Täsch running on pride and nothing else. Elise's men reach it a minute later.",
+          "sfx": "gunshot"
         },
         {
           "speaker": "kolade",
@@ -224,7 +397,8 @@
         {
           "speaker": "narrator",
           "if": {"flags": ["sent_kolade"]},
-          "text": "Kolade Balogun dies with his phone still recording. The recording is enough to convict Elise twice over."
+          "text": "Kolade Balogun dies with his phone still recording. The recording is enough to convict Elise twice over.",
+          "sfx": "sting_death"
         },
         {
           "speaker": "narrator",
@@ -263,6 +437,12 @@
             {
               "speaker": "narrator",
               "text": "By the time her lawyers arrive, Elise Moreau has confessed to everything. The poison. The spoon. Oliver."
+            },
+            {
+              "speaker": "elise",
+              "mood": "smile",
+              "text": "You think I'm the wolf? Every wolf has a shepherd, darling. Ask yourself who knew exactly how your Chief took his tea.",
+              "sfx": "sting_reveal"
             }
           ]
         },
@@ -325,7 +505,8 @@
         }
       ],
       "next": null,
-      "tension": true
+      "tension": true,
+      "music": "sorrow"
     }
   ],
   "outcomes": [
@@ -378,6 +559,11 @@
       "title": "The Storm on the Pass",
       "background": "alps_storm",
       "text": "Somebody didn't come back down the mountain."
+    },
+    "m_montreux": {
+      "title": "Montreux, Midnight",
+      "background": "montreux_night",
+      "text": "Silk, a moonlit lake, and a key card trying the door."
     }
   },
   "keepsakes": {
@@ -386,6 +572,12 @@
       "title": "The coral bracelet, whole",
       "from": "Vault 7, Banque Moreau",
       "text": "Two halves, thirty years apart. A perfect fit."
+    },
+    "k_syringe": {
+      "type": "memento",
+      "title": "A hotel syringe",
+      "from": "The intruder in Montreux",
+      "text": "Thallium. Enough to stop a heart in a day and leave no trace by morning."
     }
   }
 }

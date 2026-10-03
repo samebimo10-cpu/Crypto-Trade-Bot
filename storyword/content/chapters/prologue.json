@@ -14,7 +14,8 @@
       "lines": [
         {
           "speaker": "narrator",
-          "text": "Port Harcourt. The rain came in off the Bonny River like it had a grudge."
+          "text": "Port Harcourt. The rain came in off the Bonny River like it had a grudge.",
+          "sfx": "thunder"
         },
         {
           "speaker": "narrator",
@@ -36,19 +37,30 @@
         },
         {
           "speaker": "narrator",
+          "text": "A silver spoon lay on the saucer beside his cup. A gift from Geneva. He had stirred his tea with it twice."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Somewhere in the house, a door closed very softly. The Chief did not hear it.",
+          "sfx": "door"
+        },
+        {
+          "speaker": "narrator",
           "text": "He sealed four letters with red wax, pressed his ring into each one, and called for his driver."
         },
         {"speaker": "gideon", "text": "If I do not wake up, send them. All four. Before the vultures land."}
       ],
       "puzzle": "pr_crown",
       "next": "pr_dawn",
-      "keepsake": "k_voice_gideon"
+      "keepsake": "k_voice_gideon",
+      "music": "night",
+      "tension": true
     },
     {
       "id": "pr_dawn",
       "background": "ph_day",
       "lines": [
-        {"speaker": "narrator", "text": "Chief Gideon Okoro did not wake up."},
+        {"speaker": "narrator", "text": "Chief Gideon Okoro did not wake up.", "sfx": "sting_death"},
         {
           "speaker": "narrator",
           "text": "By dawn, four letters were racing across Nigeria: north to the granite rocks of Jos, south to the creeks of Bayelsa, up to the ancient walls of Kano, and west to Lagos, which never sleeps."
@@ -62,7 +74,8 @@
         {"id": "pick_hadiza", "pov": "hadiza", "text": "Hadiza Lawan, House of the Walls"},
         {"id": "pick_kolade", "pov": "kolade", "text": "Kolade Balogun, House of the Lagoon"}
       ],
-      "next": null
+      "next": null,
+      "music": "title"
     }
   ],
   "outcomes": [

@@ -65,7 +65,8 @@
         }
       ],
       "puzzle": "k_bridge",
-      "next": "k2_vi"
+      "next": "k2_vi",
+      "music": "calm"
     },
     {
       "id": "k2_vi",
@@ -119,13 +120,36 @@
           "keepsake": "k_voice_elise"
         }
       ],
-      "next": "k3_beach"
+      "next": "k3_beach",
+      "music": "tension",
+      "tension": true
     },
     {
       "id": "k3_beach",
       "background": "lagos_beach",
       "memory": "m_beach",
       "lines": [
+        {
+          "speaker": "narrator",
+          "text": "On the drive to Lekki, a motorbike pulls level with his window. The rider lifts two fingers like a gun, taps the glass twice, and is gone into the traffic.",
+          "sfx": "engine"
+        },
+        {
+          "speaker": "phone",
+          "if": {"flags": ["elise_deal"]},
+          "text": "A photo, from a private number: Kolade asleep in his own bed, taken last night. 'We keep our partners close, Monsieur.'"
+        },
+        {
+          "speaker": "phone",
+          "if": {"flags": ["refused_elise"]},
+          "text": "'Fools live longer, Monsieur. Usually.'"
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["double_agent"]},
+          "text": "He checks the cloud for his recording of Elise. Someone has already deleted it. Only the copy on his phone survived.",
+          "sfx": "sting_reveal"
+        },
         {"speaker": "narrator", "text": "Dawn on the beach at Lekki. The Atlantic doesn't care about crowns."},
         {
           "speaker": "kolade",
@@ -163,7 +187,8 @@
         }
       ],
       "puzzle": "k_lagos",
-      "next": null
+      "next": null,
+      "music": "danger"
     }
   ],
   "outcomes": [

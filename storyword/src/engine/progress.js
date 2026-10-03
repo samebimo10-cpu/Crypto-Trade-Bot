@@ -34,7 +34,7 @@ export function newProfile() {
     bestStreak: 0,
     memories: [], // memory ids
     keepsakes: [], // keepsake ids: voice notes, letters, mementos
-    settings: { sound: false },
+    settings: { sound: true, soundV: 2 },
     secrets: [], // secret ids
     completedChapters: [], // chapter ids
     endings: [], // outcome ids seen

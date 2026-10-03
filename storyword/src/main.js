@@ -28,6 +28,7 @@ const ui = {
   daily: null, // { key, entry, lineIndex, phase }
   shake: false,
   scene: null, // background currently drawn
+  lastLine: null, // the line whose sound effect already played
   atmosphere: null, // particle overlay currently drawn
   lastSpeaker: null,
 };
@@ -62,6 +63,7 @@ function migrate(p) {
     }
   };
   fill(p.run);
+  if ((p.settings?.soundV ?? 0) < 2) p.settings = { ...p.settings, sound: true, soundV: 2 };
   for (const cp of p.run?.checkpoints ?? []) fill(cp.run);
   return p;
 }
@@ -156,11 +158,12 @@ function go(screen) {
 }
 
 // mode: 'full' (story), 'dim' (puzzle, home) or 'none' (menus)
-function setScene(key, mode = 'full', { tension = false } = {}) {
+function setScene(key, mode = 'full', { tension = false, music = null, ambience } = {}) {
   document.body.dataset.scene = key ? mode : 'none';
   document.body.dataset.tension = tension ? 'on' : 'off';
   setAtmosphere(key ? ATMOSPHERE[key] : null);
-  Audio.setMood(tension ? 'tension' : NIGHT.has(key) ? 'night' : 'calm');
+  Audio.playMusic(music ?? (tension ? 'tension' : NIGHT.has(key) ? 'night' : 'calm'));
+  Audio.setAmbience(ambience !== undefined ? ambience : key ? AMBIENT_SOUND[key] ?? null : null);
   if (!key || key === ui.scene) return;
   ui.scene = key;
   sceneLayer.innerHTML = sceneSVG(key);
@@ -173,7 +176,13 @@ const ATMOSPHERE = {
   london: 'mist', london_night: 'mist', creek_night: 'mist', bayelsa: 'mist', ph_night: 'mist',
   vault: 'dust', geneva: 'dust', lagos_night: 'dust', ph_day: 'dust',
 };
-const NIGHT = new Set(['ph_night', 'creek_night', 'london_night', 'lagos_night', 'road_night', 'jos_dusk', 'ph_garden', 'kano_market', 'alps_storm']);
+const AMBIENT_SOUND = {
+  ph_night: 'storm', london: 'rain', london_night: 'rain', alps: 'wind', alps_storm: 'wind',
+  caribbean: 'waves', caribbean_sunset: 'waves', lagos_beach: 'waves', bayelsa: 'waves', creek_night: 'waves',
+  geneva: 'waves', montreux_night: 'waves', ph_garden: 'crickets', jos_dusk: 'crickets', road_night: 'crickets',
+  mansion: 'fire', kano_market: 'fire',
+};
+const NIGHT = new Set(['montreux_night', 'ph_night', 'creek_night', 'london_night', 'lagos_night', 'road_night', 'jos_dusk', 'ph_garden', 'kano_market', 'alps_storm']);
 
 function setAtmosphere(kind) {
   if (kind === ui.atmosphere) return;
@@ -194,11 +203,16 @@ function setAtmosphere(kind) {
   fxLayer.innerHTML = `<div class="fx fx-${kind}">${html}</div>`;
 }
 
+function soundButton() {
+  const on = profile.settings?.sound !== false;
+  return `<button class="icon-btn sound${on ? '' : ' off'}" data-action="sound" aria-pressed="${on}" aria-label="${on ? 'Turn sound off' : 'Turn sound on'}">♪</button>`;
+}
+
 function topbar(label, { hints = false, tools = false } = {}) {
   const held = profile.run ? Story.heldLeverage(profile.run, C.story.secretFlags || []).length : 0;
   const extras = tools
     ? `<button class="pill pill-btn" data-action="leverage" aria-label="Leverage: secrets you hold">🗝 ${held}</button>
-       <button class="icon-btn sound${Audio.isOn() ? '' : ' off'}" data-action="sound" aria-pressed="${Audio.isOn()}" aria-label="${Audio.isOn() ? 'Turn sound off' : 'Turn sound on'}">♪</button>`
+       ${soundButton()}`
     : '';
   return `<header class="topbar">
     <button class="icon-btn" data-action="home" aria-label="Home">⌂</button>
@@ -224,7 +238,7 @@ function renderHome() {
   const chapter = currentChapter();
   const inProgress = run && !run.complete;
   const sceneKey = run ? Story.getScene(chapter, run.sceneId).background : 'jos';
-  setScene(sceneKey, 'dim');
+  setScene(sceneKey, 'dim', { music: 'title', ambience: null });
   const heroine = C.characters[C.story.heroine];
   const today = Progress.dateKey();
   const dailyDone = Progress.dailyDone(profile, today);
@@ -237,6 +251,7 @@ function renderHome() {
     <header class="topbar">
       <span class="pill">⭐ ${profile.stars}</span>
       <span class="pill">🪙 ${profile.coins}</span>
+      ${soundButton()}
       <button class="icon-btn" data-action="profile" aria-label="Your progress">☰</button>
     </header>
     <h1 class="logo">STORY<span>WORD</span></h1>
@@ -305,12 +320,14 @@ function renderStory() {
   const label = `${chapterLabel(chapter)} · ${chapter.place}`;
   const tension = Boolean(view.scene.tension);
 
+  const music = view.scene.music;
   if (view.type === 'puzzle') {
-    setScene(view.scene.background, 'dim', { tension });
+    setScene(view.scene.background, 'dim', { tension, music: music ?? (tension ? 'tension' : 'calm') });
     startPuzzle(`${chapter.id}:${view.puzzleId}`, C.puzzles[view.puzzleId], 'story');
     return renderPuzzle(chapterLabel(chapter));
   }
-  setScene(view.scene.background, 'full', { tension: tension || view.type === 'choice' && view.choices.some((c) => c.risk || c.leverage) });
+  setScene(view.scene.background, 'full', { tension: tension || view.type === 'choice' && view.choices.some((c) => c.risk || c.leverage), music });
+  if (view.type === 'line') lineSound(view, run);
   if (view.type === 'choice') {
     if (view.choices.some((c) => c.pov)) return renderCharacterSelect(view);
     return `<main class="screen story">
@@ -326,6 +343,17 @@ function renderStory() {
     ${topbar(label, { tools: true })}
     ${lineHTML(view.line, run)}
   </main>`;
+}
+
+// Each line plays its sound once: an explicit `sfx`, or a page turn for
+// letters and a buzz for text messages.
+function lineSound(view, run) {
+  const key = `${run.chapterId}/${view.scene.id}/${run.phase}/${view.index}`;
+  if (ui.lastLine === key) return;
+  ui.lastLine = key;
+  const ch = C.characters[view.line.speaker] || {};
+  const name = view.line.sfx ?? (ch.letter ? 'page' : ch.message ? 'phone' : null);
+  if (name) Audio.sfx(name);
 }
 
 const TAG_HINT = { DESIRE: 'Desire', CONTROL: 'Control', LOYALTY: 'Loyalty', LUXURY: 'Luxury', LEVERAGE: 'Leverage' };
@@ -352,6 +380,7 @@ function awardKeepsake(chapter, id) {
   profile = next;
   persist();
   const k = keepsakeById(id);
+  Audio.sfx('keepsake');
   toast(`${KEEPSAKE_ICON[k.type] ?? '◆'} Keepsake: ${k.title}`);
 }
 
@@ -523,6 +552,7 @@ function submitGuess() {
     unknown: `${res.word} isn't a word we know`,
   }[res.result];
   if (res.result === 'unknown' || res.result === 'too-short') ui.shake = true;
+  Audio.sfx({ required: 'correct', bonus: 'bonus', repeat: 'tap', 'too-short': 'wrong', unknown: 'wrong' }[res.result]);
   if (res.result === 'bonus') {
     const credit = Progress.creditBonusWord(profile);
     profile = credit.profile;
@@ -530,6 +560,7 @@ function submitGuess() {
   }
   if (res.secret && !p.secretFlags.includes(res.secret.id)) {
     p.secretFlags.push(res.secret.id);
+    Audio.sfx('secret');
     collectSecrets([res.secret.id]);
   }
   afterPuzzleChange();
@@ -548,6 +579,7 @@ function useHint() {
   if (!hint) return;
   p.state = state;
   p.guess = [];
+  Audio.sfx('swell');
   p.feedback = {
     [Puzzle.HINT_LEVELS.FIRST_LETTER]: 'First letter revealed',
     [Puzzle.HINT_LEVELS.REMOVE_LETTERS]: "Letters you don't need are gone",
@@ -569,6 +601,7 @@ function afterPuzzleChange() {
 function finishPuzzle() {
   const p = ui.puzzle;
   const stars = Puzzle.starsFor(p.state);
+  setTimeout(() => Audio.sfx('solved'), 250);
   const res = Progress.rewardPuzzle(profile, p.state, stars);
   const extra = p.puzzle.reward?.coins ?? 0;
   profile = { ...res.profile, coins: res.profile.coins + extra, puzzleProgress: null };
@@ -692,9 +725,10 @@ const endingsSeen = () => profile.endings.filter((e) => e.startsWith('end_')).le
 function renderResults() {
   const run = profile.run;
   if (!run?.complete) return renderHome();
-  setScene(null);
   const chapter = currentChapter();
   const outcome = (chapter.outcomes || []).find((o) => o.id === run.outcomeId);
+  const sad = ['end_ashes', 'end_betrayal'].includes(run.outcomeId) || /^a_(tari|hadiza|kolade)$/.test(run.outcomeId ?? '');
+  setScene(null, 'none', { music: sad ? 'sorrow' : chapter.number === 5 ? 'triumph' : 'calm' });
   const reflections = (chapter.reflections || []).filter((r) => Story.checkCondition(r.if, run));
   const puzzles = Object.values(run.puzzles);
   const stars = puzzles.reduce((s, p) => s + p.stars, 0) + (run.chapterReward?.stars ?? 0);
@@ -739,7 +773,7 @@ function renderResults() {
 // --- Profile and memories ---------------------------------------------------
 
 function renderProfile() {
-  setScene(null);
+  setScene(null, 'none', { music: 'calm' });
   const run = profile.run;
   const chapter = run && currentChapter();
   const stats = run?.stats ?? profile.lastStats;
@@ -771,7 +805,7 @@ function renderProfile() {
 }
 
 function renderMemories() {
-  setScene(null);
+  setScene(null, 'none', { music: 'romance' });
   const cards = C.chapters.flatMap((ch) =>
     Object.entries(ch.memories || {}).map(([id, m]) =>
       profile.memories.includes(id)
@@ -863,9 +897,10 @@ const actions = {
     render();
   },
   sound() {
-    if (Audio.isOn()) Audio.disable();
-    else Audio.enable(document.body.dataset.tension === 'on' ? 'tension' : 'calm');
-    profile.settings = { ...profile.settings, sound: Audio.isOn() };
+    const on = profile.settings?.sound !== false;
+    profile.settings = { ...profile.settings, sound: !on };
+    if (on) Audio.disable();
+    else Audio.unlock();
     persist();
     render();
   },
@@ -906,10 +941,16 @@ const actions = {
     collectSecrets(run.flags);
     persist();
     if (choice.keepsake) awardKeepsake(currentChapter(), choice.keepsake);
+    Audio.sfx(choice.sfx ?? (choice.leverage ? 'sting_reveal' : 'select'));
     if (choice.leverage) toast(`🗝 You played: ${secretById(choice.leverage)?.title}`);
+    let warmer = false;
     for (const r of relationshipsFor(run)) {
-      if (before[r.id] && before[r.id] !== r.status) toast(`${r.c.name}: ${before[r.id]} → ${r.status}`);
+      if (before[r.id] && before[r.id] !== r.status) {
+        toast(`${r.c.name}: ${before[r.id]} → ${r.status}`);
+        warmer ||= (choice.rel?.[r.id]?.intimacy ?? 0) > 0;
+      }
     }
+    if (warmer && !choice.sfx) setTimeout(() => Audio.sfx('sting_romance'), 350);
     if (choice.echo) toast(choice.echo);
     if (choice.pov) toast(`You are ${C.characters[choice.pov].fullName}.`);
     render();
@@ -924,6 +965,7 @@ const actions = {
     const i = Number(el.dataset.i);
     const p = ui.puzzle;
     if (!p.guess.includes(i) && !p.state.disabledTiles.includes(i)) {
+      Audio.sfx('letter', { index: p.guess.length });
       p.guess.push(i);
       p.feedback = '';
       render();
@@ -967,7 +1009,8 @@ const actions = {
 };
 
 function onClick(e) {
-  if (profile.settings?.sound && !Audio.isOn()) Audio.enable(document.body.dataset.tension === 'on' ? 'tension' : 'calm');
+  // Browsers only start audio from a tap, so the first tap anywhere starts the score.
+  if (profile.settings?.sound !== false && !Audio.isOn() && !e.target.closest('[data-action=sound]')) Audio.unlock();
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled) return;
   // While an overlay is up, only its own buttons respond.

@@ -87,7 +87,8 @@
         }
       ],
       "puzzle": "n_stones",
-      "next": "n2_dusk"
+      "next": "n2_dusk",
+      "music": "calm"
     },
     {
       "id": "n2_dusk",
@@ -167,7 +168,8 @@
       ],
       "puzzle": "n_plateau",
       "next": "n3_market",
-      "keepsake": "k_bracelet"
+      "keepsake": "k_bracelet",
+      "music": "sorrow"
     },
     {
       "id": "n3_market",
@@ -198,7 +200,8 @@
         {
           "speaker": "tari",
           "mood": "worried",
-          "text": "Nabyen? It's Tari. Tari Ebiowei. The Chief asked me to keep you safe. Don't get in any car from Lagos."
+          "text": "Nabyen? It's Tari. Tari Ebiowei. The Chief asked me to keep you safe. Don't get in any car from Lagos.",
+          "sfx": "phone"
         }
       ],
       "prompt": "Two men. Two offers.",
@@ -250,13 +253,26 @@
           "tag": "CONTROL"
         }
       ],
-      "next": "n4_road"
+      "next": "n4_road",
+      "music": "romance"
     },
     {
       "id": "n4_road",
       "background": "road_night",
       "memory": "m_road",
       "lines": [
+        {
+          "speaker": "narrator",
+          "text": "As the road climbs out of Jos, Nabyen looks back. The sky over Terminus market is glowing orange.",
+          "sfx": "fire"
+        },
+        {"speaker": "narrator", "text": "Her stall. Her mother's stall. Thirty years of it, burning."},
+        {"speaker": "phone", "text": "That was a warning, Miss Dalyop. The next one won't be."},
+        {
+          "speaker": "nabyen",
+          "mood": "defiant",
+          "text": "Whoever you are, you just made the worst mistake of your life."
+        },
         {
           "speaker": "narrator",
           "if": {"flags": ["ally_kolade"]},
@@ -302,7 +318,9 @@
         }
       ],
       "next": null,
-      "keepsake": "k_card"
+      "keepsake": "k_card",
+      "music": "danger",
+      "tension": true
     }
   ],
   "outcomes": [

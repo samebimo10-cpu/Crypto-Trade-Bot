@@ -42,6 +42,10 @@
           "mood": "sad",
           "text": "The Lagos boy. Gideon said he was all ambition and no peace. I hope he has peace now."
         },
+        {
+          "speaker": "narrator",
+          "text": "His hands are perfectly steady as he pours. Too steady, for a man who has just lost his only brother."
+        },
         {"speaker": "marcus", "text": "I have the last seal, and his last instruction: you choose. Together."}
       ],
       "prompt": "Marcus pours the rum.",
@@ -63,7 +67,8 @@
       ],
       "puzzle": "c_island",
       "next": "c2_ibiere",
-      "keepsake": "k_letters_marcus"
+      "keepsake": "k_letters_marcus",
+      "music": "calm"
     },
     {
       "id": "c2_ibiere",
@@ -135,7 +140,8 @@
         }
       ],
       "next": "c3_vote",
-      "tension": true
+      "tension": true,
+      "music": "tension"
     },
     {
       "id": "c3_vote",
@@ -189,6 +195,169 @@
         }
       ],
       "puzzle": "c_palms",
+      "next": "c4_shepherd",
+      "tension": true,
+      "music": "night"
+    },
+    {
+      "id": "c4_shepherd",
+      "background": "caribbean_sunset",
+      "music": "danger",
+      "tension": true,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The vote is barely counted when the steel band stops playing.",
+          "sfx": "sting_reveal"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Marcus is standing at the top of the steps. The rum glass is gone. In its place, a small black pistol."
+        },
+        {
+          "speaker": "marcus",
+          "mood": "smile",
+          "text": "Forty years of Christmas letters. 'Next year I will come, little brother.' He never came."
+        },
+        {
+          "speaker": "marcus",
+          "mood": "angry",
+          "text": "He got the empire. I got a pink house and a promise. So I made my own arrangements."
+        },
+        {"speaker": "narrator", "text": "Somewhere behind you, a glass hits the floor.", "sfx": "glass"},
+        {"speaker": "ibiere", "mood": "surprised", "text": "You. It was you. Elise worked for you."},
+        {
+          "speaker": "marcus",
+          "mood": "smile",
+          "text": "Elise worked for money. I gave her a reason. Le Berger, she called me. The shepherd. B, on the last page of every ledger."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["s_psalm"]},
+          "text": "The Lord is my shepherd. The psalm he hums every sunset was never a prayer. It was a signature."
+        },
+        {"speaker": "marcus", "text": "Now. Which of you wants to hand me the seal?"}
+      ],
+      "prompt": "Marcus has the gun, the seal, and nothing left to lose.",
+      "choices": [
+        {
+          "id": "c_lev_psalm",
+          "leverage": "s_psalm",
+          "tag": "LEVERAGE",
+          "risk": "High risk",
+          "text": "\"'The Lord is my shepherd.' Every sunset you hummed your own confession, Marcus. Le Berger.\"",
+          "effects": {"control": 15},
+          "setFlags": ["shepherd_exposed", "marcus_caught"],
+          "response": [
+            {"speaker": "marcus", "mood": "surprised", "text": "...Clever. Gideon would have liked you."},
+            {
+              "speaker": "narrator",
+              "text": "His hand wavers for half a second. It's enough. Ibiere's bodyguards were never just guests. Marcus is face down in the sand before the steel band's last note fades.",
+              "sfx": "heartbeat"
+            }
+          ]
+        },
+        {
+          "id": "c_shield",
+          "if": {
+            "any": [
+              {"flags": ["romance_nabyen"]},
+              {"flags": ["romance_tari"], "notFlags": ["dead_tari"]},
+              {"flags": ["romance_kolade"], "notFlags": ["dead_kolade"]}
+            ]
+          },
+          "tag": "DESIRE",
+          "risk": "High risk",
+          "text": "Step between the gun and the one you love.",
+          "effects": {"desire": 15, "loyalty": 10},
+          "setFlags": ["shielded_partner", "marcus_caught"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "The shot is louder than the steel band ever was.",
+              "sfx": "gunshot"
+            },
+            {
+              "speaker": "narrator",
+              "text": "{pov} goes down on the sand. The bullet passes clean through the shoulder. Bleeding. Alive."
+            },
+            {
+              "speaker": "nabyen",
+              "if": {"flags": ["romance_nabyen"]},
+              "mood": "worried",
+              "text": "Look at me. LOOK at me. You do not get to leave me on a beach."
+            },
+            {
+              "speaker": "tari",
+              "if": {"flags": ["romance_tari"], "notFlags": ["dead_tari"]},
+              "mood": "worried",
+              "text": "Nabyen! Nabyen, stay with me. Stay with me!"
+            },
+            {
+              "speaker": "kolade",
+              "if": {"flags": ["romance_kolade"], "notFlags": ["dead_kolade"]},
+              "mood": "worried",
+              "text": "No. No, no, no. Somebody call a doctor! I will buy the whole island a hospital!"
+            },
+            {
+              "speaker": "narrator",
+              "text": "In the chaos, Ibiere breaks a bottle over Marcus's head. Nobody has ever seen her look happier."
+            }
+          ]
+        },
+        {
+          "id": "c_talk_down",
+          "tag": "LOYALTY",
+          "text": "\"He kept every letter you ever sent him, Marcus. Every one. They were in the vault.\"",
+          "effects": {"loyalty": 10, "trust": 10},
+          "setFlags": ["marcus_broken", "marcus_caught"],
+          "response": [
+            {"speaker": "marcus", "mood": "sad", "text": "...He kept them?"},
+            {
+              "speaker": "narrator",
+              "text": "The gun lowers, an inch at a time. Marcus sits down heavily on the steps and sets it on the sand."
+            },
+            {
+              "speaker": "marcus",
+              "mood": "sad",
+              "text": "Call whoever you like. I am tired. I have been tired for forty years."
+            }
+          ]
+        },
+        {
+          "id": "c_go_gun",
+          "tag": "CONTROL",
+          "risk": "High risk",
+          "text": "Go for the gun.",
+          "effects": {"control": 10, "desire": 10},
+          "setFlags": ["fought_marcus"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "if": {"min": {"control": 70}},
+              "text": "{pov} is faster. The gun skids across the sand and into the surf.",
+              "sfx": "splash"
+            },
+            {
+              "speaker": "narrator",
+              "if": {"min": {"control": 70}},
+              "text": "Marcus is still reaching for it when the Tobago police come up the steps."
+            },
+            {
+              "speaker": "narrator",
+              "if": {"max": {"control": 69}},
+              "text": "The gun goes off. The lantern above Ibiere's head explodes in a shower of glass.",
+              "sfx": "gunshot"
+            },
+            {
+              "speaker": "narrator",
+              "if": {"max": {"control": 69}},
+              "text": "In the chaos, Marcus is gone: down the beach, into the seaplane, into the dark.",
+              "sfx": "engine"
+            }
+          ]
+        }
+      ],
       "next": [
         {"if": {"flags": ["betrayer"]}, "to": "end_betrayal"},
         {"if": {"flags": ["romance_tari", "dead_tari"]}, "to": "end_ashes"},
@@ -225,8 +394,7 @@
         },
         {"if": {"flags": ["crowned_self"]}, "to": "end_crown"},
         {"to": "end_council"}
-      ],
-      "tension": true
+      ]
     },
     {
       "id": "end_wedding",
@@ -278,7 +446,11 @@
           "if": {"flags": ["council"]},
           "text": "At the head table sit the four houses, every voice equal, and nobody wearing a crown at all."
         },
-        {"speaker": "marcus", "mood": "smile", "text": "Some stories end in blood. This one ends in dancing."}
+        {
+          "speaker": "narrator",
+          "mood": "smile",
+          "text": "Some stories end in blood. This one ends in dancing."
+        }
       ],
       "next": [
         {
@@ -291,7 +463,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "romance"
     },
     {
       "id": "end_crown",
@@ -329,7 +502,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "title"
     },
     {
       "id": "end_council",
@@ -338,7 +512,7 @@
       "lines": [
         {
           "speaker": "narrator",
-          "text": "Every year after that, on the day the Chief died, the houses meet at the pink house in Tobago."
+          "text": "Every year after that, on the day the Chief died, the houses meet on the beach at Castara Bay."
         },
         {
           "speaker": "narrator",
@@ -350,9 +524,9 @@
           "text": "They always set one extra place at the table."
         },
         {
-          "speaker": "marcus",
+          "speaker": "narrator",
           "mood": "smile",
-          "text": "My brother built an empire. You built a family. That's much harder."
+          "text": "The Chief built an empire. They built something harder: a family."
         }
       ],
       "next": [
@@ -366,7 +540,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "triumph"
     },
     {
       "id": "end_ashes",
@@ -410,7 +585,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "sorrow"
     },
     {
       "id": "end_betrayal",
@@ -429,7 +605,8 @@
         {"speaker": "kolade", "mood": "sad", "text": "I earned it, old man. Just like you said."},
         {"speaker": "narrator", "text": "The view is spectacular. The rooms are very, very empty."}
       ],
-      "next": null
+      "next": null,
+      "music": "sorrow"
     },
     {
       "id": "end_power_couple",
@@ -491,7 +668,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "triumph"
     },
     {
       "id": "end_rival_passion",
@@ -539,7 +717,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "romance"
     },
     {
       "id": "end_empress",
@@ -576,7 +755,8 @@
           "to": "epi_homecoming"
         },
         {"to": null}
-      ]
+      ],
+      "music": "title"
     },
     {
       "id": "epi_homecoming",
@@ -595,7 +775,8 @@
         {"speaker": "kaneng", "mood": "sad", "text": "Foolish, loud, wonderful man."},
         {"speaker": "nabyen", "mood": "smile", "text": "Come on, Mama. Let's go home."}
       ],
-      "next": null
+      "next": null,
+      "music": "calm"
     }
   ],
   "outcomes": [
@@ -648,6 +829,22 @@
     }
   ],
   "reflections": [
+    {
+      "if": {"flags": ["shepherd_exposed"]},
+      "text": "Le Berger sits in a Tobago cell, humming his psalm to an empty room."
+    },
+    {
+      "if": {"flags": ["shielded_partner"]},
+      "text": "You took a bullet for love. The scar on your shoulder is shaped like a river."
+    },
+    {
+      "if": {"flags": ["marcus_broken"]},
+      "text": "Marcus confessed to everything, and asked for the letters to be sent to his cell."
+    },
+    {
+      "if": {"flags": ["fought_marcus"], "max": {"control": 69}},
+      "text": "Marcus escaped in the seaplane. Somewhere, the shepherd is still counting his sheep."
+    },
     {
       "if": {"flags": ["end_secret"]},
       "text": "Secret ending unlocked: The Seventh Seal. You found the hidden words, and the letter the Chief was too afraid to send."

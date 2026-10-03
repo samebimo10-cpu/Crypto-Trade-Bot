@@ -58,9 +58,17 @@
           "speaker": "oliver",
           "mood": "worried",
           "text": "He did, Madam. And the first half of the will is waiting in my office in London."
-        }
+        },
+        {"speaker": "narrator", "text": "Then the lights die.", "sfx": "thunder"},
+        {
+          "speaker": "narrator",
+          "text": "When they flicker back on, someone has slashed the Chief's portrait from corner to corner. Pinned to the canvas, a card in neat handwriting: 'One of you is next.'",
+          "sfx": "sting_reveal"
+        },
+        {"speaker": "ibiere", "mood": "angry", "text": "Who did this? WHO DID THIS?"}
       ],
-      "next": "f2_accuse"
+      "next": "f2_accuse",
+      "music": "sorrow"
     },
     {
       "id": "f2_accuse",
@@ -190,7 +198,8 @@
       ],
       "puzzle": "f_funeral",
       "next": "f3_garden",
-      "tension": true
+      "tension": true,
+      "music": "tension"
     },
     {
       "id": "f3_garden",
@@ -266,7 +275,8 @@
       ],
       "puzzle": "f_poison",
       "next": "f4_moment",
-      "keepsake": "k_spoon"
+      "keepsake": "k_spoon",
+      "music": "night"
     },
     {
       "id": "f4_moment",
@@ -334,7 +344,8 @@
           "response": [
             {"speaker": "kolade", "mood": "intimate", "text": "Careful, Miss Dalyop. I might."},
             {"speaker": "narrator", "text": "On the path, Tari turns and walks away without a word."}
-          ]
+          ],
+          "sfx": "sting_romance"
         },
         {
           "id": "c_use_secret",
@@ -377,7 +388,8 @@
           "setFlags": ["spark_nabyen"],
           "response": [{"speaker": "nabyen", "mood": "smile", "text": "...You're kind. I didn't expect kind, here."}],
           "tag": "DESIRE",
-          "rel": {"nabyen": {"intimacy": 15}}
+          "rel": {"nabyen": {"intimacy": 15}},
+          "sfx": "sting_romance"
         },
         {
           "id": "c_honest",
@@ -396,7 +408,8 @@
           "setFlags": ["spark_tari"],
           "response": [{"speaker": "tari", "mood": "smile", "text": "I'll sit here until the sun comes up, if you want."}],
           "tag": "DESIRE",
-          "rel": {"tari": {"intimacy": 15}}
+          "rel": {"tari": {"intimacy": 15}},
+          "sfx": "sting_romance"
         },
         {
           "id": "c_leave",
@@ -407,7 +420,8 @@
         }
       ],
       "next": null,
-      "tension": true
+      "tension": true,
+      "music": "romance"
     }
   ],
   "outcomes": [

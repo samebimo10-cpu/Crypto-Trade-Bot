@@ -411,6 +411,19 @@ const SCENES = {
     <g class="palm" style="transform-origin:60px 400px"><rect x="58" y="380" width="3" height="80" fill="#555"/><rect x="61" y="380" width="34" height="34" fill="#d52b1e"/><path d="M72 397 L84 397 M78 391 L78 403" stroke="#fff" stroke-width="5"/></g>
     ${[0, 1].map((i) => `<g class="bob" style="animation-delay:${i}s"><ellipse cx="${300 + i * 40}" cy="${470 + i * 20}" rx="12" ry="7" fill="#fff"/><path d="M${308 + i * 40} ${466 + i * 20} q6 -14 0 -18" stroke="#fff" stroke-width="4" fill="none"/></g>`).join('')}`,
 
+  // Montreux at night: moon over Lake Geneva, the Alps in silhouette, a grand
+  // hotel balcony strung with lights.
+  montreux_night: () => `${sky('mx', [[0, '#05081a'], [0.55, '#1a2350'], [1, '#2a3a6a']])}
+    ${stars(70, 33, 240)}${moon(300, 110)}
+    ${mountains(330, [[0, 230], [90, 170], [170, 220], [260, 150], [340, 210], [400, 180]], '#121a38', '#c9d3ee')}
+    ${skyline(61, 340, '#0d1230', '#ffd98a', { maxH: 40, minH: 14, maxW: 22, density: 0.5 })}
+    ${water(340, '#1c2a5a', '#060a1c', '#ffe9b0')}
+    <path d="M300 345 L292 700" stroke="#fff6d6" stroke-width="26" opacity="0.07"/>
+    <g><rect x="-10" y="150" width="120" height="330" fill="#1a1630"/>${[0, 1, 2, 3, 4, 5].map((r) => [0, 1, 2].map((c) => `<rect x="${8 + c * 34}" y="${172 + r * 48}" width="18" height="26" fill="#ffd98a" opacity="${(r + c) % 3 ? 0.85 : 0.3}"/>`).join('')).join('')}</g>
+    <rect y="470" width="400" height="12" fill="#2a2440"/>${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => `<rect x="${i * 44}" y="482" width="6" height="60" fill="#2a2440"/>`).join('')}<rect y="540" width="400" height="160" fill="#14102a"/>
+    <path d="M-10 455 Q200 495 410 455" stroke="#3a3458" stroke-width="1" fill="none"/>${lanterns(470, 21, 10)}
+    ${fireflies(10, 41)}`,
+
   // The Alps: snow peaks, pines, a red mountain train on a viaduct, a chalet.
   alps: () => `${sky('al', [[0, '#3a7bd5'], [0.7, '#a8d4ff'], [1, '#e8f4ff']])}
     ${mountains(420, [[0, 200], [80, 110], [150, 230], [240, 80], [330, 200], [400, 140]], '#6a86b0', '#ffffff')}

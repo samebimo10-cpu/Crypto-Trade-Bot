@@ -65,9 +65,29 @@ reframed as decoding.
 - **Confessions and keepsakes.** You collect voice notes, letters and mementos, such as
   Oliver's last voicemail, the blackened spoon, and Gideon's unsent message to Kaneng.
 - **Noir and jewel tones.** The palette is midnight, garnet, emerald and gold. Scenes have
-  candlelight embers, river mist and gold dust. The vignette tightens like a heartbeat in
-  tense moments, and an optional ambient score (♪) is synthesised in the browser, so it
-  needs no audio files.
+  candlelight embers, river mist and gold dust, and the vignette tightens like a heartbeat
+  in tense moments.
+- **A full cinematic score and sound effects, generated in code.** Everything is
+  synthesised with the Web Audio API, with no audio files, so it plays offline.
+  - **Eight cues:** title, romance, tension, danger, night, sorrow, triumph and calm.
+    They're built from taiko-style drums, a talking drum, string ostinatos, brass swells,
+    a choir and kora-like plucked strings.
+  - **Ambience:** rain, storm, wind, waves, crickets and fire, chosen by location.
+  - **24 sound effects,** including thunder, gunshots, breaking glass, a heartbeat, text
+    buzzes, letters, and stings for deaths, reveals and romance. Taps, choices, correct
+    words, secrets and keepsakes all have their own sounds.
+  - Sound is on by default and starts on the first tap; ♪ toggles it. The mix is voiced
+    above 200 Hz so phone speakers carry it, and it plays even with the iPhone silent
+    switch on.
+- **The story.**
+  - A hidden mastermind, *Le Berger* (the shepherd), is seeded through every chapter
+    and unmasked in Tobago, with a gun on the beach.
+  - A night in Montreux before the bank: romance, and a stranger with a syringe at the
+    door.
+  - Danger in every house's chapter: Nabyen's market stall burned, Tari's boat
+    ambushed, poisoned kunu for Hadiza, a gunman's warning for Kolade.
+  - A slashed portrait at the funeral.
+
 - **9 endings:**
   - *Dangerous Power Couple*, *Rivalry Turned Passion* and *Solitary Empress*
   - *Where the Rivers Meet* (wedding), *The Crown of the Confluence* and *Four Rivers,
@@ -120,6 +140,9 @@ features available:
   `"setFlags": ["dead_tari"]`. Deaths and endings work this way.
 - **The player's name in text.** `{pov}` in story text is replaced with the name of the
   character you're playing. Lines spoken by that character are labelled "(you)".
+- **Sound.** Scenes take `music` (`title`, `romance`, `tension`, `danger`, `night`,
+  `sorrow`, `triumph` or `calm`) and an optional `ambience`. Lines and choices take
+  `sfx`. The validator rejects unknown names.
 - **Romance and intrigue.**
   - `rel: {kolade: {intimacy: 10, tension: 5}}` on a choice shifts the relationship.
   - `gate: {if: {...}, label: "..."}` shows the choice but locks it until the condition

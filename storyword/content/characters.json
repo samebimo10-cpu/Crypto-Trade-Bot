@@ -189,5 +189,8 @@
     "necklace": "gold",
     "outfit": {"style": "kaftan", "color": "#f6e7c8", "color2": "#1aa0b8"},
     "accent": "#22c1c3"
-  }
+  },
+  "river": {"name": "The Woman in the Water", "whisper": true},
+  "note": {"name": "A handwritten note", "note": true},
+  "diary": {"name": "Nana Rinji's diary", "diary": true}
 }

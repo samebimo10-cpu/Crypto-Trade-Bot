@@ -180,14 +180,15 @@ const ATMOSPHERE = {
   mansion: 'embers', ph_garden: 'embers', kano_market: 'embers', caribbean_sunset: 'embers', jos_dusk: 'embers',
   london: 'mist', london_night: 'mist', creek_night: 'mist', bayelsa: 'mist', ph_night: 'mist',
   vault: 'dust', geneva: 'dust', lagos_night: 'dust', ph_day: 'dust',
+  dream_river: 'petals',
 };
 const AMBIENT_SOUND = {
   ph_night: 'storm', london: 'rain', london_night: 'rain', alps: 'wind', alps_storm: 'wind',
   caribbean: 'waves', caribbean_sunset: 'waves', lagos_beach: 'waves', bayelsa: 'waves', creek_night: 'waves',
   geneva: 'waves', montreux_night: 'waves', ph_garden: 'crickets', jos_dusk: 'crickets', road_night: 'crickets',
-  mansion: 'fire', kano_market: 'fire',
+  mansion: 'fire', kano_market: 'fire', dream_river: 'waves',
 };
-const NIGHT = new Set(['montreux_night', 'ph_night', 'creek_night', 'london_night', 'lagos_night', 'road_night', 'jos_dusk', 'ph_garden', 'kano_market', 'alps_storm']);
+const NIGHT = new Set(['montreux_night', 'ph_night', 'creek_night', 'london_night', 'lagos_night', 'road_night', 'jos_dusk', 'ph_garden', 'kano_market', 'alps_storm', 'dream_river']);
 
 function setAtmosphere(kind) {
   if (kind === ui.atmosphere) return;
@@ -196,13 +197,13 @@ function setAtmosphere(kind) {
     fxLayer.innerHTML = '';
     return;
   }
-  const n = kind === 'mist' ? 6 : 26;
+  const n = kind === 'mist' ? 6 : kind === 'petals' ? 16 : 26;
   let html = '';
   for (let i = 0; i < n; i++) {
     const x = (i * 37 + 11) % 100;
     const delay = ((i * 1.7) % 9).toFixed(1);
     const dur = (kind === 'mist' ? 26 : 9) + ((i * 3) % 7);
-    const size = kind === 'mist' ? 60 + (i % 3) * 25 : 2 + (i % 3);
+    const size = kind === 'mist' ? 60 + (i % 3) * 25 : kind === 'petals' ? 7 + (i % 3) * 3 : 2 + (i % 3);
     html += `<i style="left:${x}%;animation-delay:-${delay}s;animation-duration:${dur}s;--s:${size}${kind === 'mist' ? 'vw' : 'px'}"></i>`;
   }
   fxLayer.innerHTML = `<div class="fx fx-${kind}">${html}</div>`;
@@ -429,6 +430,19 @@ function lineHTML(line, run, { tapHint = true } = {}) {
     return `<div class="stage"><div class="letter-card"><span class="seal"></span><p>${fmt(line.text)}</p></div></div>
       <div class="dialogue message-line">${tap}</div>`;
   }
+  if (ch.note) {
+    const flower = line.flower === 'lily' ? 'lily' : 'rose';
+    return `<div class="stage"><div class="note-card ${flower}"><span class="note-flower" aria-hidden="true">${flower === 'lily' ? '⚘' : '❀'}</span><p>${fmt(line.text)}</p></div></div>
+      <div class="dialogue message-line">${tap}</div>`;
+  }
+  if (ch.diary) {
+    return `<div class="stage"><div class="diary-page"><p class="diary-from">${esc(ch.name)}</p><p>${fmt(line.text)}</p></div></div>
+      <div class="dialogue message-line">${tap}</div>`;
+  }
+  if (ch.whisper) {
+    return `<div class="stage"></div>
+      <div class="dialogue whisper"><p class="speaker">${esc(ch.name)}</p><p class="line">${fmt(line.text)}</p>${tap}</div>`;
+  }
   if (ch.narration) {
     return `<div class="stage"></div>
       <div class="dialogue narration"><p class="line">${fmt(line.text)}</p>${tap}</div>`;
@@ -457,6 +471,7 @@ function renderStory() {
       <button class="btn" data-action="replay">Replay chapter</button>
     </main>`;
   }
+  if (ui.titleCard === run.chapterId && chapter.epigraph && run.sceneId === chapter.start) return renderTitleCard(chapter);
   // Keep the solved puzzle under its results sheet; the next scene appears
   // only once the player taps continue.
   if (ui.overlay?.type === 'solved' && ui.puzzle) return renderPuzzle(chapterLabel(chapter));
@@ -491,6 +506,20 @@ function renderStory() {
   </main>`;
 }
 
+// A chapter opens on a title card: its name, place and an epigraph.
+function renderTitleCard(chapter) {
+  const start = Story.getScene(chapter, chapter.start);
+  setScene(start.background, 'dim', { music: start.music ?? 'mystic' });
+  const { text, source } = chapter.epigraph;
+  return `<main class="screen title-card" data-action="title-begin">
+    <p class="tc-label">${esc(chapterLabel(chapter))}</p>
+    <h1 class="tc-title">${esc(chapter.title)}</h1>
+    <p class="tc-place">${esc(chapter.place)}</p>
+    <blockquote class="tc-epigraph"><p>${fmt(text)}</p>${source ? `<cite>${esc(source)}</cite>` : ''}</blockquote>
+    <span class="tap">tap to begin</span>
+  </main>`;
+}
+
 // Each line plays its sound once: an explicit `sfx`, or a page turn for
 // letters and a buzz for text messages.
 function lineSound(view, run) {
@@ -498,7 +527,7 @@ function lineSound(view, run) {
   if (ui.lastLine === key) return;
   ui.lastLine = key;
   const ch = C.characters[view.line.speaker] || {};
-  const name = view.line.sfx ?? (ch.letter ? 'page' : ch.message ? 'phone' : null);
+  const name = view.line.sfx ?? (ch.letter || ch.note || ch.diary ? 'page' : ch.message ? 'phone' : ch.whisper ? 'whisper' : null);
   if (name) Audio.sfx(name);
 }
 
@@ -572,7 +601,7 @@ function renderCharacterSelect(view) {
 function choiceStage(scene, run) {
   const line = Story.visibleLines(scene.lines, run).findLast((l) => {
     const ch = C.characters[l.speaker];
-    return ch && !ch.narration && !ch.message && !ch.letter && l.speaker !== run.pov;
+    return ch && !ch.narration && !ch.message && !ch.letter && !ch.note && !ch.diary && !ch.whisper && l.speaker !== run.pov;
   });
   if (!line) return '<div class="stage"></div>';
   return `<div class="stage"><div class="portrait small mood-${esc(line.mood || 'neutral')}">${portraitSVG(C.characters[line.speaker], line.mood, line.speaker)}</div></div>`;
@@ -1025,6 +1054,7 @@ function renderDaily() {
 
 function startNewSaga() {
   profile.run = Story.newRun(C.chapters[0]);
+  ui.titleCard = profile.run.chapterId;
   profile.puzzleProgress = null;
   ui.puzzle = null;
   persist();
@@ -1041,6 +1071,11 @@ const actions = {
     go(profile.run.complete ? 'results' : 'story');
   },
   'new-saga': startNewSaga,
+  'title-begin'() {
+    ui.titleCard = null;
+    Audio.sfx('chime');
+    render();
+  },
   'plus-open'(el) {
     ui.plus.error = '';
     ui.overlay = { type: 'plus', kind: el.dataset.kind };
@@ -1072,6 +1107,7 @@ const actions = {
     const next = Story.nextChapter(C.story, run.chapterId, run);
     if (!next) return;
     profile.run = Story.newRun(chapterById(next.id), Story.carryFrom(run));
+    ui.titleCard = profile.run.chapterId;
     profile.puzzleProgress = null;
     ui.puzzle = null;
     persist();
@@ -1080,6 +1116,7 @@ const actions = {
   replay() {
     const run = profile.run;
     profile.run = Story.newRun(currentChapter(), run.carry);
+    ui.titleCard = profile.run.chapterId;
     profile.puzzleProgress = null;
     ui.puzzle = null;
     persist();

@@ -212,6 +212,18 @@
         },
         {
           "speaker": "narrator",
+          "text": "On the edge of the fountain, someone has left a white lily. Tied to its stem with black thread, a note.",
+          "sfx": "sting_reveal"
+        },
+        {"speaker": "note", "text": "Welcome home, little sheep. — B.", "flower": "lily"},
+        {
+          "speaker": "narrator",
+          "if": {"notPov": "tari"},
+          "text": "And on the bench beside Nabyen, where nobody saw it placed, a single red rose."
+        },
+        {"speaker": "note", "if": {"pov": "nabyen"}, "text": "Breathe. I am here. — W.", "flower": "rose"},
+        {
+          "speaker": "narrator",
           "text": "On the stone bench: the Chief's tea tray, taken from his study before the police arrived. One silver spoon has gone black at the tip."
         },
         {
@@ -481,5 +493,6 @@
       "from": "The Chief's tea tray",
       "text": "Silver, engraved E.M. Gone black at the tip, the way silver does when it meets poison."
     }
-  }
+  },
+  "epigraph": {"text": "Every funeral is a gathering of the people who did not do it.", "source": "Ibiere Okoro"}
 }

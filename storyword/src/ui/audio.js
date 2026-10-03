@@ -14,11 +14,11 @@
 // (which can't play deep bass) still carry it. Browsers only allow audio
 // after a tap: call unlock() from a click handler.
 
-export const MUSIC = ['title', 'romance', 'tension', 'danger', 'night', 'sorrow', 'triumph', 'calm'];
+export const MUSIC = ['title', 'romance', 'tension', 'danger', 'night', 'sorrow', 'triumph', 'calm', 'mystic'];
 export const SFX = [
   'tap', 'select', 'letter', 'correct', 'bonus', 'wrong', 'solved', 'secret', 'keepsake', 'page', 'phone',
   'thunder', 'gunshot', 'heartbeat', 'splash', 'glass', 'knock', 'door', 'fire', 'engine',
-  'sting_death', 'sting_romance', 'sting_reveal', 'swell',
+  'sting_death', 'sting_romance', 'sting_reveal', 'swell', 'whisper', 'chime',
 ];
 export const AMBIENCE = ['rain', 'storm', 'wind', 'waves', 'crickets', 'fire'];
 
@@ -493,6 +493,25 @@ const CUES = {
       if (beat === 4 || beat === 12) hat(t, 0.02);
     },
   },
+  // The dream river: a slow modal choir, distant bells and a kora that
+  // circles but never resolves.
+  mystic: {
+    bpm: 58,
+    step(s, t, bar) {
+      const beat = s % 16;
+      const chords = [[50, 57, 62, 64], [48, 55, 62, 64], [46, 53, 60, 62], [48, 55, 59, 64]];
+      const c = chords[bar % 4];
+      if (beat === 0) {
+        choir(t, c.slice(1).map((m) => midi(m + 12)), 4.6, { gain: 0.06 });
+        strings(t, midi(c[0]), 4.4, { gain: 0.05, attack: 1.6, cutoff: 800 });
+      }
+      if (beat === 0 && bar % 2 === 0) bell(t, midi(74 + (bar % 4 ? 3 : 0)), { gain: 0.11, dur: 5 });
+      if (beat === 8 && bar % 4 === 3) bell(t, midi(81), { gain: 0.07, dur: 4 });
+      const dor = [74, 76, 77, 81, 83, 86];
+      const pattern = [0, -1, -1, 2, -1, -1, 4, -1, 3, -1, -1, 1, -1, 5, -1, -1];
+      if (pattern[beat] >= 0 && (bar + beat) % 4 !== 1) pluck(t, midi(dor[pattern[beat]]), { gain: 0.26, verb: 0.9 });
+    },
+  },
 };
 
 export function playMusic(mood) {
@@ -781,6 +800,15 @@ export function sfx(name, opts = {}) {
     case 'sting_romance':
       [65, 69, 72, 76, 77, 81, 84, 88].forEach((m, i) => pluck(t + i * 0.07, midi(m), { gain: 0.22, dest: sfxBus, verb: 0.9 }));
       for (const m of [65, 72, 76]) strings(t + 0.3, midi(m), 2.2, { gain: 0.06, attack: 0.7, cutoff: 2200, dest: sfxBus });
+      break;
+    case 'whisper':
+      // breath through a closed door: filtered noise rising and falling
+      noiseBurst(t, 1.4, { type: 'bandpass', freq: 2400, sweepTo: 4200, q: 6, gain: 0.18, attack: 0.4, verb: 0.9 });
+      noiseBurst(t + 0.5, 1.1, { type: 'bandpass', freq: 3200, sweepTo: 1800, q: 7, gain: 0.12, attack: 0.3, verb: 0.9 });
+      choir(t + 0.2, [midi(74), midi(75)], 2.2, { gain: 0.03, dest: sfxBus });
+      break;
+    case 'chime':
+      [86, 93, 89, 98].forEach((m, i) => bell(t + i * 0.18, midi(m), { gain: 0.12, dur: 2.6, dest: sfxBus }));
       break;
     case 'sting_reveal':
       drum(t, { f0: 150, f1: 45, gain: 1, dur: 1, dest: sfxBus });

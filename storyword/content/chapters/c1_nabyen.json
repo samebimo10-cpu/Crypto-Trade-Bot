@@ -29,6 +29,11 @@
           "text": "Nabyen. If you are reading this, I am gone. Come to Port Harcourt. Trust the rivers, not the men who sail them. — G.O."
         },
         {
+          "speaker": "narrator",
+          "text": "Pressed flat inside the envelope: a single red rose petal. Like the rose on her windowsill.",
+          "sfx": "sting_reveal"
+        },
+        {
           "speaker": "nabyen",
           "mood": "surprised",
           "text": "Chief Gideon Okoro? THE Chief Gideon? Why would a man like that write to me?"
@@ -87,8 +92,75 @@
         }
       ],
       "puzzle": "n_stones",
-      "next": "n2_dusk",
+      "next": "n1b_note",
       "music": "calm"
+    },
+    {
+      "id": "n1b_note",
+      "background": "jos_dusk",
+      "music": "mystic",
+      "tension": true,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "That evening, there is a note tucked into the frame of her front door. Cream paper. Old-fashioned handwriting, the kind nobody learns any more."
+        },
+        {
+          "speaker": "note",
+          "text": "You don't know me yet. But I have known you all your life. Don't go to Port Harcourt alone. — W.",
+          "flower": "rose"
+        },
+        {"speaker": "nabyen", "mood": "worried", "text": "Who are you?"},
+        {
+          "speaker": "narrator",
+          "text": "Across the street, under the jacaranda, something moves in the dark. When she looks properly, there is nobody there.",
+          "sfx": "heartbeat"
+        }
+      ],
+      "prompt": "The note smells faintly of the river.",
+      "choices": [
+        {
+          "id": "c_burn_note",
+          "tag": "CONTROL",
+          "text": "Burn it. Nobody watches a Dalyop woman.",
+          "effects": {"control": 10},
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "The paper curls in the flame. The ink, strangely, doesn't burn. The letter W glows for a moment, then the ash blows away."
+            }
+          ]
+        },
+        {
+          "id": "c_keep_note",
+          "tag": "DESIRE",
+          "text": "Keep it. Sleep with it under her pillow.",
+          "effects": {"desire": 10},
+          "setFlags": ["kept_watcher_note"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "She tells herself it's so she won't lose the evidence. She doesn't believe herself."
+            }
+          ]
+        },
+        {
+          "id": "c_reply_note",
+          "tag": "LOYALTY",
+          "risk": "High risk",
+          "text": "Write a reply and leave it on the step: \"Then show yourself.\"",
+          "effects": {"loyalty": 5, "desire": 5},
+          "setFlags": ["reply_watcher"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "In the morning, her note is gone. In its place, a red rose, still wet with dew.",
+              "sfx": "chime"
+            }
+          ]
+        }
+      ],
+      "next": "n2_dusk"
     },
     {
       "id": "n2_dusk",
@@ -99,6 +171,26 @@
           "speaker": "narrator",
           "text": "Evening at the balancing rocks. The sky goes orange, then violet, then full of stars."
         },
+        {
+          "speaker": "narrator",
+          "text": "Mama Kaneng brings out a bundle wrapped in faded ankara. Inside, a leather diary, its pages brown with age."
+        },
+        {
+          "speaker": "kaneng",
+          "mood": "sad",
+          "text": "Your grandmother's. Nana Rinji. She could see things. I never wanted you to read this."
+        },
+        {
+          "speaker": "diary",
+          "text": "The women of our line see the river before a death. My mother saw it. I saw it. Forgive me, child: you will see it too."
+        },
+        {
+          "speaker": "diary",
+          "text": "When the coral is broken, the family is broken. When the two halves meet, the river will choose, and the dead will rest.",
+          "sfx": "whisper"
+        },
+        {"speaker": "nabyen", "mood": "surprised", "text": "Mama. Last night I dreamed of a river."},
+        {"speaker": "kaneng", "mood": "worried", "text": "...I know. So did I."},
         {
           "speaker": "kaneng",
           "mood": "sad",
@@ -168,7 +260,7 @@
       ],
       "puzzle": "n_plateau",
       "next": "n3_market",
-      "keepsake": "k_bracelet",
+      "keepsake": "k_diary",
       "music": "sorrow"
     },
     {
@@ -284,6 +376,18 @@
           "text": "The bus rattles south through the night, past dark hills and sleeping towns."
         },
         {
+          "speaker": "note",
+          "if": {"notFlags": ["reply_watcher"]},
+          "text": "I saw the fire. I am sorry about your mother's stall. I will not let them touch you. — W.",
+          "flower": "rose"
+        },
+        {
+          "speaker": "note",
+          "if": {"flags": ["reply_watcher"]},
+          "text": "You wrote back. Nobody has ever written back. I will show myself when it is safe, I promise. — W.",
+          "flower": "rose"
+        },
+        {
           "speaker": "narrator",
           "text": "She opens her bag for water and finds something that wasn't there this morning."
         },
@@ -343,6 +447,7 @@
     }
   ],
   "reflections": [
+    {"if": {"flags": ["reply_watcher"]}, "text": "Someone out there has your handwriting now."},
     {"if": {"flags": ["burned_letter"]}, "text": "Mama Kaneng's hand is bandaged. She hasn't mentioned it."},
     {
       "if": {"flags": ["knows_father"]},
@@ -380,6 +485,13 @@
       "title": "A cream business card",
       "from": "Banque Moreau, Genève",
       "text": "'Stay in Jos.' Neat handwriting. A woman's, she thinks."
+    },
+    "k_diary": {
+      "type": "letter",
+      "title": "Nana Rinji's diary",
+      "from": "Your grandmother",
+      "text": "\"When the coral is broken, the family is broken. When the two halves meet, the river will choose.\""
     }
-  }
+  },
+  "epigraph": {"text": "The women of the Rock see the river before a death.", "source": "Nana Rinji's diary"}
 }

@@ -20,6 +20,15 @@
           "text": "Hadiza Lawan had her father's ledgers open on her knees when the letter came."
         },
         {
+          "speaker": "narrator",
+          "text": "Mallama Binta, the oldest dyer at Kofar Mata, blind for forty years, catches Hadiza's wrist with indigo-black fingers."
+        },
+        {
+          "speaker": "narrator",
+          "text": "\"Three will cross the cold mountain,\" the old woman whispers. \"Not all of them will come down.\"",
+          "sfx": "whisper"
+        },
+        {
           "speaker": "letter",
           "text": "Hadiza. You always saw what I missed. Count the money. Someone has been counting it for me. — G.O."
         },
@@ -272,5 +281,6 @@
       "from": "Confluence Holdings, 2019",
       "text": "Four million, out. Four million, out. Four million, out. Every line initialled E.M."
     }
-  }
+  },
+  "epigraph": {"text": "In Kano, the walls listen. Then they talk.", "source": "Hadiza Lawan"}
 }

@@ -25,6 +25,11 @@
           "text": "He pulled me out of this river when I was six. Raised me like his own. And I wasn't there."
         },
         {
+          "speaker": "narrator",
+          "text": "The fishermen tell it differently. They say a woman in white pulled the boy out of the creek, and the Chief only found him on the bank. Some nights, Tari isn't sure they are wrong.",
+          "sfx": "whisper"
+        },
+        {
           "speaker": "letter",
           "text": "Tari. You were the son I chose. Protect the girl from the Rock. Nabyen. Do not let them near her. — G.O."
         },
@@ -32,6 +37,11 @@
           "speaker": "tari",
           "mood": "surprised",
           "text": "Nabyen? Little Nabyen from Jos? She used to scream at every fish."
+        },
+        {
+          "speaker": "narrator",
+          "text": "In his jacket, folded small, is a note he has written a hundred times and never signed with his own name. A red hibiscus is pressed inside. At the bottom, one letter: W.",
+          "sfx": "sting_reveal"
         }
       ],
       "prompt": "The crew are watching him.",
@@ -178,6 +188,11 @@
             {"speaker": "narrator", "text": "Tari hauls him into the boat, coughing up river."},
             {
               "speaker": "narrator",
+              "text": "For a moment, under the black water, Tari sees a pale hand pushing the man up towards him. Then it is gone.",
+              "sfx": "whisper"
+            },
+            {
+              "speaker": "narrator",
               "text": "'The white woman pays in francs,' the man gasps. 'She said nobody from the creeks reaches Port Harcourt.'"
             }
           ],
@@ -207,6 +222,11 @@
           "speaker": "nabyen",
           "mood": "smile",
           "text": "You still owe me a fish, you know. A big one. You promised."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "tari"},
+          "text": "She has a red rose petal pinned inside her collar. Tari recognises it. He should. He sent it."
         }
       ],
       "prompt": "Nabyen Dalyop, all grown up.",
@@ -294,5 +314,6 @@
       "from": "The man in the water",
       "text": "What a life costs on the creeks, apparently. Paid in Swiss money."
     }
-  }
+  },
+  "epigraph": {"text": "What the creek takes, the creek keeps.", "source": "A fisherman's saying"}
 }

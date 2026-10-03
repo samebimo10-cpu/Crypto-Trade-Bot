@@ -45,6 +45,21 @@ npm run words -- fill              # add every real word to each puzzle's bonus 
 
 ## What's in it
 
+- **The mystic thread.** The saga opens in a dream before it opens in a mansion. A woman
+  in white stands on a black river and tells Nabyen that *someone has always been
+  watching you*.
+  - From then on, notes signed **W.** with a single red rose turn up where they shouldn't:
+    on her rocks in Jos, in her funeral wreath, on a London bridge. Answer them or burn
+    them, and the Watcher's notes change.
+  - **Nana Rinji's diary** carries a family curse ("the women of our line see the river
+    before a death") and a prophecy about a broken coral necklace.
+  - A blind dyer in Kano and a kola-seller in Lagos see the same river. Le Berger leaves
+    white lilies.
+  - Who W. is stays hidden until London.
+  - Each chapter opens on a title card with an epigraph. A new *mystic* cue (choir,
+    distant bells, a kora that never resolves) plays with whispers and chimes, and rose
+    petals fall over the dream river.
+
 The game is built around relational tension and high-stakes trade-offs, with word puzzles
 reframed as decoding.
 
@@ -69,11 +84,12 @@ reframed as decoding.
   in tense moments.
 - **A full cinematic score and sound effects, generated in code.** Everything is
   synthesised with the Web Audio API, with no audio files, so it plays offline.
-  - **Eight cues:** title, romance, tension, danger, night, sorrow, triumph and calm.
+  - **Nine cues:** title, romance, tension, danger, night, sorrow, triumph, calm and
+    mystic.
     They're built from taiko-style drums, a talking drum, string ostinatos, brass swells,
     a choir and kora-like plucked strings.
   - **Ambience:** rain, storm, wind, waves, crickets and fire, chosen by location.
-  - **24 sound effects,** including thunder, gunshots, breaking glass, a heartbeat, text
+  - **26 sound effects,** including whispers, chimes, thunder, gunshots, breaking glass, a heartbeat, text
     buzzes, letters, and stings for deaths, reveals and romance. Taps, choices, correct
     words, secrets and keepsakes all have their own sounds.
   - Sound is on by default and starts on the first tap; ♪ toggles it. The mix is voiced
@@ -96,7 +112,7 @@ reframed as decoding.
 - **Still here from before:**
   - four playable houses and Nabyen as the key character
   - deaths on the Alpine pass
-  - 24 animated locations and animated portraits, now with *intimate* and *defiant*
+  - 25 animated locations, including the dream river and animated portraits, now with *intimate* and *defiant*
     expressions
   - Daily Word, rewinding to any decision, and saving on the device
 
@@ -162,7 +178,7 @@ features available:
 - **The player's name in text.** `{pov}` in story text is replaced with the name of the
   character you're playing. Lines spoken by that character are labelled "(you)".
 - **Sound.** Scenes take `music` (`title`, `romance`, `tension`, `danger`, `night`,
-  `sorrow`, `triumph` or `calm`) and an optional `ambience`. Lines and choices take
+  `sorrow`, `triumph`, `calm` or `mystic`) and an optional `ambience`. Lines and choices take
   `sfx`. The validator rejects unknown names.
 - **Romance and intrigue.**
   - `rel: {kolade: {intimacy: 10, tension: 5}}` on a choice shifts the relationship.
@@ -171,8 +187,13 @@ features available:
   - `leverage: "s_spoon"` shows the choice only while you hold that secret, and spends it.
   - `tag` and `risk` label the card. `keepsake` awards a voice note, letter or memento.
   - Puzzles take `frame` and `decoded`. A scene can set `tension: true`.
-- **Speakers.** `letter` shows a wax-sealed letter, `phone` shows a text message and
-  `narrator` shows narration.
+- **Speakers.**
+  - `letter` shows a wax-sealed letter, `phone` a text message and `narrator`
+    narration.
+  - `note` shows a handwritten note. Set `"flower": "rose"` or `"lily"` on the line.
+  - `diary` shows a parchment diary page and `river` shows a ghostly whisper.
+- **Epigraphs.** `"epigraph": {"text": "...", "source": "..."}` on a chapter shows it on
+  that chapter's title card.
 - **Checking.** `npm run validate` catches:
   - broken links and unreachable scenes
   - unknown speakers

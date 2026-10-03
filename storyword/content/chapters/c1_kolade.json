@@ -152,6 +152,15 @@
         },
         {"speaker": "narrator", "text": "Dawn on the beach at Lekki. The Atlantic doesn't care about crowns."},
         {
+          "speaker": "narrator",
+          "text": "An old woman selling kola nuts on the sand presses one into his palm and closes his fingers over it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "\"You will be offered a crown and a heart, Lagos boy. You cannot carry both.\"",
+          "sfx": "whisper"
+        },
+        {
           "speaker": "kolade",
           "text": "Two ways to play this. Fly straight to Port Harcourt and be first in the room."
         },
@@ -242,5 +251,6 @@
       "from": "Kolade's phone",
       "text": "'Lagos deserves a king, Monsieur. And kings are made in Geneva.'"
     }
-  }
+  },
+  "epigraph": {"text": "Lagos never sleeps. Neither do the people who want what you have.", "source": "A danfo driver"}
 }

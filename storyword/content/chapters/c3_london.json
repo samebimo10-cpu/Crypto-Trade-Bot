@@ -266,6 +266,11 @@
       "lines": [
         {
           "speaker": "narrator",
+          "text": "On the parapet, under a lamp, someone has left a white lily. Nobody touches it.",
+          "sfx": "whisper"
+        },
+        {
+          "speaker": "narrator",
           "if": {"notPov": "nabyen"},
           "text": "Westminster Bridge, two in the morning. Nabyen has been crying, and is pretending she hasn't."
         },
@@ -286,6 +291,24 @@
           "if": {"pov": "nabyen", "flags": ["spark_tari"]},
           "mood": "sad",
           "text": "I'm not going home. Not without you."
+        },
+        {
+          "speaker": "tari",
+          "if": {"pov": "nabyen", "flags": ["spark_tari"]},
+          "mood": "sad",
+          "text": "The roses. Every birthday since you were twelve. The notes. W."
+        },
+        {
+          "speaker": "tari",
+          "if": {"pov": "nabyen", "flags": ["spark_tari"]},
+          "mood": "intimate",
+          "text": "The Chief asked me to watch over you. I never told him I had fallen in love with you."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"pov": "nabyen", "flags": ["spark_tari"]},
+          "mood": "surprised",
+          "text": "...You. It was always you."
         },
         {
           "speaker": "narrator",
@@ -463,5 +486,6 @@
       "from": "Oliver Ashworth, 8:52 pm",
       "text": "If you're hearing this, I didn't make it to the Embankment. The key opens the vault. The blood opens the truth. And look after the girl. Please."
     }
-  }
+  },
+  "epigraph": {"text": "London keeps its secrets the way the Thames keeps its dead.", "source": "Oliver Ashworth's diary"}
 }

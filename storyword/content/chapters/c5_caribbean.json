@@ -16,6 +16,11 @@
           "text": "Tobago. Water the colour of a peacock's throat, sand like sugar, and a pink house on the hill above Castara Bay."
         },
         {
+          "speaker": "narrator",
+          "text": "At sunset, far out on the water, Nabyen sees a woman in white standing on the sea. Nobody else turns to look.",
+          "sfx": "whisper"
+        },
+        {
           "speaker": "marcus",
           "mood": "smile",
           "text": "So. The children my brother collected. Come, come. There's fish on the fire and rum in the shade."
@@ -46,7 +51,13 @@
           "speaker": "narrator",
           "text": "His hands are perfectly steady as he pours. Too steady, for a man who has just lost his only brother."
         },
-        {"speaker": "marcus", "text": "I have the last seal, and his last instruction: you choose. Together."}
+        {"speaker": "marcus", "text": "I have the last seal, and his last instruction: you choose. Together."},
+        {
+          "speaker": "tari",
+          "if": {"pov": "nabyen", "notFlags": ["spark_tari", "dead_tari"]},
+          "mood": "sad",
+          "text": "The roses were from me. All of them. Every birthday. I just wanted you to know, before this ends."
+        }
       ],
       "prompt": "Marcus pours the rum.",
       "choices": [
@@ -773,6 +784,11 @@
           "text": "Kaneng. I was a coward for thirty years. I built four rivers because I was too afraid to come back to one. Tell our daughter she was the only treasure I never deserved. — Gideon."
         },
         {"speaker": "kaneng", "mood": "sad", "text": "Foolish, loud, wonderful man."},
+        {
+          "speaker": "narrator",
+          "text": "That night, for the first time in three generations, a woman of the Rock dreams of the river and nobody dies. The woman in white only smiles, and sinks gently out of sight.",
+          "sfx": "whisper"
+        },
         {"speaker": "nabyen", "mood": "smile", "text": "Come on, Mama. Let's go home."}
       ],
       "next": null,
@@ -883,5 +899,6 @@
       "from": "Gideon to Marcus",
       "text": "Every one ends the same way: 'Next year, little brother, I'll come.' He never did."
     }
-  }
+  },
+  "epigraph": {"text": "When the two halves meet, the river will choose.", "source": "Nana Rinji's diary"}
 }

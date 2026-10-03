@@ -257,7 +257,7 @@ test('every speaker and background in the content can be drawn', () => {
   for (const b of backgrounds) assert.ok(SCENE_KEYS.includes(b), `no scene art for "${b}"`);
   for (const k of SCENE_KEYS) assert.match(sceneSVG(k), /^<svg[\s\S]*<\/svg>$/);
   for (const [id, c] of Object.entries(characters)) {
-    if (c.narration || c.message || c.letter) continue;
+    if (c.narration || c.message || c.letter || c.note || c.diary || c.whisper) continue;
     for (const mood of ['neutral', 'smile', 'sad', 'angry', 'surprised', 'worried']) {
       assert.match(portraitSVG(c, mood, id), /<svg[\s\S]*<\/svg>/, `${id} ${mood}`);
     }

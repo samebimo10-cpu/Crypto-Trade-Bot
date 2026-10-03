@@ -224,6 +224,45 @@ body[data-scene='full'] #scene { filter: saturate(0.85) contrast(1.05) brightnes
 .seal { position: absolute; top: -14px; left: 50%; width: 34px; height: 34px; margin-left: -17px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #e04a3a, #8e1b14); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
 @keyframes unfold { from { opacity: 0; transform: rotate(-1.2deg) scaleY(0.6); } to { opacity: 1; transform: rotate(-1.2deg); } }
 
+/* The mystic layer: the Watcher's notes, Nana Rinji's diary, the woman in the water */
+.note-card {
+  position: relative; width: min(78vw, 300px); background: linear-gradient(160deg, #fffaf3, #efe4d6); color: #2a1620;
+  border-radius: 3px; padding: 26px 22px 20px; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55); animation: unfold 0.6s ease;
+  transform: rotate(2deg);
+}
+.note-card p { margin: 0; font-family: 'Snell Roundhand', 'Segoe Script', 'Brush Script MT', var(--serif); font-style: italic; font-size: 1.18rem; line-height: 1.5; }
+.note-flower { position: absolute; top: -18px; right: 14px; font-size: 2rem; line-height: 1; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.4)); }
+.note-card.rose .note-flower { color: #b0173a; }
+.note-card.lily { background: linear-gradient(160deg, #f6f8f4, #dfe6dc); }
+.note-card.lily .note-flower { color: #f4f0e0; text-shadow: 0 0 6px #6a7a5a; }
+.diary-page {
+  width: min(84vw, 330px); background: linear-gradient(175deg, #e9dcc0, #c9b089); color: #2e1c10;
+  border-radius: 4px 10px 10px 4px; padding: 20px 22px; box-shadow: inset 10px 0 18px -10px rgba(60, 30, 10, 0.6), 0 18px 40px rgba(0, 0, 0, 0.55);
+  animation: rise 0.6s ease; border-left: 3px solid #6a3a1c;
+}
+.diary-from { margin: 0 0 8px; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: #6a3a1c; }
+.diary-page p:last-child { margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.1rem; line-height: 1.5; }
+.whisper { background: rgba(10, 6, 24, 0.55); border-color: rgba(205, 184, 255, 0.25); text-align: center; }
+.whisper::before { background: linear-gradient(90deg, transparent, #cdb8ff, transparent); }
+.whisper .speaker { color: #cdb8ff; letter-spacing: 0.3em; font-weight: 600; }
+.whisper .line { font-style: italic; color: #efe6ff; text-shadow: 0 0 14px rgba(205, 184, 255, 0.7); animation: whisper-in 2.4s ease; }
+@keyframes whisper-in { from { opacity: 0; letter-spacing: 0.12em; filter: blur(3px); } to { opacity: 1; letter-spacing: normal; filter: none; } }
+.fx-petals i { bottom: auto; top: -16px; border-radius: 80% 0 80% 0; background: linear-gradient(135deg, #e23a5c, #7a0f2a); opacity: 0.85; animation: petal linear infinite; }
+@keyframes petal { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 10% { opacity: 0.9; } 100% { transform: translate(-60px, 108vh) rotate(540deg); opacity: 0.2; } }
+.apparition { animation: apparition 9s ease-in-out infinite; }
+@keyframes apparition { 0%, 100% { opacity: 0.25; } 45%, 60% { opacity: 0.95; } }
+.title-card {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 10px; padding: 32px 26px; cursor: pointer; animation: fade-in 1.6s ease;
+}
+.tc-label { margin: 0; font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); }
+.tc-title { margin: 0; font-family: var(--serif); font-size: 2.2rem; font-weight: 400; letter-spacing: 0.04em; text-shadow: 0 0 24px rgba(155, 108, 209, 0.6); }
+.tc-place { margin: 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.12em; }
+.tc-epigraph { margin: 26px 0 0; max-width: 30ch; animation: fade-in 3s ease; }
+.tc-epigraph p { margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.15rem; line-height: 1.55; color: #efe6ff; }
+.tc-epigraph cite { display: block; margin-top: 10px; font-style: normal; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); }
+.title-card .tap { align-self: center; margin-top: 40px; }
+
 .choices { cursor: default; gap: 10px; }
 .prompt-line { margin: 0 0 4px; font-family: var(--serif); font-style: italic; font-size: 1.1rem; color: var(--gold); }
 .choice {

@@ -211,6 +211,11 @@
           "text": "Inside: the second half of the will, half of a coral bracelet that matches Nabyen's exactly, and a ledger bound in black leather."
         },
         {
+          "speaker": "narrator",
+          "text": "Nabyen fits the two halves of coral together. They are warm. Every candle in the vault gutters at once, though there is no wind, and a woman's voice says, very close: \"The river has chosen.\"",
+          "sfx": "whisper"
+        },
+        {
           "speaker": "letter",
           "text": "To my daughter Nabyen, and to the three children I chose: the crown belongs to whoever you choose, together. Elise Moreau has robbed me for ten years. The proof is in this book. — G.O."
         },
@@ -579,5 +584,6 @@
       "from": "The intruder in Montreux",
       "text": "Thallium. Enough to stop a heart in a day and leave no trace by morning."
     }
-  }
+  },
+  "epigraph": {"text": "Only blood opens what blood built.", "source": "Inscription, Vault 7"}
 }

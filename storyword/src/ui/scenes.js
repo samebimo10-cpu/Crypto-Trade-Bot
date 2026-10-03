@@ -470,6 +470,20 @@ const SCENES = {
     <path d="M-10 470 Q200 450 410 470 L410 700 L-10 700Z" fill="#2a0a2a"/>
     <path d="M-10 160 Q200 240 410 160" stroke="#2a0a2a" stroke-width="1" fill="none"/>${lanterns(190, 12, 11)}
     ${palm(40, 480, 1.25, '#1a0418', '#1a0418')}${palm(370, 486, 1.1, '#1a0418', '#1a0418', 0.8)}${fireflies(16, 3)}`,
+  // The dream river: black water under a violet moon, floating lanterns,
+  // and a woman in white standing on the water.
+  dream_river: () => `${sky('dr', [[0, '#05030f'], [0.5, '#1d0f33'], [0.8, '#3a1a4a'], [1, '#12081e']])}
+    ${stars(90, 77, 330)}
+    <circle cx="200" cy="170" r="70" fill="#d9c8ff" opacity="0.08"/><circle cx="200" cy="170" r="44" fill="#efe6ff" opacity="0.9"/><circle cx="214" cy="160" r="40" fill="#1d0f33" opacity="0.35"/>
+    ${mountains(360, [[0, 300], [90, 250], [180, 310], [280, 240], [400, 290]], '#0c0618')}
+    ${water(360, '#140a26', '#020108', '#cdb8ff')}
+    <path d="M200 362 L188 700 L212 700Z" fill="#efe6ff" opacity="0.08"/>
+    <g class="apparition"><ellipse cx="200" cy="452" rx="26" ry="5" fill="#efe6ff" opacity="0.25"/>
+      <path d="M200 340 C188 344 184 360 186 380 L172 452 Q200 460 228 452 L214 380 C216 360 212 344 200 340Z" fill="#f4efff" opacity="0.82"/>
+      <circle cx="200" cy="332" r="11" fill="#2a1a24"/><path d="M188 330 Q200 300 212 330 Q214 360 222 380 Q200 360 178 380 Q186 360 188 330Z" fill="#120a14"/>
+      <path d="M172 452 Q150 470 120 466 M228 452 Q250 470 280 466" stroke="#f4efff" stroke-width="2" opacity="0.35" fill="none"/></g>
+    ${[[60, 520], [120, 600], [300, 560], [350, 630], [240, 650], [90, 470], [320, 480]].map(([x, y], i) => `<g class="bob" style="animation-delay:${i * 0.7}s"><path d="M${x - 10} ${y} L${x + 10} ${y} L${x + 6} ${y + 8} L${x - 6} ${y + 8}Z" fill="#5a2a3a"/><circle cx="${x}" cy="${y - 6}" r="16" fill="#ffb86b" opacity="0.15"/><g class="flicker" style="animation-delay:${i * 0.4}s"><path d="M${x} ${y - 14} Q${x + 5} ${y - 6} ${x} ${y - 2} Q${x - 5} ${y - 6} ${x} ${y - 14}Z" fill="#ffd27a"/></g></g>`).join('')}
+    ${fireflies(14, 91)}`,
 };
 
 export const SCENE_KEYS = Object.keys(SCENES);

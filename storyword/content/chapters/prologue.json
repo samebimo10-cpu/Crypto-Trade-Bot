@@ -4,9 +4,43 @@
   "title": "The Last Storm",
   "place": "Port Harcourt, Rivers State",
   "teaser": "A storm over the Bonny River. Four letters sealed in red wax. One old lion who won't see morning.",
-  "start": "pr_storm",
+  "start": "pr_dream",
   "initialStats": {"trust": 50, "affection": 50, "reputation": 50, "desire": 50, "control": 50, "loyalty": 50},
   "scenes": [
+    {
+      "id": "pr_dream",
+      "background": "dream_river",
+      "music": "mystic",
+      "memory": "m_dream",
+      "lines": [
+        {"speaker": "narrator", "text": "Before the storm. Before the letters. Before anyone died."},
+        {
+          "speaker": "narrator",
+          "text": "On the night it began, in Jos, Nabyen Dalyop dreamed of a river she had never seen."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Black water. A thousand floating lanterns. And a woman in white, standing on the surface as if it were glass.",
+          "sfx": "whisper"
+        },
+        {
+          "speaker": "river",
+          "text": "Two halves, daughter of the Rock. When they meet, the river will choose."
+        },
+        {"speaker": "river", "text": "Someone is watching you. Someone has always been watching you."},
+        {"speaker": "narrator", "text": "Nabyen woke with river water on her pillow."},
+        {
+          "speaker": "narrator",
+          "text": "And on her windowsill, three floors up, a single red rose that had not been there when she fell asleep.",
+          "sfx": "sting_reveal"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Four hundred kilometres south, in Port Harcourt, an old man was writing his last letters."
+        }
+      ],
+      "next": "pr_storm"
+    },
     {
       "id": "pr_storm",
       "background": "ph_night",
@@ -24,6 +58,11 @@
         {
           "speaker": "narrator",
           "text": "Ships in the Delta. Tin on the Plateau. Cloth in Kano. Money in Lagos. Everything he touched became an empire."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Through the rain-streaked window, for one moment, he thought he saw a woman in white standing on the river. He had seen her once before, forty years ago. The night his father died.",
+          "sfx": "whisper"
         },
         {
           "speaker": "gideon",
@@ -108,6 +147,11 @@
       "title": "The Last Storm",
       "background": "ph_night",
       "text": "Red wax, four letters, and a cold cup of tea."
+    },
+    "m_dream": {
+      "title": "The Woman in the Water",
+      "background": "dream_river",
+      "text": "Black water, a thousand lanterns, and a rose that should not have been there."
     }
   },
   "initialRel": {
@@ -123,5 +167,6 @@
       "from": "Chief Gideon Okoro",
       "text": "Kaneng. It's me. Thirty years, and I still can't say it properly. I'm sorry. Tell her... no. I'll tell her myself. Soon."
     }
-  }
+  },
+  "epigraph": {"text": "The river remembers every name it has ever been told.", "source": "Nana Rinji's diary"}
 }

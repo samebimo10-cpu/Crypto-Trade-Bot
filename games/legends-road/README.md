@@ -1,19 +1,47 @@
 # Legends Road
 
-An offline road racer across eight historic places. Each leg ends at a finish
-line where you meet a famous person whose fortune began there, with a short
-history of the place and their story.
+**Season One: The Fortune Trail.** An offline racing series in ten episodes.
+Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across ten
+cities to win the Fortune Trail and save Tobi's late father's garage. Each
+episode opens with a cinematic fly-in, the couple talk to each other as you drive,
+and every finish line tells the story of a famous person whose fortune began
+in that city.
 
-| Leg | Place | History | Person |
+| Ep | City | Map | Legend |
 | --- | --- | --- | --- |
-| 1 | Kano, Nigeria | Trans-Saharan trade city, ancient walls, Kofar Mata dye pits | Aliko Dangote |
-| 2 | A Coruña, Spain | Tower of Hercules, the oldest Roman lighthouse still in use | Amancio Ortega |
-| 3 | Paris, France | Eiffel Tower (1889), Haussmann's boulevards | Bernard Arnault |
-| 4 | Mumbai, India | Seven islands, Gateway of India (1924) | Mukesh Ambani |
-| 5 | Hong Kong | Victoria Harbour, the Peak Tram (1888) | Li Ka-shing |
-| 6 | Omaha, USA | Start of the Union Pacific transcontinental railroad | Warren Buffett |
-| 7 | Seattle, USA | Klondike Gold Rush gateway, Space Needle (1962) | Bill Gates |
-| 8 | Starbase, USA | Battle of Palmito Ranch (1865), Starship launch site | Elon Musk |
+| 1 | Lagos, Nigeria | Street map: Ikeja, Third Mainland Bridge, Lagos Island, Ikoyi, Lekki–Ikoyi Link Bridge, Victoria Island, Eko Atlantic | Mike Adenuga |
+| 2 | Port Harcourt, Nigeria | Street map: Rumuokoro, Pleasure Park, Trans-Amadi, Isaac Boro Park, Mile 1, the port | Folorunso Alakija |
+| 3 | Kano, Nigeria | Route map | Aliko Dangote |
+| 4 | A Coruña, Spain | Route map | Amancio Ortega |
+| 5 | Paris, France | Street map: Arc de Triomphe to the Eiffel Tower along the Seine | Bernard Arnault |
+| 6 | Mumbai, India | Route map | Mukesh Ambani |
+| 7 | Hong Kong | Route map | Li Ka-shing |
+| 8 | Omaha, USA | Route map | Warren Buffett |
+| 9 | Seattle, USA | Route map | Bill Gates |
+| 10 | Starbase, USA | Route map, with a night rocket launch at the finish | Elon Musk |
+
+"Street map" episodes are built from real coordinates: the length of each leg
+and the angle of each turn come from the map. The maps are stylised (offline,
+with no map tiles), so treat positions as approximate. The couples are
+fictional.
+
+## Features
+
+- **Minimap** in the top-right corner, with your position, the rivals and the
+  next real place. Press **N** or tap the minimap for the full map with every
+  place described.
+- **Shortcuts.** Two per episode, placed where the road bends back on itself.
+  A green sign and Tobi announce each one. Steer into the blue-marked lane and
+  stay in it to cut across.
+- **Garage.** Five cars with different top speed, acceleration, handling and
+  nitro. Fortune you collect on the road pays for them.
+- **Steering assist** (on by default, toggle on the title or pause screen).
+  It cuts drift in bends and eases the car back onto the road.
+- **Lucky spin.** Earn one spin per finished episode (two for a win): cash,
+  a new car, or a perk for the next race (bigger nitro tank, a shield against
+  one crash, or a head start).
+- **Couples championship.** 25-18-15-12-10-8 points per race, with season
+  standings after every episode.
 
 ## Play
 
@@ -50,12 +78,14 @@ open `http://localhost:8000`.
 | Accelerate | Up arrow, W | Automatic |
 | Brake | Down arrow, S | Brake button |
 | Nitro | Space or Shift | Nitro button |
+| Full map | N | Tap the minimap |
+| Skip intro | Enter or Esc | Skip button |
 | Pause | P or Esc | II button |
 | Sound on/off | M | SND button |
 
 Collect gold coins to build your fortune and blue canisters to refill nitro.
-Off-road driving slows you down, and roadside objects stop you. Finishing a leg
-unlocks the next one; progress is saved in the browser.
+Off-road driving slows you down, and roadside objects stop you. Finishing an
+episode unlocks the next one; progress is saved in the browser.
 
 Add `?autodrive` to the URL to let the car drive itself (demo mode).
 

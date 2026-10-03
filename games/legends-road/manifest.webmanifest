@@ -1,7 +1,7 @@
 {
   "name": "Legends Road",
   "short_name": "Legends Road",
-  "description": "An offline road racer across eight historic places, each ending with the story of a famous fortune that began there.",
+  "description": "An offline racing series: a Lagos couple race rival couples across ten cities, from Lagos and Port Harcourt to Starbase, meeting the legends whose fortunes began there.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",

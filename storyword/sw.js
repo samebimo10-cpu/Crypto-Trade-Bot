@@ -1,7 +1,7 @@
 // Service worker: after the first visit, StoryWord plays with no connection.
 // It precaches the app shell and every content file listed in story.json,
 // then serves from the cache first. Bump VERSION when shipping changes.
-const VERSION = 'storyword-v2';
+const VERSION = 'storyword-v3';
 const SHELL = [
   './',
   'index.html',
@@ -14,6 +14,7 @@ const SHELL = [
   'src/engine/progress.js',
   'src/ui/portrait.js',
   'src/ui/scenes.js',
+  'src/ui/audio.js',
   'content/story.json',
   'content/characters.json',
   'content/puzzles.json',

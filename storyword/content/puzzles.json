@@ -9,7 +9,9 @@
       "letters": ["C", "R", "O", "W", "N"],
       "requiredWords": ["CROWN", "CROW", "WORN"],
       "bonusWords": ["CON", "COR", "COW", "NOR", "NOW", "OWN", "ROC", "ROW", "WON", "CORN"],
-      "reward": {"coins": 3}
+      "reward": {"coins": 3},
+      "frame": {"kind": "seal", "label": "The wax seal"},
+      "decoded": "Four letters. One crown. Let them choose well. — G.O."
     },
     {
       "id": "n_stones",
@@ -24,7 +26,9 @@
         "TON", "NESS", "NETS", "NOSE", "NOTE", "ONES", "SENT", "SETS", "SONS", "TENS", "TOES", "TONE", "TONS",
         "TOSS", "ONSET", "TONES", "STONES"
       ],
-      "reward": {"coins": 3}
+      "reward": {"coins": 3},
+      "frame": {"kind": "note", "label": "A note in Mama's sewing tin"},
+      "decoded": "The stones remember who carried them. So do I. — K."
     },
     {
       "id": "n_plateau",
@@ -40,7 +44,9 @@
         "PLEA", "TAPE", "TEAL"
       ],
       "secrets": [{"word": "PLEA", "id": "s_plea"}],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "confession", "label": "Mama's confession"},
+      "decoded": "He was your father. He was also a coward. I loved him anyway."
     },
     {
       "id": "t_waters",
@@ -58,7 +64,9 @@
         "SWEAT", "TEARS", "WASTE", "WEARS", "WATERS"
       ],
       "secrets": [{"word": "SWEAR", "id": "s_swear"}],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "intercept", "label": "Radio chatter on the creeks"},
+      "decoded": "Boat seven leaves Yenagoa at midnight. Nobody from the creeks reaches Port Harcourt."
     },
     {
       "id": "t_rivers",
@@ -69,7 +77,9 @@
       "letters": ["R", "I", "V", "E", "R", "S"],
       "requiredWords": ["RIVERS", "RIVER", "RISE"],
       "bonusWords": ["ERR", "ERS", "IRE", "REI", "RES", "REV", "SER", "SIR", "SRI", "VIE", "VIS", "SIRE"],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "threat", "label": "Scratched into the hull"},
+      "decoded": "Stay on the river, captain. Rivers are easy to drown in."
     },
     {
       "id": "h_ledger",
@@ -84,7 +94,9 @@
         "REEL", "GREED"
       ],
       "secrets": [{"word": "GREED", "id": "s_greed"}],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "ledger", "label": "A coded ledger margin"},
+      "decoded": "BM-GVA. 4,000,000. Approved: E.M."
     },
     {
       "id": "h_horses",
@@ -98,7 +110,9 @@
         "ERS", "ESS", "HER", "HES", "ORE", "ORS", "RES", "ROE", "SER", "SHE", "SOS", "HERS", "HOSE", "ROSE",
         "SHOE", "SORE", "ROSES", "SHOES", "HORSES", "SHORES"
       ],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "intercept", "label": "A message passed at the Durbar"},
+      "decoded": "The Lagos man has met the Swiss woman. Twice."
     },
     {
       "id": "k_bridge",
@@ -113,7 +127,9 @@
         "REG", "REI", "RIB", "RID", "RIG", "BERG", "BRED", "DIRE", "GRID", "RIDE", "BRIDE"
       ],
       "secrets": [{"word": "BRIDE", "id": "s_bride"}],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "intercept", "label": "A text on a burner phone"},
+      "decoded": "Your godfather is dying. Be ready when he does. — E."
     },
     {
       "id": "k_lagos",
@@ -124,7 +140,9 @@
       "letters": ["L", "A", "G", "O", "S"],
       "requiredWords": ["GOAL", "GOALS", "ALSO"],
       "bonusWords": ["AGO", "ALS", "GAL", "GAS", "GOA", "LAG", "LAS", "LOG", "LOS", "SAL", "SOL", "GALS", "LOGS"],
-      "reward": {"coins": 4}
+      "reward": {"coins": 4},
+      "frame": {"kind": "confession", "label": "Kolade's unsent message"},
+      "decoded": "I don't want his money. I wanted him to be proud of me."
     },
     {
       "id": "f_funeral",
@@ -140,7 +158,9 @@
         "FLEA", "FRAU", "FUEL", "LANE", "LEAF", "LEAN", "LUNA", "LURE", "NEAL", "NEAR", "REAL", "RULE",
         "LUNAR", "RENAL", "NEURAL", "UNREAL"
       ],
-      "reward": {"coins": 5}
+      "reward": {"coins": 5},
+      "frame": {"kind": "threat", "label": "A card tucked into the wreath"},
+      "decoded": "Leave after the burial. Or be buried beside him."
     },
     {
       "id": "f_poison",
@@ -155,7 +175,9 @@
         "SON", "IONS", "OOPS", "PINS", "SNOOP", "SPOON"
       ],
       "secrets": [{"word": "SPOON", "id": "s_spoon"}],
-      "reward": {"coins": 5}
+      "reward": {"coins": 5},
+      "frame": {"kind": "intercept", "label": "The doctor's private note"},
+      "decoded": "Symptoms consistent with thallium. Do not file. Paid in full."
     },
     {
       "id": "l_thames",
@@ -173,7 +195,9 @@
         "HATES", "MATES", "MATHS", "MEATS", "SHAME", "TEAMS"
       ],
       "secrets": [{"word": "SHAME", "id": "s_shame"}],
-      "reward": {"coins": 5}
+      "reward": {"coins": 5},
+      "frame": {"kind": "confession", "label": "Oliver's diary"},
+      "decoded": "I am a coward with a law degree. Tomorrow I tell them everything."
     },
     {
       "id": "l_murder",
@@ -184,7 +208,9 @@
       "letters": ["M", "U", "R", "D", "E", "R"],
       "requiredWords": ["MURDER", "DRUM", "RUDE"],
       "bonusWords": ["DUE", "EMU", "ERR", "MED", "MUD", "RED", "REM", "RUE", "RUM"],
-      "reward": {"coins": 5}
+      "reward": {"coins": 5},
+      "frame": {"kind": "threat", "label": "A note pinned to Oliver's coat"},
+      "decoded": "Curiosity is expensive in London."
     },
     {
       "id": "a_geneva",
@@ -195,7 +221,9 @@
       "letters": ["G", "E", "N", "E", "V", "A"],
       "requiredWords": ["GENEVA", "EVEN", "GAVE"],
       "bonusWords": ["AGE", "AVE", "EAN", "EEN", "ENG", "EVE", "GAN", "GEE", "GEN", "VAN", "GENE", "VEGA", "VEGAN"],
-      "reward": {"coins": 6}
+      "reward": {"coins": 6},
+      "frame": {"kind": "ledger", "label": "The vault inscription"},
+      "decoded": "Only blood opens what blood built."
     },
     {
       "id": "a_snow",
@@ -212,7 +240,9 @@
         "FLAWS", "FLOWN", "FLOWS", "LOANS", "SALON", "SLOAN", "WALLS", "ALLOWS"
       ],
       "secrets": [{"word": "WOLF", "id": "s_wolf"}],
-      "reward": {"coins": 6}
+      "reward": {"coins": 6},
+      "frame": {"kind": "intercept", "label": "Radio on the mountain train"},
+      "decoded": "Le Loup to all units: the ledger must not reach Täsch."
     },
     {
       "id": "c_island",
@@ -227,7 +257,9 @@
         "LID", "LIN", "LIS", "NAS", "NIL", "NIS", "SAD", "SAL", "SAN", "SIN", "AIDS", "DANS", "DIAL", "LAID",
         "NAIL", "SAID", "SAND", "SIND", "LANDS", "NAILS"
       ],
-      "reward": {"coins": 6}
+      "reward": {"coins": 6},
+      "frame": {"kind": "confession", "label": "Marcus's letter to his brother"},
+      "decoded": "Come home to the sea, Gideon. The crown can wait. I can't."
     },
     {
       "id": "c_palms",
@@ -242,7 +274,9 @@
         "SAP", "SPA", "ALPS", "AMPS", "LAMP", "LAPS", "MAPS", "PALS", "SLAM", "SLAP", "SPAM", "PSALM"
       ],
       "secrets": [{"word": "PSALM", "id": "s_psalm"}],
-      "reward": {"coins": 6}
+      "reward": {"coins": 6},
+      "frame": {"kind": "confession", "label": "Gideon's last confession"},
+      "decoded": "I built four rivers because I was afraid of one. Choose better than I did."
     }
   ]
 }

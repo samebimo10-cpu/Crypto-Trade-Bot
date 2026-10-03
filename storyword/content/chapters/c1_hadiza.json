@@ -34,14 +34,15 @@
         {
           "id": "c_audit",
           "text": "Open every ledger tonight. All ten years.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "setFlags": ["audited"],
-          "response": [{"speaker": "hadiza", "mood": "smile", "text": "Bring me tea. A great deal of tea."}]
+          "response": [{"speaker": "hadiza", "mood": "smile", "text": "Bring me tea. A great deal of tea."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_call_lagos",
           "text": "Call Kolade in Lagos. Bankers know where money hides.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "loyalty": -5},
           "setFlags": ["ally_kolade"],
           "response": [
             {
@@ -49,14 +50,17 @@
               "mood": "smile",
               "text": "Hadiza Lawan, calling me? I'm flattered. And suspicious."
             }
-          ]
+          ],
+          "tag": "LUXURY",
+          "rel": {"kolade": {"intimacy": 5, "tension": 5}}
         },
         {
           "id": "c_silent",
           "text": "Tell no one. Not even family.",
-          "effects": {"trust": 5, "reputation": -5},
+          "effects": {"trust": 5, "reputation": -5, "control": 10},
           "setFlags": ["silent"],
-          "response": [{"speaker": "hadiza", "text": "In Kano, the walls listen. Then they talk."}]
+          "response": [{"speaker": "hadiza", "text": "In Kano, the walls listen. Then they talk."}],
+          "tag": "CONTROL"
         }
       ],
       "puzzle": "h_ledger",
@@ -91,14 +95,15 @@
         {
           "id": "c_share",
           "text": "Send it to the other heirs. Nobody wins a rigged game.",
-          "effects": {"trust": 10},
+          "effects": {"trust": 10, "loyalty": 10},
           "setFlags": ["shared_ledger", "clue_moreau"],
-          "response": [{"speaker": "hadiza", "text": "Let them all see. Thieves hate the light."}]
+          "response": [{"speaker": "hadiza", "text": "Let them all see. Thieves hate the light."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_leverage",
           "text": "Keep it. Whoever holds this holds the crown.",
-          "effects": {"reputation": 10, "trust": -5},
+          "effects": {"reputation": 10, "trust": -5, "control": 15, "loyalty": -5},
           "setFlags": ["leverage", "clue_moreau"],
           "echo": "Knowledge is a blade.",
           "response": [
@@ -107,12 +112,13 @@
               "mood": "smile",
               "text": "My father taught me: never show your best cloth on the first day of the market."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_for_nd",
           "text": "Send it to one person only: the 'N.D.' in the margins.",
-          "effects": {"affection": 5, "trust": 5},
+          "effects": {"affection": 5, "trust": 5, "loyalty": 5},
           "setFlags": ["ally_nabyen", "clue_moreau"],
           "response": [
             {
@@ -120,10 +126,13 @@
               "text": "In the margin of the oldest ledger, in the Chief's handwriting: 'For N.D., if anything happens to me.'"
             },
             {"speaker": "hadiza", "text": "Nabyen Dalyop. Jos. Let's see who you are."}
-          ]
+          ],
+          "tag": "LOYALTY",
+          "rel": {"nabyen": {"intimacy": 10}}
         }
       ],
-      "next": "h3_durbar"
+      "next": "h3_durbar",
+      "keepsake": "k_ledger_page"
     },
     {
       "id": "h3_durbar",
@@ -150,27 +159,33 @@
         {
           "id": "c_shake",
           "text": "Shake his hand.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "loyalty": -5},
           "setFlags": ["ally_kolade"],
-          "response": [{"speaker": "kolade", "mood": "smile", "text": "A pleasure doing business."}]
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "A pleasure doing business."}],
+          "tag": "LUXURY",
+          "rel": {"kolade": {"intimacy": 10}}
         },
         {
           "id": "c_refuse_k",
           "text": "\"I don't share crowns, Kolade.\"",
-          "effects": {"reputation": 5, "trust": -5},
+          "effects": {"reputation": 5, "trust": -5, "control": 5},
           "setFlags": ["refused_kolade"],
-          "response": [{"speaker": "kolade", "text": "Then I'll see you on the other side of the table."}]
+          "response": [{"speaker": "kolade", "text": "Then I'll see you on the other side of the table."}],
+          "tag": "CONTROL",
+          "rel": {"kolade": {"tension": 15}}
         },
         {
           "id": "c_test",
           "text": "Ask him about Banque Moreau. Watch his eyes.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "setFlags": ["suspects_kolade"],
           "response": [
             {"speaker": "narrator", "text": "He blinks. Once. Then he laughs."},
             {"speaker": "kolade", "mood": "smile", "text": "Never heard of them."},
             {"speaker": "narrator", "text": "Hadiza has played enough cards to know a bluff."}
-          ]
+          ],
+          "tag": "CONTROL",
+          "rel": {"kolade": {"tension": 10}}
         }
       ],
       "puzzle": "h_horses",
@@ -228,6 +243,14 @@
       "title": "The Durbar",
       "background": "kano_durbar",
       "text": "Horsemen in red and gold, and a Lagos banker in the dust."
+    }
+  },
+  "keepsakes": {
+    "k_ledger_page": {
+      "type": "memento",
+      "title": "A torn ledger page",
+      "from": "Confluence Holdings, 2019",
+      "text": "Four million, out. Four million, out. Four million, out. Every line initialled E.M."
     }
   }
 }

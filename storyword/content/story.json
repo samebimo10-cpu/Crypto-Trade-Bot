@@ -2,11 +2,11 @@
   "title": "StoryWord",
   "season": 1,
   "seasonTitle": "Crown of the Confluence",
-  "tagline": "Four houses. One crown. A death that started everything.",
+  "tagline": "Four houses. One crown. Every secret is a weapon.",
   "heroine": "nabyen",
   "totalChapters": 5,
   "totalSecrets": 8,
-  "totalEndings": 6,
+  "totalEndings": 9,
   "secretFlags": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
   "chapters": [
     {"id": "prologue", "file": "chapters/prologue.json"},

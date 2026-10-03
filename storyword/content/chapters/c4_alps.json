@@ -69,30 +69,34 @@
         {
           "id": "c_grab",
           "text": "Grab the ledger and run.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "control": 5},
           "setFlags": ["has_ledger"],
           "response": [
             {
               "speaker": "narrator",
               "text": "Up the stairs, through the lobby, out into the sunlight with alarms screaming."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_hold",
           "text": "Hold the vault door so the others can get out.",
-          "effects": {"trust": 10, "reputation": 5},
+          "effects": {"trust": 10, "reputation": 5, "loyalty": 10},
           "setFlags": ["has_ledger", "held_door"],
           "response": [
             {
               "speaker": "narrator",
               "text": "Steel against shoulder, ten seconds that feel like ten years. Long enough."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         }
       ],
       "puzzle": "a_geneva",
-      "next": "a3_train"
+      "next": "a3_train",
+      "tension": true,
+      "keepsake": "k_coral_whole"
     },
     {
       "id": "a3_train",
@@ -124,44 +128,49 @@
           "id": "c_send_tari",
           "if": {"notPov": "tari"},
           "text": "Tari. He's the strongest of us.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 10},
           "setFlags": ["sent_tari", "dead_tari", "elise_caught"],
           "echo": "Nobody says goodbye properly.",
-          "response": [{"speaker": "tari", "mood": "smile", "text": "Easy. It's only downhill."}]
+          "response": [{"speaker": "tari", "mood": "smile", "text": "Easy. It's only downhill."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_send_hadiza",
           "if": {"notPov": "hadiza"},
           "text": "Hadiza. She knows exactly what the ledger proves.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 10},
           "setFlags": ["sent_hadiza", "dead_hadiza", "elise_caught"],
           "echo": "Nobody says goodbye properly.",
-          "response": [{"speaker": "hadiza", "text": "Page by page. Don't wait for me."}]
+          "response": [{"speaker": "hadiza", "text": "Page by page. Don't wait for me."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_send_kolade",
           "if": {"notPov": "kolade"},
           "text": "Kolade. Lagos men run fast.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 10},
           "setFlags": ["sent_kolade", "dead_kolade", "elise_caught"],
           "echo": "Nobody says goodbye properly.",
-          "response": [{"speaker": "kolade", "mood": "smile", "text": "Finally, a job that pays in glory."}]
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "Finally, a job that pays in glory."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_send_self",
           "text": "Carry it yourself.",
-          "effects": {"reputation": 10},
+          "effects": {"reputation": 10, "loyalty": 10, "desire": 5},
           "setFlags": ["went_self", "elise_escaped"],
           "response": [
             {
               "speaker": "narrator",
               "text": "{pov} zips the ledger into a coat pocket and steps off the train into the white."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         }
       ],
       "puzzle": "a_snow",
-      "next": "a4_storm"
+      "next": "a4_storm",
+      "tension": true
     },
     {
       "id": "a4_storm",
@@ -241,23 +250,41 @@
       "prompt": "The storm is passing.",
       "choices": [
         {
+          "id": "c_lev_wolf",
+          "if": {"flags": ["elise_caught"]},
+          "leverage": "s_wolf",
+          "tag": "LEVERAGE",
+          "risk": "High risk",
+          "text": "Lean close to the glass. \"Hello, Le Loup.\" Watch the mask slip.",
+          "effects": {"control": 15},
+          "setFlags": ["elise_broken", "justice"],
+          "response": [
+            {"speaker": "elise", "mood": "angry", "text": "...Who told you that name?"},
+            {
+              "speaker": "narrator",
+              "text": "By the time her lawyers arrive, Elise Moreau has confessed to everything. The poison. The spoon. Oliver."
+            }
+          ]
+        },
+        {
           "id": "c_justice",
           "if": {"flags": ["elise_caught"]},
           "text": "Hand everything to the Swiss courts. Let the law have her.",
-          "effects": {"trust": 10},
+          "effects": {"trust": 10, "loyalty": 10},
           "setFlags": ["justice"],
           "response": [
             {
               "speaker": "narrator",
               "text": "Elise Moreau will spend the next twenty years looking at a very small piece of Swiss sky."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_deal",
           "if": {"flags": ["elise_caught"]},
           "text": "Offer Elise a deal: return every franc, and she walks.",
-          "effects": {"reputation": 10, "trust": -10},
+          "effects": {"reputation": 10, "trust": -10, "loyalty": -15, "control": 10},
           "setFlags": ["deal_elise"],
           "response": [
             {"speaker": "elise", "mood": "smile", "text": "You're more like him than you know."},
@@ -265,36 +292,40 @@
               "speaker": "narrator",
               "text": "Forty million dollars comes home. The woman who stole it walks free."
             }
-          ]
+          ],
+          "tag": "LUXURY"
         },
         {
           "id": "c_hunt",
           "if": {"flags": ["elise_escaped"]},
           "text": "\"Wherever she runs, we'll find her.\"",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "desire": 10},
           "setFlags": ["vengeance"],
           "response": [
             {
               "speaker": "narrator",
               "text": "Somewhere, a woman with pale hair is buying a ticket to somewhere warm."
             }
-          ]
+          ],
+          "tag": "DESIRE"
         },
         {
           "id": "c_let",
           "if": {"flags": ["elise_escaped"]},
           "text": "Let her go. You have the truth, and everyone is alive.",
-          "effects": {"affection": 10},
+          "effects": {"affection": 10, "loyalty": 5},
           "setFlags": ["mercy"],
           "response": [
             {
               "speaker": "narrator",
               "text": "Everyone is alive. In this story, that's the rarest treasure of all."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         }
       ],
-      "next": null
+      "next": null,
+      "tension": true
     }
   ],
   "outcomes": [
@@ -347,6 +378,14 @@
       "title": "The Storm on the Pass",
       "background": "alps_storm",
       "text": "Somebody didn't come back down the mountain."
+    }
+  },
+  "keepsakes": {
+    "k_coral_whole": {
+      "type": "memento",
+      "title": "The coral bracelet, whole",
+      "from": "Vault 7, Banque Moreau",
+      "text": "Two halves, thirty years apart. A perfect fit."
     }
   }
 }

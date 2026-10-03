@@ -36,7 +36,7 @@
         {
           "id": "c_invite",
           "text": "\"Come with us to Geneva, Oliver. You're not safe here.\"",
-          "effects": {"trust": 5, "affection": 5},
+          "effects": {"trust": 5, "affection": 5, "loyalty": 5},
           "setFlags": ["invited_oliver"],
           "response": [
             {
@@ -44,17 +44,19 @@
               "mood": "smile",
               "text": "That's... very kind. I have one thing to collect first. Meet me on the Embankment at nine."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_doubt",
           "text": "\"How do we know you're not part of this?\"",
-          "effects": {"trust": -5, "reputation": 5},
+          "effects": {"trust": -5, "reputation": 5, "control": 10},
           "setFlags": ["doubted_oliver"],
           "response": [
             {"speaker": "oliver", "mood": "sad", "text": "You don't. That's rather the point of trust."},
             {"speaker": "oliver", "text": "The Embankment, nine o'clock. There's something you need to see."}
-          ]
+          ],
+          "tag": "CONTROL"
         }
       ],
       "puzzle": "l_thames",
@@ -82,7 +84,7 @@
         {
           "id": "c_stay_o",
           "text": "Stay with Oliver.",
-          "effects": {"affection": 5, "trust": 5},
+          "effects": {"affection": 5, "trust": 5, "loyalty": 10},
           "setFlags": ["stayed_oliver", "clue_moreau"],
           "response": [
             {"speaker": "oliver", "mood": "sad", "text": "Tell the girl... her father... was so proud..."},
@@ -90,12 +92,13 @@
               "speaker": "narrator",
               "text": "Oliver Ashworth, solicitor, sixty-one years old, dies on the steps of the Thames as the fog closes over him."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_chase_s",
           "text": "Chase the shadow.",
-          "effects": {"reputation": 10},
+          "effects": {"reputation": 10, "desire": 10},
           "setFlags": ["chased_shadow"],
           "response": [
             {
@@ -103,23 +106,27 @@
               "text": "Down the Embankment, across the bridge, and into a black car with Swiss diplomatic plates."
             },
             {"speaker": "narrator", "text": "When the chase is over, so is Oliver."}
-          ]
+          ],
+          "tag": "DESIRE"
         },
         {
           "id": "c_police",
           "text": "Call the police. Do this properly.",
-          "effects": {"trust": 10, "reputation": -5},
+          "effects": {"trust": 10, "reputation": -5, "control": 5},
           "setFlags": ["called_police"],
           "response": [
             {
               "speaker": "narrator",
               "text": "The Met arrive in eleven minutes. Oliver Ashworth has been dead for ten."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         }
       ],
       "puzzle": "l_murder",
-      "next": [{"if": {"pov": "kolade", "flags": ["elise_deal"]}, "to": "l3_dark"}, {"to": "l3_pub"}]
+      "next": [{"if": {"pov": "kolade", "flags": ["elise_deal"]}, "to": "l3_dark"}, {"to": "l3_pub"}],
+      "tension": true,
+      "keepsake": "k_voice_oliver"
     },
     {
       "id": "l3_pub",
@@ -143,26 +150,54 @@
           "id": "c_confront_k",
           "if": {"notPov": "kolade", "flags": ["suspects_kolade"]},
           "text": "\"Kolade. Who keeps calling you?\"",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "setFlags": ["confronted_kolade"],
           "response": [
             {"speaker": "kolade", "mood": "surprised", "text": "My mother."},
             {"speaker": "narrator", "text": "Nobody believes him. Nobody can prove otherwise, either."}
-          ]
+          ],
+          "tag": "CONTROL",
+          "rel": {"kolade": {"tension": 15}}
         },
         {
           "id": "c_vow",
           "text": "\"We finish this. For the Chief, and for Oliver.\"",
-          "effects": {"trust": 5, "reputation": 5},
+          "effects": {"trust": 5, "reputation": 5, "loyalty": 10},
           "setFlags": ["vowed"],
-          "response": [{"speaker": "hadiza", "text": "For Oliver."}, {"speaker": "tari", "text": "For the Chief."}]
+          "response": [{"speaker": "hadiza", "text": "For Oliver."}, {"speaker": "tari", "text": "For the Chief."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_lone",
           "text": "Trust no one at this table.",
-          "effects": {"trust": -5, "reputation": 5},
+          "effects": {"trust": -5, "reputation": 5, "control": 10, "loyalty": -5},
           "setFlags": ["lone_wolf"],
-          "response": [{"speaker": "narrator", "text": "In this game, the cautious ones live longest."}]
+          "response": [{"speaker": "narrator", "text": "In this game, the cautious ones live longest."}],
+          "tag": "CONTROL"
+        },
+        {
+          "id": "c_lev_shame",
+          "leverage": "s_shame",
+          "tag": "LEVERAGE",
+          "text": "Read Oliver's diary aloud: \"My shame: I knew about Geneva for two years and said nothing.\"",
+          "effects": {"control": 10, "trust": 5},
+          "setFlags": ["group_united"],
+          "response": [
+            {"speaker": "hadiza", "mood": "sad", "text": "He knew. And he died trying to make it right."},
+            {"speaker": "tari", "text": "Then we finish what he started."}
+          ]
+        },
+        {
+          "id": "c_lev_spoon_pub",
+          "leverage": "s_spoon",
+          "tag": "LEVERAGE",
+          "text": "Lay the blackened spoon on the table. \"E.M. Elise Moreau. She killed the Chief.\"",
+          "effects": {"control": 10, "reputation": 5},
+          "setFlags": ["named_killer"],
+          "response": [
+            {"speaker": "narrator", "text": "Nobody touches it. Everybody stares at it."},
+            {"speaker": "hadiza", "mood": "angry", "text": "Then Geneva is not a bank visit. It is a hunt."}
+          ]
         }
       ],
       "next": "l4_bridge"
@@ -184,7 +219,7 @@
         {
           "id": "c_confess",
           "text": "Tell them everything about Elise's offer.",
-          "effects": {"trust": 15, "reputation": -10},
+          "effects": {"trust": 15, "reputation": -10, "loyalty": 20},
           "setFlags": ["confessed"],
           "response": [
             {"speaker": "tari", "mood": "angry", "text": "You WHAT?"},
@@ -194,18 +229,21 @@
               "mood": "sad",
               "text": "Thank you for telling us. Don't ever lie to me again."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_betray",
           "text": "Say nothing. Text Elise one word: 'Soon.'",
-          "effects": {"reputation": 10, "trust": -15},
+          "effects": {"reputation": 10, "trust": -15, "loyalty": -25, "desire": 5},
           "setFlags": ["betrayer"],
           "echo": "There is no undoing this.",
-          "response": [{"speaker": "narrator", "text": "Sent. Delivered. Read."}]
+          "response": [{"speaker": "narrator", "text": "Sent. Delivered. Read."}],
+          "tag": "LUXURY"
         }
       ],
-      "next": "l4_bridge"
+      "next": "l4_bridge",
+      "tension": true
     },
     {
       "id": "l4_bridge",
@@ -258,7 +296,7 @@
           "id": "c_kiss_n",
           "if": {"notPov": "nabyen", "flags": ["spark_nabyen"]},
           "text": "Kiss her.",
-          "effects": {"affection": 15},
+          "effects": {"affection": 15, "desire": 15},
           "setFlags": ["romance_nabyen"],
           "response": [
             {
@@ -266,28 +304,36 @@
               "text": "The fog swallows the bridge, the river, the whole city. For a moment, there's nobody left in London but the two of them."
             },
             {"speaker": "nabyen", "mood": "smile", "text": "...Okay. So that happened."}
-          ]
+          ],
+          "tag": "DESIRE",
+          "rel": {"nabyen": {"intimacy": 20, "tension": 5}},
+          "gate": {"if": {"rel": {"nabyen": {"minIntimacy": 30}}}, "label": "Requires intimacy 30+ with Nabyen"},
+          "risk": "High risk"
         },
         {
           "id": "c_stay_n",
           "if": {"notPov": "nabyen"},
           "text": "\"I'm not going anywhere.\"",
-          "effects": {"affection": 5, "trust": 5},
+          "effects": {"affection": 5, "trust": 5, "loyalty": 5},
           "setFlags": ["promised_nabyen"],
-          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Good. I'd hate to have to come and find you."}]
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Good. I'd hate to have to come and find you."}],
+          "tag": "LOYALTY",
+          "rel": {"nabyen": {"intimacy": 5}}
         },
         {
           "id": "c_walk_back",
           "if": {"notPov": "nabyen"},
           "text": "Walk her back to the hotel without a word.",
-          "effects": {"trust": 5},
-          "response": [{"speaker": "narrator", "text": "Some silences say more than speeches. This is one of them."}]
+          "effects": {"trust": 5, "control": 5},
+          "response": [{"speaker": "narrator", "text": "Some silences say more than speeches. This is one of them."}],
+          "tag": "CONTROL",
+          "rel": {"nabyen": {"tension": 5}}
         },
         {
           "id": "c_kiss_tari",
           "if": {"pov": "nabyen", "flags": ["spark_tari"]},
           "text": "Kiss Tari.",
-          "effects": {"affection": 15},
+          "effects": {"affection": 15, "desire": 15},
           "setFlags": ["romance_tari"],
           "response": [
             {
@@ -295,13 +341,17 @@
               "text": "He tastes like rain and the river. Big Ben strikes again, and neither of them hears it."
             },
             {"speaker": "tari", "mood": "smile", "text": "Twenty years I've wanted to do that."}
-          ]
+          ],
+          "tag": "DESIRE",
+          "rel": {"tari": {"intimacy": 20}},
+          "gate": {"if": {"rel": {"tari": {"minIntimacy": 30}}}, "label": "Requires intimacy 30+ with Tari"},
+          "risk": "High risk"
         },
         {
           "id": "c_kiss_kolade",
           "if": {"pov": "nabyen", "flags": ["spark_kolade"]},
           "text": "Kiss Kolade.",
-          "effects": {"affection": 15},
+          "effects": {"affection": 15, "desire": 15},
           "setFlags": ["romance_kolade"],
           "response": [
             {"speaker": "narrator", "text": "The coffee goes into the Thames. Neither of them notices."},
@@ -310,23 +360,29 @@
               "mood": "smile",
               "text": "For once in my life, I have nothing clever to say."
             }
-          ]
+          ],
+          "tag": "DESIRE",
+          "rel": {"kolade": {"intimacy": 20, "tension": -5}},
+          "gate": {"if": {"rel": {"kolade": {"minIntimacy": 30}}}, "label": "Requires intimacy 30+ with Kolade"},
+          "risk": "High risk"
         },
         {
           "id": "c_call_mama",
           "if": {"pov": "nabyen"},
           "text": "Call Mama Kaneng in Jos.",
-          "effects": {"affection": 5, "trust": 5},
+          "effects": {"affection": 5, "trust": 5, "loyalty": 5},
           "response": [
             {
               "speaker": "kaneng",
               "mood": "sad",
               "text": "My daughter. Come home in one piece. That is all I'm asking."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         }
       ],
-      "next": null
+      "next": null,
+      "tension": true
     }
   ],
   "outcomes": [
@@ -377,6 +433,14 @@
       "title": "Westminster, 2 a.m.",
       "background": "london_night",
       "text": "Fog, lamplight, and Big Ben striking two."
+    }
+  },
+  "keepsakes": {
+    "k_voice_oliver": {
+      "type": "voice",
+      "title": "Oliver's last voicemail",
+      "from": "Oliver Ashworth, 8:52 pm",
+      "text": "If you're hearing this, I didn't make it to the Embankment. The key opens the vault. The blood opens the truth. And look after the girl. Please."
     }
   }
 }

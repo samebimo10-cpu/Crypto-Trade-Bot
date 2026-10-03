@@ -11,9 +11,11 @@ import * as Puzzle from './engine/puzzle.js';
 import * as Progress from './engine/progress.js';
 import { portraitSVG } from './ui/portrait.js';
 import { sceneSVG } from './ui/scenes.js';
+import * as Audio from './ui/audio.js';
 
 const app = document.getElementById('app');
 const sceneLayer = document.getElementById('scene');
+const fxLayer = document.getElementById('fx');
 const toastHost = document.getElementById('toasts');
 const storage = safeStorage();
 
@@ -26,6 +28,7 @@ const ui = {
   daily: null, // { key, entry, lineIndex, phase }
   shake: false,
   scene: null, // background currently drawn
+  atmosphere: null, // particle overlay currently drawn
   lastSpeaker: null,
 };
 
@@ -39,11 +42,28 @@ async function boot() {
       <p class="muted">Open the single-file build (dist/storyword.html), or serve this folder with <code>npm start</code>.</p></main>`;
     return;
   }
-  profile = Progress.load(storage);
+  profile = migrate(Progress.load(storage));
   app.addEventListener('click', onClick);
   document.addEventListener('keydown', onKey);
   render();
   registerOffline();
+}
+
+// Saves from before the relationship redesign have no rel or new axes.
+function migrate(p) {
+  const pro = C.chapters[0];
+  const fill = (run) => {
+    if (!run) return;
+    run.rel ??= structuredClone(pro.initialRel ?? {});
+    for (const k of ['desire', 'control', 'loyalty']) run.stats[k] ??= pro.initialStats?.[k] ?? 50;
+    if (run.carry) {
+      run.carry.rel ??= structuredClone(run.rel);
+      run.carry.stats = { ...run.stats, ...run.carry.stats };
+    }
+  };
+  fill(p.run);
+  for (const cp of p.run?.checkpoints ?? []) fill(cp.run);
+  return p;
 }
 
 async function loadContent() {
@@ -136,18 +156,55 @@ function go(screen) {
 }
 
 // mode: 'full' (story), 'dim' (puzzle, home) or 'none' (menus)
-function setScene(key, mode = 'full') {
+function setScene(key, mode = 'full', { tension = false } = {}) {
   document.body.dataset.scene = key ? mode : 'none';
+  document.body.dataset.tension = tension ? 'on' : 'off';
+  setAtmosphere(key ? ATMOSPHERE[key] : null);
+  Audio.setMood(tension ? 'tension' : NIGHT.has(key) ? 'night' : 'calm');
   if (!key || key === ui.scene) return;
   ui.scene = key;
   sceneLayer.innerHTML = sceneSVG(key);
 }
 
-function topbar(label, { hints = false } = {}) {
+// Particle overlays: candlelight embers in lit rooms, mist on the river,
+// gold dust in the vault and the boardrooms.
+const ATMOSPHERE = {
+  mansion: 'embers', ph_garden: 'embers', kano_market: 'embers', caribbean_sunset: 'embers', jos_dusk: 'embers',
+  london: 'mist', london_night: 'mist', creek_night: 'mist', bayelsa: 'mist', ph_night: 'mist',
+  vault: 'dust', geneva: 'dust', lagos_night: 'dust', ph_day: 'dust',
+};
+const NIGHT = new Set(['ph_night', 'creek_night', 'london_night', 'lagos_night', 'road_night', 'jos_dusk', 'ph_garden', 'kano_market', 'alps_storm']);
+
+function setAtmosphere(kind) {
+  if (kind === ui.atmosphere) return;
+  ui.atmosphere = kind;
+  if (!kind) {
+    fxLayer.innerHTML = '';
+    return;
+  }
+  const n = kind === 'mist' ? 6 : 26;
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    const x = (i * 37 + 11) % 100;
+    const delay = ((i * 1.7) % 9).toFixed(1);
+    const dur = (kind === 'mist' ? 26 : 9) + ((i * 3) % 7);
+    const size = kind === 'mist' ? 60 + (i % 3) * 25 : 2 + (i % 3);
+    html += `<i style="left:${x}%;animation-delay:-${delay}s;animation-duration:${dur}s;--s:${size}${kind === 'mist' ? 'vw' : 'px'}"></i>`;
+  }
+  fxLayer.innerHTML = `<div class="fx fx-${kind}">${html}</div>`;
+}
+
+function topbar(label, { hints = false, tools = false } = {}) {
+  const held = profile.run ? Story.heldLeverage(profile.run, C.story.secretFlags || []).length : 0;
+  const extras = tools
+    ? `<button class="pill pill-btn" data-action="leverage" aria-label="Leverage: secrets you hold">🗝 ${held}</button>
+       <button class="icon-btn sound${Audio.isOn() ? '' : ' off'}" data-action="sound" aria-pressed="${Audio.isOn()}" aria-label="${Audio.isOn() ? 'Turn sound off' : 'Turn sound on'}">♪</button>`
+    : '';
   return `<header class="topbar">
     <button class="icon-btn" data-action="home" aria-label="Home">⌂</button>
     <span class="topbar-label">${esc(label)}</span>
-    ${hints ? `<span class="pill" title="Hints">💡 ${profile.hints}</span>` : '<span class="pill-spacer"></span>'}
+    ${extras}
+    ${hints ? `<span class="pill" title="Hints">💡 ${profile.hints}</span>` : tools ? '' : '<span class="pill-spacer"></span>'}
   </header>`;
 }
 
@@ -244,29 +301,71 @@ function renderStory() {
   if (ui.overlay?.type === 'solved' && ui.puzzle) return renderPuzzle(chapterLabel(chapter));
   const view = Story.currentView(chapter, run);
   unlockSceneMemory(chapter, view.scene);
+  if (view.scene.keepsake) awardKeepsake(chapter, view.scene.keepsake);
   const label = `${chapterLabel(chapter)} · ${chapter.place}`;
+  const tension = Boolean(view.scene.tension);
 
   if (view.type === 'puzzle') {
-    setScene(view.scene.background, 'dim');
+    setScene(view.scene.background, 'dim', { tension });
     startPuzzle(`${chapter.id}:${view.puzzleId}`, C.puzzles[view.puzzleId], 'story');
     return renderPuzzle(chapterLabel(chapter));
   }
-  setScene(view.scene.background, 'full');
+  setScene(view.scene.background, 'full', { tension: tension || view.type === 'choice' && view.choices.some((c) => c.risk || c.leverage) });
   if (view.type === 'choice') {
     if (view.choices.some((c) => c.pov)) return renderCharacterSelect(view);
     return `<main class="screen story">
-      ${topbar(label)}
+      ${topbar(label, { tools: true })}
       ${choiceStage(view.scene, run)}
       <div class="dialogue choices">
         <p class="prompt-line">${fmt(view.prompt)}</p>
-        ${view.choices.map((c) => `<button class="choice" data-action="choose" data-id="${esc(c.id)}">${fmt(c.text)}</button>`).join('')}
+        ${view.choices.map(choiceCard).join('')}
       </div>
     </main>`;
   }
   return `<main class="screen story" data-action="advance">
-    ${topbar(label)}
+    ${topbar(label, { tools: true })}
     ${lineHTML(view.line, run)}
   </main>`;
+}
+
+const TAG_HINT = { DESIRE: 'Desire', CONTROL: 'Control', LOYALTY: 'Loyalty', LUXURY: 'Luxury', LEVERAGE: 'Leverage' };
+
+function choiceCard(c) {
+  const tag = c.tag ? `<span class="choice-tag">${esc(TAG_HINT[c.tag] ?? c.tag)}</span>` : '<span></span>';
+  let note = '';
+  if (c.locked) note = `<span class="choice-req">🔒 ${esc(c.locked.label)}</span>`;
+  else if (c.leverage) note = `<span class="choice-req">Spends: ${esc(secretById(c.leverage)?.title ?? 'a secret')}</span>`;
+  else if (c.risk) note = `<span class="choice-risk">${esc(c.risk)}</span>`;
+  const head = c.tag || note ? `<span class="choice-header">${tag}${note}</span>` : '';
+  return `<button class="choice${c.tag ? ` tag-${c.tag.toLowerCase()}` : ''}${c.locked ? ' locked' : ''}" data-action="choose" data-id="${esc(c.id)}" ${c.locked ? 'disabled aria-disabled="true"' : ''}>
+    ${head}<span class="choice-body">${fmt(c.text)}</span></button>`;
+}
+
+function keepsakeById(id) {
+  for (const ch of C.chapters) if (ch.keepsakes?.[id]) return ch.keepsakes[id];
+  return null;
+}
+
+function awardKeepsake(chapter, id) {
+  const { profile: next, isNew } = Progress.addKeepsake(profile, id);
+  if (!isNew) return;
+  profile = next;
+  persist();
+  const k = keepsakeById(id);
+  toast(`${KEEPSAKE_ICON[k.type] ?? '◆'} Keepsake: ${k.title}`);
+}
+
+const KEEPSAKE_ICON = { voice: '🎙', letter: '✉', memento: '◆' };
+
+// Relationship statuses for everyone except the player's own character.
+function relationshipsFor(run) {
+  return Object.entries(C.characters)
+    .filter(([id, c]) => c.relationship && id !== run?.pov)
+    .map(([id, c]) => {
+      const values = run?.rel?.[id] ?? { intimacy: 0, tension: 0 };
+      const dead = run?.flags.includes(`dead_${id}`);
+      return { id, c, values, dead, status: dead ? 'Fallen' : Story.relStatus(c.relationship, values) };
+    });
 }
 
 // "Whose story will you follow?": playable characters as cards.
@@ -384,10 +483,13 @@ function renderPuzzle(label) {
     .join('');
   const word = guess.map((i) => puzzle.letters[i]).join('');
   const bonusTotal = (puzzle.bonusWords || []).length;
+  const frame = puzzle.frame;
   return `<main class="screen puzzle">
     ${topbar(label, { hints: true })}
-    <div class="puzzle-card">
+    <div class="puzzle-card${frame ? ` frame-${esc(frame.kind)}` : ''}">
+      ${frame ? `<p class="frame-label"><span>${esc(FRAME_KIND[frame.kind] ?? frame.kind)}</span>${esc(frame.label)}</p>` : ''}
       <blockquote class="prompt">${fmt(puzzle.prompt)}</blockquote>
+      ${frame ? '<p class="decode-hint">Decode the words to read it.</p>' : ''}
       <p class="clue">${esc(puzzle.hint)}</p>
       <div class="rows">${rows}</div>
       <p class="bonus">${state.bonus.length ? `Bonus words: ${state.bonus.length} of ${bonusTotal} ✨` : `${bonusTotal} bonus words hidden here`}</p>
@@ -403,6 +505,8 @@ function renderPuzzle(label) {
     </div>
   </main>`;
 }
+
+const FRAME_KIND = { intercept: 'Intercepted', confession: 'Confession', threat: 'Veiled threat', ledger: 'Coded ledger', seal: 'Sealed', note: 'Hidden note' };
 
 function submitGuess() {
   const p = ui.puzzle;
@@ -476,6 +580,8 @@ function finishPuzzle() {
     hintsGained: res.reward.hintsGained,
     words: [...p.state.found, ...p.state.bonus],
     context: p.context,
+    decoded: p.puzzle.decoded,
+    frame: p.puzzle.frame,
   };
   if (p.context === 'story') {
     profile.run = Story.completePuzzle(currentChapter(), profile.run, p.puzzle.id, {
@@ -504,11 +610,29 @@ function renderOverlay() {
       o.daily ? `+${o.daily.coins} 🪙 +${o.daily.stars} ⭐ daily · 🔥 ${o.daily.streak} day${o.daily.streak === 1 ? '' : 's'}` : '',
     ].filter(Boolean);
     return `<div class="overlay"><div class="sheet pop">
-      <h2>Solved</h2>
+      <h2>${o.decoded ? 'Decoded' : 'Solved'}</h2>
+      ${o.decoded ? `<blockquote class="decoded"><small>${esc(o.frame?.label ?? '')}</small>${fmt(o.decoded)}</blockquote>` : ''}
       <div class="stars">${stars}</div>
       <p class="reward-line">${extras.map(esc).join(' · ')}</p>
       <p class="chips">${o.words.map((w) => `<span class="chip">${esc(w)}</span>`).join('')}</p>
       <button class="btn primary" data-action="overlay-continue">${o.context === 'story' ? 'Continue the story' : 'Done'}</button>
+    </div></div>`;
+  }
+  if (o.type === 'leverage') {
+    const ids = C.story.secretFlags || [];
+    const run = profile.run;
+    const rows = ids
+      .filter((id) => run?.flags.includes(id))
+      .map((id) => {
+        const sec = secretById(id);
+        const spent = run.flags.includes(`spent_${id}`);
+        return `<li class="${spent ? 'spent' : ''}"><b>${esc(sec.title)}</b><span>${esc(sec.text)}</span><em>${spent ? 'Used' : 'Held: can be played in the right conversation'}</em></li>`;
+      });
+    return `<div class="overlay"><div class="sheet pop leverage-sheet">
+      <h2>🗝 Leverage</h2>
+      <p class="muted">Secrets you've uncovered in this story. Each can be spent once, to corner someone or win their trust.</p>
+      ${rows.length ? `<ul class="secrets">${rows.join('')}</ul>` : '<p>No leverage yet. Hidden words in the puzzles reveal secrets.</p>'}
+      <button class="btn" data-action="overlay-close">Close</button>
     </div></div>`;
   }
   if (o.type === 'confirm-reset') {
@@ -536,6 +660,25 @@ function finishChapter() {
   profile = { ...res.profile, lastStats: run.stats, endings: [...new Set([...res.profile.endings, ...endings])] };
   profile.run = { ...run, finished: true, chapterReward: res.reward, outcomeId: outcome?.id ?? null };
   persist();
+}
+
+function axesHTML(stats) {
+  const v = (k) => stats?.[k] ?? 50;
+  return `<h3 class="card-title">Your heart</h3>
+    ${statBar('Desire', v('desire'))}
+    ${statBar('Control', v('control'))}
+    <div class="stat axis"><span>Luxury</span><div class="bar two"><i style="left:${v('loyalty')}%"></i></div><b>Loyalty</b></div>`;
+}
+
+function relHTML(run) {
+  const rows = relationshipsFor(run)
+    .map(({ id, c, values, dead, status }) => `<li class="rel${dead ? ' dead' : ''}" style="--accent:${esc(c.accent)}">
+      <div class="rel-face">${portraitSVG(c, dead ? 'sad' : 'neutral', `rel-${id}`)}</div>
+      <div class="rel-info"><b>${esc(c.name)}</b><span class="rel-status">${esc(status)}</span>
+        ${dead ? '' : `<span class="rel-bars"><span>Intimacy</span><span class="bar"><i style="width:${values.intimacy}%"></i></span><span>Tension</span><span class="bar tension"><i style="width:${values.tension}%"></i></span></span>`}
+      </div></li>`)
+    .join('');
+  return `<h3 class="card-title">Hearts and rivals</h3><ul class="rels">${rows}</ul>`;
 }
 
 function statBar(name, value) {
@@ -568,11 +711,8 @@ function renderResults() {
     ${outcome ? `<section class="card outcome"><h2>${esc(outcome.title)}</h2><p>${fmt(outcome.text)}</p>
       ${reflections.length ? `<ul>${reflections.map((r) => `<li>${fmt(r.text)}</li>`).join('')}</ul>` : ''}</section>` : ''}
     ${fallen.length || run.flags.includes('dead_oliver') ? `<section class="card fallen"><h3>The fallen</h3><p>Chief Gideon Okoro${run.flags.includes('dead_oliver') ? ' · Oliver Ashworth' : ''}${fallen.map((n) => ` · ${esc(n)}`).join('')}</p></section>` : ''}
-    ${chapter.number > 0 ? `<section class="card">
-      ${statBar('Trust', run.stats.trust)}
-      ${statBar('Affection', run.stats.affection)}
-      ${statBar('Reputation', run.stats.reputation)}
-    </section>` : ''}
+    ${chapter.number > 0 ? `<section class="card">${axesHTML(run.stats)}</section>
+      <section class="card">${relHTML(run)}</section>` : ''}
     <section class="card reward-grid">
       <div><b>⭐ ${stars}</b><span>stars</span></div>
       <div><b>🪙 ${coins}</b><span>coins</span></div>
@@ -612,12 +752,13 @@ function renderProfile() {
       ${row('Chapter', chapter ? `${chapter.number}/${C.story.totalChapters}` : '—')}
       ${row('Words Found', profile.wordsFound.length)}
       ${row('Trust', stats?.trust ?? '—')}
-      ${row('Affection', stats?.affection ?? '—')}
       ${row('Reputation', stats?.reputation ?? '—')}
       ${row('Secrets Discovered', `${profile.secrets.length}/${C.story.totalSecrets}`)}
+      ${row('Keepsakes', (profile.keepsakes || []).length)}
       ${row('Endings seen', `${endingsSeen()}/${C.story.totalEndings}`)}
       ${fallen.length ? row('Fallen', esc(fallen.join(', '))) : ''}
     </section>
+    ${run ? `<section class="card">${axesHTML(stats)}</section><section class="card">${relHTML(run)}</section>` : ''}
     <section class="card">
       ${row('⭐ Stars', profile.stars)}
       ${row('🪙 Coins', profile.coins)}
@@ -646,9 +787,19 @@ function renderMemories() {
   return `<main class="screen memories">
     ${topbar('Memories')}
     <div class="memory-grid">${cards.join('')}</div>
+    <h3>Confessions and keepsakes <small>${(profile.keepsakes || []).length}/${allKeepsakes().length}</small></h3>
+    <ul class="keepsakes">${allKeepsakes()
+      .map(([id, k]) => (profile.keepsakes || []).includes(id)
+        ? `<li class="keepsake ks-${esc(k.type)}"><span class="ks-icon">${KEEPSAKE_ICON[k.type] ?? '◆'}</span><div><b>${esc(k.title)}</b><small>${esc(k.from)}</small>${k.type === 'voice' ? '<span class="wave" aria-hidden="true"></span>' : ''}<p>${esc(k.text)}</p></div></li>`
+        : `<li class="keepsake locked"><span class="ks-icon">?</span><div><b>Not yet found</b></div></li>`)
+      .join('')}</ul>
     <h3>Secrets <small>${found.length}/${C.story.totalSecrets}</small></h3>
     <ul class="secrets">${found.join('')}${hidden > 0 ? `<li class="locked"><b>${hidden} still hidden</b><span>Some words hide more than they say. Find four in one story to unlock the secret ending.</span></li>` : ''}</ul>
   </main>`;
+}
+
+function allKeepsakes() {
+  return C.chapters.flatMap((ch) => Object.entries(ch.keepsakes || {}));
 }
 
 // --- Daily Word -------------------------------------------------------------
@@ -707,6 +858,17 @@ const actions = {
     go(profile.run.complete ? 'results' : 'story');
   },
   'new-saga': startNewSaga,
+  leverage() {
+    ui.overlay = { type: 'leverage' };
+    render();
+  },
+  sound() {
+    if (Audio.isOn()) Audio.disable();
+    else Audio.enable(document.body.dataset.tension === 'on' ? 'tension' : 'calm');
+    profile.settings = { ...profile.settings, sound: Audio.isOn() };
+    persist();
+    render();
+  },
   'next-chapter'() {
     const run = profile.run;
     const next = Story.nextChapter(C.story, run.chapterId, run);
@@ -738,10 +900,16 @@ const actions = {
     render();
   },
   choose(el) {
+    const before = Object.fromEntries(relationshipsFor(profile.run).map((r) => [r.id, r.status]));
     const { run, choice } = Story.choose(currentChapter(), profile.run, el.dataset.id);
     profile.run = run;
     collectSecrets(run.flags);
     persist();
+    if (choice.keepsake) awardKeepsake(currentChapter(), choice.keepsake);
+    if (choice.leverage) toast(`🗝 You played: ${secretById(choice.leverage)?.title}`);
+    for (const r of relationshipsFor(run)) {
+      if (before[r.id] && before[r.id] !== r.status) toast(`${r.c.name}: ${before[r.id]} → ${r.status}`);
+    }
     if (choice.echo) toast(choice.echo);
     if (choice.pov) toast(`You are ${C.characters[choice.pov].fullName}.`);
     render();
@@ -799,6 +967,7 @@ const actions = {
 };
 
 function onClick(e) {
+  if (profile.settings?.sound && !Audio.isOn()) Audio.enable(document.body.dataset.tension === 'on' ? 'tension' : 'calm');
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled) return;
   // While an overlay is up, only its own buttons respond.

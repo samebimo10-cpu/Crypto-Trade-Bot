@@ -4,7 +4,7 @@ A story + word puzzle game you can play offline. It's a saga of mystery, romance
 joy that moves from **Jos (Plateau State)**, **Kano**, **Lagos**, **Bayelsa** and **Port
 Harcourt** to **London**, **Switzerland** and **the Caribbean**.
 
-> Four houses. One crown. A death that started everything.
+> Four houses. One crown. Every secret is a weapon.
 
 When Chief Gideon Okoro dies in Port Harcourt, four letters sealed in red wax go out across
 Nigeria. You choose whose story to follow:
@@ -45,41 +45,40 @@ npm run words -- fill              # add every real word to each puzzle's bonus 
 
 ## What's in it
 
-- **A prologue and 5 chapters.** Each playthrough is about 22 scenes and 17 decisions. Including the four
-  first chapters, there are 17 story puzzles, plus 5 rotating Daily Word puzzles.
-- **6 endings.**
-  - *Where the Rivers Meet*: a wedding on the beach.
-  - *The Crown of the Confluence*: you rule alone.
-  - *Four Rivers, One Sea*: the houses share power as a council.
-  - *Ashes on the Water*: tragedy.
-  - *The Price of Gold*: Kolade's betrayal.
-  - *The Seventh Seal*: a secret ending you unlock by finding 4 of the 8 hidden words in
-    one story.
-- **Romance and death.**
-  - If you play Tari, Hadiza or Kolade, you can fall for Nabyen. If you play Nabyen, you
-    choose between Tari and Kolade.
-  - On the Alpine pass, whoever you send down the mountain dies. If you carry the ledger
-    yourself, everyone lives, but the villain escapes.
-- **Animated characters with no image files.** Every portrait is drawn in code with six
-  moods, blinking eyes, breathing and swaying earrings.
-  - Nabyen has deep chocolate skin, box braids with gold cuffs, gold hoops and an ankara
-    top.
-  - Hadiza wears a hijab, Ibiere a gele and Chief Gideon a red chief's cap. Tari wears
-    coral beads.
-- **Colourful animated scenes, also drawn in code.** 24 locations, including the Jos
-  rocks and mining pond, Kano's walls and dye pits, the Durbar, Third Mainland Bridge and
-  its danfos, the Bayelsa mangroves, Port Harcourt's gas flares, Big Ben and Tower Bridge
-  in the rain, the Jet d'Eau, the Alps, and Tobago at sunset.
-- **Words.**
-  - Each puzzle accepts every common English word its letters can spell. The word list is
-    vetted and offensive words are removed.
-  - Hidden *secret words* reveal parts of the mystery.
-  - Hints go in three steps: first letter, then remove letters you don't need, then reveal
-    the word. You earn hints back by solving puzzles and finding bonus words.
-- **Saving and replaying.**
-  - Progress is saved on the device.
-  - You can rewind to any decision.
-  - The game keeps track of memories, secrets, stars, coins and streaks.
+The game is built around relational tension and high-stakes trade-offs, with word puzzles
+reframed as decoding.
+
+- **Your heart.** Three axes move with every choice: **Desire**, **Control**, and
+  **Loyalty ↔ Luxury**. Choice cards are tagged with the axis they push (Desire, Control,
+  Loyalty, Luxury or Leverage) and marked when they're high risk.
+- **Hearts and rivals.** Tari, Kolade, Hadiza and Nabyen each have **intimacy** and
+  **tension** with you. Their status changes as those move: *Unspoken Desire*, *Dangerous
+  Alliance*, *Rival Intellect*, *Slow Burn*, *Dangerous Passion*, *Open Enemy*. Some
+  choices stay **locked** until the relationship is ready, for example "Requires tension
+  50+ with Kolade".
+- **Leverage ("pillow talk").** Hidden words in puzzles uncover secrets, and each secret
+  can be played once in a later conversation. You can use one to corner Kolade, soften
+  the widow, break Elise, or win someone's trust. A leverage choice only appears while
+  you hold the secret. 🗝 shows what you're carrying.
+- **Tension puzzles.** Each puzzle is an intercepted message, a confession, a veiled
+  threat or a coded ledger. Solving it decodes the note.
+- **Confessions and keepsakes.** You collect voice notes, letters and mementos, such as
+  Oliver's last voicemail, the blackened spoon, and Gideon's unsent message to Kaneng.
+- **Noir and jewel tones.** The palette is midnight, garnet, emerald and gold. Scenes have
+  candlelight embers, river mist and gold dust. The vignette tightens like a heartbeat in
+  tense moments, and an optional ambient score (♪) is synthesised in the browser, so it
+  needs no audio files.
+- **9 endings:**
+  - *Dangerous Power Couple*, *Rivalry Turned Passion* and *Solitary Empress*
+  - *Where the Rivers Meet* (wedding), *The Crown of the Confluence* and *Four Rivers,
+    One Sea*
+  - *Ashes on the Water*, *The Price of Gold*, and the secret *Seventh Seal*
+- **Still here from before:**
+  - four playable houses and Nabyen as the key character
+  - deaths on the Alpine pass
+  - 24 animated locations and animated portraits, now with *intimate* and *defiant*
+    expressions
+  - Daily Word, rewinding to any decision, and saving on the device
 
 ## How it's built
 
@@ -121,6 +120,13 @@ features available:
   `"setFlags": ["dead_tari"]`. Deaths and endings work this way.
 - **The player's name in text.** `{pov}` in story text is replaced with the name of the
   character you're playing. Lines spoken by that character are labelled "(you)".
+- **Romance and intrigue.**
+  - `rel: {kolade: {intimacy: 10, tension: 5}}` on a choice shifts the relationship.
+  - `gate: {if: {...}, label: "..."}` shows the choice but locks it until the condition
+    holds.
+  - `leverage: "s_spoon"` shows the choice only while you hold that secret, and spends it.
+  - `tag` and `risk` label the card. `keepsake` awards a voice note, letter or memento.
+  - Puzzles take `frame` and `decoded`. A scene can set `tension: true`.
 - **Speakers.** `letter` shows a wax-sealed letter, `phone` shows a text message and
   `narrator` shows narration.
 - **Checking.** `npm run validate` catches:

@@ -32,7 +32,7 @@
         {
           "id": "c_widow",
           "text": "Call the widow. Lock in the board votes before anyone else lands.",
-          "effects": {"reputation": 10, "trust": -5},
+          "effects": {"reputation": 10, "trust": -5, "loyalty": -10, "control": 5},
           "setFlags": ["courted_ibiere"],
           "response": [
             {
@@ -40,25 +40,28 @@
               "mood": "smile",
               "text": "Kolade. You always were the practical one. Come and see me."
             }
-          ]
+          ],
+          "tag": "LUXURY"
         },
         {
           "id": "c_research",
           "text": "Look up the other names under the seal.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "setFlags": ["researched"],
           "response": [
             {
               "speaker": "kolade",
               "text": "Dalyop. Ebiowei. Lawan. And me. A gem trader, a boat captain, a Kano accountant and a banker. What were you building, Chief?"
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_drink",
           "text": "\"Driver. Victoria Island. I need a drink first.\"",
-          "effects": {"affection": 5},
-          "response": [{"speaker": "kolade", "mood": "sad", "text": "Grief can wait until the second bottle."}]
+          "effects": {"affection": 5, "desire": 5},
+          "response": [{"speaker": "kolade", "mood": "sad", "text": "Grief can wait until the second bottle."}],
+          "tag": "DESIRE"
         }
       ],
       "puzzle": "k_bridge",
@@ -89,27 +92,31 @@
         {
           "id": "c_accept",
           "text": "\"Tell me more.\"",
-          "effects": {"reputation": 10, "trust": -10},
+          "effects": {"reputation": 10, "trust": -10, "loyalty": -20, "desire": 5},
           "setFlags": ["elise_deal"],
           "echo": "Elise will remember this.",
-          "response": [{"speaker": "elise", "mood": "smile", "text": "I knew you were the clever one."}]
+          "response": [{"speaker": "elise", "mood": "smile", "text": "I knew you were the clever one."}],
+          "tag": "LUXURY"
         },
         {
           "id": "c_refuse_e",
           "text": "\"He was my godfather. Find another fool.\"",
-          "effects": {"trust": 10},
+          "effects": {"trust": 10, "loyalty": 15},
           "setFlags": ["refused_elise", "clue_moreau"],
-          "response": [{"speaker": "elise", "text": "A pity. Fools live longer, Monsieur."}]
+          "response": [{"speaker": "elise", "text": "A pity. Fools live longer, Monsieur."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_spy",
           "text": "Pretend to accept. Record every word.",
-          "effects": {"trust": 5, "reputation": 5},
+          "effects": {"trust": 5, "reputation": 5, "control": 15},
           "setFlags": ["double_agent", "clue_moreau"],
           "response": [
             {"speaker": "kolade", "mood": "smile", "text": "Of course, Madame. Let's talk numbers."},
             {"speaker": "narrator", "text": "In his pocket, his phone is recording."}
-          ]
+          ],
+          "tag": "CONTROL",
+          "keepsake": "k_voice_elise"
         }
       ],
       "next": "k3_beach"
@@ -134,14 +141,16 @@
         {
           "id": "c_to_jos",
           "text": "Fly to Jos. Meet Nabyen Dalyop.",
-          "effects": {"affection": 5},
+          "effects": {"affection": 5, "desire": 10},
           "setFlags": ["ally_nabyen", "spark_nabyen"],
-          "response": [{"speaker": "narrator", "text": "Later he'll tell everyone it was strategy. It wasn't."}]
+          "response": [{"speaker": "narrator", "text": "Later he'll tell everyone it was strategy. It wasn't."}],
+          "tag": "DESIRE",
+          "rel": {"nabyen": {"intimacy": 10, "tension": 10}}
         },
         {
           "id": "c_to_ph",
           "text": "Fly straight to Port Harcourt. Be first in the room.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "control": 5},
           "setFlags": ["first_in_room"],
           "response": [
             {
@@ -149,7 +158,8 @@
               "mood": "smile",
               "text": "In Lagos, the early bird doesn't just catch the worm. He buys the farm."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         }
       ],
       "puzzle": "k_lagos",
@@ -198,6 +208,14 @@
       "title": "Dawn at Lekki",
       "background": "lagos_beach",
       "text": "The Atlantic, a choice, and a woman he hadn't met yet."
+    }
+  },
+  "keepsakes": {
+    "k_voice_elise": {
+      "type": "voice",
+      "title": "Recording: Elise Moreau",
+      "from": "Kolade's phone",
+      "text": "'Lagos deserves a king, Monsieur. And kings are made in Geneva.'"
     }
   }
 }

@@ -83,28 +83,31 @@
           "id": "c_defend",
           "if": {"notPov": "nabyen"},
           "text": "Step in front of Nabyen. \"Say that again, Madam. To me.\"",
-          "effects": {"affection": 10, "reputation": -5},
+          "effects": {"affection": 10, "reputation": -5, "loyalty": 5},
           "setFlags": ["defended_nabyen"],
           "response": [
             {"speaker": "nabyen", "mood": "surprised", "text": "...Thank you."},
             {"speaker": "ibiere", "text": "How touching."}
-          ]
+          ],
+          "tag": "LOYALTY",
+          "rel": {"nabyen": {"intimacy": 10}}
         },
         {
           "id": "c_answer",
           "if": {"pov": "nabyen"},
           "text": "\"He was my father, Madam. And I didn't come here for his money.\"",
-          "effects": {"trust": 10, "reputation": -5},
+          "effects": {"trust": 10, "reputation": -5, "loyalty": 10},
           "setFlags": ["revealed_father"],
           "response": [
             {"speaker": "ibiere", "mood": "surprised", "text": "...Liar."},
             {"speaker": "narrator", "text": "But her face has gone grey."}
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_accuse",
           "text": "\"Where were YOU the night he died, Madam?\"",
-          "effects": {"trust": 5, "reputation": -10},
+          "effects": {"trust": 5, "reputation": -10, "control": 5, "desire": 5},
           "setFlags": ["accused_ibiere"],
           "echo": "Ibiere will remember this.",
           "response": [
@@ -113,18 +116,81 @@
               "speaker": "narrator",
               "text": "Three hundred people heard that. By evening, so has all of Port Harcourt."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_calm",
           "text": "\"We're all grieving. Let's bury him in peace.\"",
-          "effects": {"reputation": 10},
+          "effects": {"reputation": 10, "control": 10},
           "setFlags": ["peacemaker"],
-          "response": [{"speaker": "ibiere", "mood": "sad", "text": "...Fine. For him. Not for you."}]
+          "response": [{"speaker": "ibiere", "mood": "sad", "text": "...Fine. For him. Not for you."}],
+          "tag": "CONTROL"
+        },
+        {
+          "id": "c_lev_plea",
+          "leverage": "s_plea",
+          "tag": "LEVERAGE",
+          "text": "Turn the Chief's letter over and hand it to Ibiere. Pencilled on the back: 'Forgive me, Kaneng.'",
+          "effects": {"control": 10, "reputation": 10},
+          "setFlags": ["ibiere_softened"],
+          "response": [
+            {"speaker": "ibiere", "mood": "sad", "text": "...He wrote that? About her?"},
+            {
+              "speaker": "ibiere",
+              "mood": "angry",
+              "text": "Then he lied to both of us. Sit down, girl. You belong here more than I do."
+            }
+          ]
+        },
+        {
+          "id": "c_lev_greed",
+          "leverage": "s_greed",
+          "tag": "LEVERAGE",
+          "text": "Quote the ledger to the whole room: GREED, circled three times in his own hand.",
+          "effects": {"control": 15, "reputation": 5},
+          "rel": {"kolade": {"tension": 10}},
+          "setFlags": ["exposed_greed"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Three hundred mourners go silent. Somewhere at the back, a glass breaks."
+            },
+            {"speaker": "ibiere", "mood": "surprised", "text": "Someone was robbing him. In my house."}
+          ]
+        },
+        {
+          "id": "c_lev_bride",
+          "leverage": "s_bride",
+          "tag": "LEVERAGE",
+          "text": "\"He once promised me a bride from the Plateau, Madam. Did you know that?\"",
+          "effects": {"desire": 10, "reputation": -5},
+          "rel": {"nabyen": {"tension": 15, "intimacy": 5}},
+          "setFlags": ["bride_revealed"],
+          "response": [
+            {"speaker": "nabyen", "mood": "surprised", "text": "...Excuse me?"},
+            {"speaker": "ibiere", "mood": "smile", "text": "Oh, this funeral is getting interesting."}
+          ]
+        },
+        {
+          "id": "c_lev_swear",
+          "leverage": "s_swear",
+          "tag": "LEVERAGE",
+          "text": "\"My father swore an oath on the Nun River to protect him. I swear the same: I'll find who did this.\"",
+          "effects": {"loyalty": 15, "trust": 10},
+          "setFlags": ["oath_sworn"],
+          "response": [
+            {
+              "speaker": "narrator",
+              "text": "Old men from the creeks stand up at the back of the hall, one by one."
+            },
+            {"speaker": "ibiere", "mood": "sad", "text": "...Your father was a good man. Sit down, Tari."}
+          ]
         }
       ],
       "puzzle": "f_funeral",
-      "next": "f3_garden"
+      "next": "f3_garden",
+      "tension": true
     },
     {
       "id": "f3_garden",
@@ -161,37 +227,46 @@
           "id": "c_trust_nabyen",
           "if": {"notPov": "nabyen"},
           "text": "Nabyen. The Chief did.",
-          "effects": {"affection": 5},
+          "effects": {"affection": 5, "loyalty": 5},
           "setFlags": ["ally_nabyen"],
-          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Then I'll try to deserve it."}]
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Then I'll try to deserve it."}],
+          "tag": "LOYALTY",
+          "rel": {"nabyen": {"intimacy": 5}}
         },
         {
           "id": "c_trust_tari",
           "if": {"notPov": "tari"},
           "text": "Tari. He's already bled for this.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "loyalty": 5},
           "setFlags": ["ally_tari"],
-          "response": [{"speaker": "tari", "text": "Nobody touches you while I'm breathing."}]
+          "response": [{"speaker": "tari", "text": "Nobody touches you while I'm breathing."}],
+          "tag": "LOYALTY",
+          "rel": {"tari": {"intimacy": 5}}
         },
         {
           "id": "c_trust_hadiza",
           "if": {"notPov": "hadiza"},
           "text": "Hadiza. She found the money.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "loyalty": 5},
           "setFlags": ["ally_hadiza"],
-          "response": [{"speaker": "hadiza", "mood": "smile", "text": "Wise. Numbers don't lie. People do."}]
+          "response": [{"speaker": "hadiza", "mood": "smile", "text": "Wise. Numbers don't lie. People do."}],
+          "tag": "LOYALTY",
+          "rel": {"hadiza": {"intimacy": 5}}
         },
         {
           "id": "c_trust_kolade",
           "if": {"notPov": "kolade"},
           "text": "Kolade. Lagos knows Geneva.",
-          "effects": {"reputation": 5, "trust": -5},
+          "effects": {"reputation": 5, "trust": -5, "loyalty": -5},
           "setFlags": ["ally_kolade"],
-          "response": [{"speaker": "kolade", "mood": "smile", "text": "Finally, somebody with taste."}]
+          "response": [{"speaker": "kolade", "mood": "smile", "text": "Finally, somebody with taste."}],
+          "tag": "LUXURY",
+          "rel": {"kolade": {"intimacy": 5, "tension": 5}}
         }
       ],
       "puzzle": "f_poison",
-      "next": "f4_moment"
+      "next": "f4_moment",
+      "keepsake": "k_spoon"
     },
     {
       "id": "f4_moment",
@@ -212,62 +287,127 @@
         {
           "speaker": "narrator",
           "if": {"pov": "nabyen"},
-          "text": "Later, Nabyen sits alone by the fountain. Two men find excuses to walk past it."
+          "text": "Midnight in the garden. The air is thick with night-blooming jasmine and unsaid promises."
         },
         {
-          "speaker": "tari",
+          "speaker": "kolade",
           "if": {"pov": "nabyen"},
-          "mood": "worried",
-          "text": "You shouldn't be out here alone. Not tonight."
+          "mood": "intimate",
+          "text": "You shouldn't be out here alone, Nabyen. Port Harcourt is full of men who take what isn't offered."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"pov": "nabyen"},
+          "mood": "defiant",
+          "text": "And are you one of them, Mr Balogun?"
         },
         {
           "speaker": "kolade",
           "if": {"pov": "nabyen"},
           "mood": "smile",
-          "text": "Or she should, and I should keep her company."
+          "text": "I prefer it when it's offered freely."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "nabyen"},
+          "text": "Footsteps on the gravel. Tari, watching from the path, not pretending otherwise."
         }
       ],
-      "prompt": "The fireflies are very bright tonight.",
+      "prompt": [
+        {
+          "if": {"pov": "nabyen"},
+          "text": "Kolade steps into her shadow. She can feel the heat coming off his jacket."
+        },
+        {"text": "The fireflies are very bright tonight."}
+      ],
       "choices": [
+        {
+          "id": "c_close_distance",
+          "if": {"pov": "nabyen"},
+          "tag": "DESIRE",
+          "risk": "High risk",
+          "gate": {"if": {"rel": {"kolade": {"minTension": 50}}}, "label": "Requires tension 50+ with Kolade"},
+          "text": "Hold his gaze and step closer. \"Then make me an offer worth accepting.\"",
+          "effects": {"desire": 15, "control": -5},
+          "rel": {"kolade": {"intimacy": 15, "tension": 10}},
+          "setFlags": ["spark_kolade", "kolade_tension_high"],
+          "response": [
+            {"speaker": "kolade", "mood": "intimate", "text": "Careful, Miss Dalyop. I might."},
+            {"speaker": "narrator", "text": "On the path, Tari turns and walks away without a word."}
+          ]
+        },
+        {
+          "id": "c_use_secret",
+          "if": {"pov": "nabyen"},
+          "leverage": "s_spoon",
+          "tag": "LEVERAGE",
+          "risk": "High risk",
+          "text": "Press the blackened spoon into his chest. \"Explain why Banque Moreau money runs through your bank.\"",
+          "effects": {"control": 15, "desire": -5},
+          "rel": {"kolade": {"tension": 15}},
+          "setFlags": ["cornered_kolade"],
+          "response": [
+            {"speaker": "kolade", "mood": "surprised", "text": "...Where did you get that?"},
+            {
+              "speaker": "kolade",
+              "mood": "worried",
+              "text": "Not here. This house has ears. In London, I tell you everything."
+            }
+          ]
+        },
+        {
+          "id": "c_pillow_spoon",
+          "if": {"notPov": "nabyen"},
+          "leverage": "s_spoon",
+          "tag": "LEVERAGE",
+          "text": "Show her the blackened spoon. \"Your father was murdered, Nabyen. I can prove it.\"",
+          "effects": {"trust": 10, "desire": 5},
+          "rel": {"nabyen": {"intimacy": 10, "tension": 10}},
+          "setFlags": ["spark_nabyen", "nabyen_knows_murder"],
+          "response": [
+            {"speaker": "nabyen", "mood": "sad", "text": "...Then we find who did it. Together. Promise me."},
+            {"speaker": "narrator", "text": "She doesn't let go of your hand for a long time."}
+          ]
+        },
         {
           "id": "c_hold",
           "if": {"notPov": "nabyen"},
           "text": "Take her hand. \"I think he loved you more than he knew how to say.\"",
-          "effects": {"affection": 10},
+          "effects": {"affection": 10, "desire": 10},
           "setFlags": ["spark_nabyen"],
-          "response": [{"speaker": "nabyen", "mood": "smile", "text": "...You're kind. I didn't expect kind, here."}]
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "...You're kind. I didn't expect kind, here."}],
+          "tag": "DESIRE",
+          "rel": {"nabyen": {"intimacy": 15}}
         },
         {
           "id": "c_honest",
           "if": {"notPov": "nabyen"},
           "text": "\"He was a great man. Not always a good one.\"",
-          "effects": {"trust": 10},
-          "response": [{"speaker": "nabyen", "text": "Honest. I'll take honest."}]
+          "effects": {"trust": 10, "control": 5},
+          "response": [{"speaker": "nabyen", "text": "Honest. I'll take honest."}],
+          "tag": "CONTROL",
+          "rel": {"nabyen": {"tension": 5}}
         },
         {
           "id": "c_sit_tari",
           "if": {"pov": "nabyen"},
-          "text": "Ask Tari to sit with her.",
-          "effects": {"affection": 10},
+          "text": "Turn to Tari. \"Sit with me. Just you.\"",
+          "effects": {"affection": 10, "desire": 5},
           "setFlags": ["spark_tari"],
-          "response": [{"speaker": "tari", "mood": "smile", "text": "I'll sit here until the sun comes up, if you want."}]
-        },
-        {
-          "id": "c_sit_kolade",
-          "if": {"pov": "nabyen"},
-          "text": "Let Kolade stay.",
-          "effects": {"affection": 10},
-          "setFlags": ["spark_kolade"],
-          "response": [{"speaker": "kolade", "mood": "smile", "text": "I'm told I'm excellent company. Mostly by me."}]
+          "response": [{"speaker": "tari", "mood": "smile", "text": "I'll sit here until the sun comes up, if you want."}],
+          "tag": "DESIRE",
+          "rel": {"tari": {"intimacy": 15}}
         },
         {
           "id": "c_leave",
           "text": "Leave the fireflies to their silence.",
-          "effects": {"reputation": 5},
-          "response": [{"speaker": "narrator", "text": "Tomorrow: London. Some conversations can wait."}]
+          "effects": {"reputation": 5, "control": 5},
+          "response": [{"speaker": "narrator", "text": "Tomorrow: London. Some conversations can wait."}],
+          "tag": "CONTROL"
         }
       ],
-      "next": null
+      "next": null,
+      "tension": true
     }
   ],
   "outcomes": [
@@ -318,6 +458,14 @@
       "title": "Fireflies at Midnight",
       "background": "ph_garden",
       "text": "A blackened spoon, a fountain, and a hand held in the dark."
+    }
+  },
+  "keepsakes": {
+    "k_spoon": {
+      "type": "memento",
+      "title": "The blackened spoon",
+      "from": "The Chief's tea tray",
+      "text": "Silver, engraved E.M. Gone black at the tip, the way silver does when it meets poison."
     }
   }
 }

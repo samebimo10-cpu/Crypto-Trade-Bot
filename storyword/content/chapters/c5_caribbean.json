@@ -49,18 +49,21 @@
         {
           "id": "c_toast",
           "text": "Raise a glass to Chief Gideon.",
-          "effects": {"affection": 5},
-          "response": [{"speaker": "marcus", "mood": "smile", "text": "To my big, loud, impossible brother."}]
+          "effects": {"affection": 5, "loyalty": 5},
+          "response": [{"speaker": "marcus", "mood": "smile", "text": "To my big, loud, impossible brother."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_toast_fallen",
           "text": "Raise a glass to everyone this crown has cost.",
-          "effects": {"trust": 5},
-          "response": [{"speaker": "marcus", "mood": "sad", "text": "To Oliver. To all of them."}]
+          "effects": {"trust": 5, "loyalty": 5},
+          "response": [{"speaker": "marcus", "mood": "sad", "text": "To Oliver. To all of them."}],
+          "tag": "LOYALTY"
         }
       ],
       "puzzle": "c_island",
-      "next": "c2_ibiere"
+      "next": "c2_ibiere",
+      "keepsake": "k_letters_marcus"
     },
     {
       "id": "c2_ibiere",
@@ -99,35 +102,40 @@
           "id": "c_apologise",
           "if": {"flags": ["accused_ibiere"]},
           "text": "Apologise. You were wrong about her.",
-          "effects": {"trust": 10, "reputation": -5},
+          "effects": {"trust": 10, "reputation": -5, "loyalty": 5},
           "setFlags": ["apologised"],
-          "response": [{"speaker": "ibiere", "mood": "sad", "text": "...Accepted. Barely."}]
+          "response": [{"speaker": "ibiere", "mood": "sad", "text": "...Accepted. Barely."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_stand",
           "if": {"flags": ["accused_ibiere"]},
           "text": "Stand your ground. Let her fight it in court.",
-          "effects": {"reputation": 10, "trust": -5},
+          "effects": {"reputation": 10, "trust": -5, "control": 10},
           "setFlags": ["ibiere_enemy"],
-          "response": [{"speaker": "ibiere", "mood": "angry", "text": "Then I'll see you in court. All of you."}]
+          "response": [{"speaker": "ibiere", "mood": "angry", "text": "Then I'll see you in court. All of you."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_welcome",
           "if": {"notFlags": ["accused_ibiere"]},
           "text": "Welcome her to the table.",
-          "effects": {"trust": 5, "affection": 5},
+          "effects": {"trust": 5, "affection": 5, "loyalty": 5},
           "setFlags": ["ibiere_ally"],
-          "response": [{"speaker": "ibiere", "mood": "smile", "text": "Thank you. He would have liked that."}]
+          "response": [{"speaker": "ibiere", "mood": "smile", "text": "Thank you. He would have liked that."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_wary",
           "if": {"notFlags": ["accused_ibiere"]},
           "text": "Keep her at arm's length.",
-          "effects": {"reputation": 5},
-          "response": [{"speaker": "ibiere", "text": "Wise. I would too."}]
+          "effects": {"reputation": 5, "control": 5},
+          "response": [{"speaker": "ibiere", "text": "Wise. I would too."}],
+          "tag": "CONTROL"
         }
       ],
-      "next": "c3_vote"
+      "next": "c3_vote",
+      "tension": true
     },
     {
       "id": "c3_vote",
@@ -147,25 +155,28 @@
         {
           "id": "c_crown_self",
           "text": "\"I will.\"",
-          "effects": {"reputation": 15, "affection": -5},
+          "effects": {"reputation": 15, "affection": -5, "control": 15},
           "setFlags": ["crowned_self"],
-          "response": [{"speaker": "marcus", "text": "Then wear it well. It's heavier than it looks."}]
+          "response": [{"speaker": "marcus", "text": "Then wear it well. It's heavier than it looks."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_crown_nabyen",
           "if": {"notPov": "nabyen"},
           "text": "\"Nabyen. It was always hers.\"",
-          "effects": {"affection": 10, "trust": 5},
+          "effects": {"affection": 10, "trust": 5, "loyalty": 10},
           "setFlags": ["crowned_nabyen"],
           "response": [
             {"speaker": "nabyen", "mood": "surprised", "text": "Me? A girl who sells stones in Jos?"},
             {"speaker": "marcus", "mood": "smile", "text": "The best kind of queen."}
-          ]
+          ],
+          "tag": "LOYALTY",
+          "rel": {"nabyen": {"intimacy": 5}}
         },
         {
           "id": "c_council",
           "text": "\"Nobody. A council of the houses, every voice equal.\"",
-          "effects": {"trust": 10, "affection": 5},
+          "effects": {"trust": 10, "affection": 5, "loyalty": 10},
           "setFlags": ["council"],
           "response": [
             {
@@ -173,7 +184,8 @@
               "mood": "smile",
               "text": "Ha! He'd have hated that. Which is how I know it's right."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         }
       ],
       "puzzle": "c_palms",
@@ -182,12 +194,39 @@
         {"if": {"flags": ["romance_tari", "dead_tari"]}, "to": "end_ashes"},
         {"if": {"flags": ["romance_kolade", "dead_kolade"]}, "to": "end_ashes"},
         {
+          "if": {
+            "any": [{"flags": ["romance_nabyen"]}, {"flags": ["romance_tari"]}, {"flags": ["romance_kolade"]}],
+            "anyFlags": ["crowned_self", "crowned_nabyen"],
+            "min": {"control": 65}
+          },
+          "to": "end_power_couple"
+        },
+        {
+          "if": {
+            "any": [
+              {"flags": ["romance_nabyen"], "rel": {"nabyen": {"minTension": 70}}},
+              {"flags": ["romance_tari"], "rel": {"tari": {"minTension": 70}}},
+              {"flags": ["romance_kolade"], "rel": {"kolade": {"minTension": 70}}}
+            ]
+          },
+          "to": "end_rival_passion"
+        },
+        {
           "if": {"anyFlags": ["romance_nabyen", "romance_tari", "romance_kolade"], "min": {"affection": 60}},
           "to": "end_wedding"
         },
+        {
+          "if": {
+            "notFlags": ["romance_nabyen", "romance_tari", "romance_kolade"],
+            "any": [{"flags": ["crowned_nabyen"]}, {"pov": ["nabyen", "hadiza"], "flags": ["crowned_self"]}],
+            "min": {"control": 60}
+          },
+          "to": "end_empress"
+        },
         {"if": {"flags": ["crowned_self"]}, "to": "end_crown"},
         {"to": "end_council"}
-      ]
+      ],
+      "tension": true
     },
     {
       "id": "end_wedding",
@@ -393,6 +432,153 @@
       "next": null
     },
     {
+      "id": "end_power_couple",
+      "background": "lagos_night",
+      "setFlags": ["end_power_couple"],
+      "tension": true,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Six months later. The top floor of Confluence Tower, the whole city lit up below like money."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["romance_nabyen"]},
+          "text": "{pov} and Nabyen Dalyop run the empire together. Boardrooms go quiet when they walk in."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["romance_tari"]},
+          "text": "Nabyen Dalyop and Tari Ebiowei run the empire together, from the Plateau to the creeks. Boardrooms go quiet when they walk in."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"flags": ["romance_kolade"]},
+          "text": "Nabyen Dalyop and Kolade Balogun run the empire together. Lagos has never seen a partnership like it, and Lagos has seen everything."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Rivals sign whatever is put in front of them. Ministers return their calls within the hour."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"notPov": "nabyen"},
+          "mood": "intimate",
+          "text": "They're afraid of us, you know."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"flags": ["romance_kolade"]},
+          "mood": "intimate",
+          "text": "They're afraid of you. I'm just the one who gets to hold your hand."
+        },
+        {
+          "speaker": "tari",
+          "if": {"flags": ["romance_tari"]},
+          "mood": "smile",
+          "text": "Let them be afraid. I only care that you come home at night."
+        },
+        {"speaker": "narrator", "text": "Love, it turns out, is the most dangerous alliance of all."}
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
+      "id": "end_rival_passion",
+      "background": "caribbean_sunset",
+      "setFlags": ["end_rival_passion"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "They never stopped arguing. Not in London, not on the mountain, not on the beach in Tobago, where it finally ended in a kiss that silenced the steel band."
+        },
+        {
+          "speaker": "kolade",
+          "if": {"flags": ["romance_kolade"]},
+          "mood": "intimate",
+          "text": "You still drive me mad, you know."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"flags": ["romance_kolade"]},
+          "mood": "defiant",
+          "text": "Good. Keep up, Mr Balogun."
+        },
+        {
+          "speaker": "tari",
+          "if": {"flags": ["romance_tari"]},
+          "mood": "smile",
+          "text": "Twenty years of fighting with you. I want fifty more."
+        },
+        {
+          "speaker": "nabyen",
+          "if": {"flags": ["romance_nabyen"]},
+          "mood": "defiant",
+          "text": "Don't think this means you win the argument."
+        },
+        {"speaker": "narrator", "text": "Every argument since has ended the same way."}
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
+      "id": "end_empress",
+      "background": "mansion",
+      "setFlags": ["end_empress"],
+      "lines": [
+        {
+          "speaker": "narrator",
+          "if": {"any": [{"flags": ["crowned_nabyen"]}, {"pov": "nabyen"}]},
+          "text": "Nabyen Dalyop takes her father's chair at the head of the Confluence table. The girl from the rocks of Jos runs ships, tin, cloth and money now."
+        },
+        {
+          "speaker": "narrator",
+          "if": {"pov": "hadiza", "flags": ["crowned_self"]},
+          "text": "Hadiza Lawan takes the Chief's chair at the head of the Confluence table. Kano always knew she'd count everyone's money one day."
+        },
+        {
+          "speaker": "narrator",
+          "text": "She answers to no husband, no council and no ghost. The empire has never been better run."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Some nights she stands at the window alone, and finds she does not mind at all."
+        }
+      ],
+      "next": [
+        {
+          "if": {
+            "count": {
+              "of": ["s_plea", "s_swear", "s_greed", "s_bride", "s_spoon", "s_shame", "s_wolf", "s_psalm"],
+              "min": 4
+            }
+          },
+          "to": "epi_homecoming"
+        },
+        {"to": null}
+      ]
+    },
+    {
       "id": "epi_homecoming",
       "background": "jos",
       "setFlags": ["end_secret"],
@@ -426,10 +612,28 @@
       "text": "Love was found and lost on the same mountain. The crown was won. It was not worth it."
     },
     {
+      "id": "end_power_couple",
+      "if": {"flags": ["end_power_couple"]},
+      "title": "Dangerous Power Couple",
+      "text": "Love and the crown, in the same two pairs of hands. Nobody in four countries dares say no to you."
+    },
+    {
+      "id": "end_rival_passion",
+      "if": {"flags": ["end_rival_passion"]},
+      "title": "Rivalry Turned Passion",
+      "text": "You fought each other across three continents. In the end, the fighting was the love story."
+    },
+    {
       "id": "end_wedding",
       "if": {"flags": ["end_wedding"]},
       "title": "Where the Rivers Meet",
       "text": "A wedding on a Caribbean beach. Four houses, one family. Some stories end in blood. This one ended in dancing."
+    },
+    {
+      "id": "end_empress",
+      "if": {"flags": ["end_empress"]},
+      "title": "Solitary Empress",
+      "text": "She took the crown and kept her heart to herself. The empire has never been better run, and she has never been freer."
     },
     {
       "id": "end_crown",
@@ -473,6 +677,14 @@
       "title": "Barefoot in the Sand",
       "background": "caribbean_sunset",
       "text": "A hundred lanterns, a wedding, and a mother dancing."
+    }
+  },
+  "keepsakes": {
+    "k_letters_marcus": {
+      "type": "letter",
+      "title": "Forty years of Christmas letters",
+      "from": "Gideon to Marcus",
+      "text": "Every one ends the same way: 'Next year, little brother, I'll come.' He never did."
     }
   }
 }

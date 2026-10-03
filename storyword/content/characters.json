@@ -18,7 +18,17 @@
     "earrings": "hoops",
     "necklace": "beads",
     "outfit": {"style": "ankara", "color": "#e8642c", "color2": "#f6c33b", "color3": "#138a7e"},
-    "accent": "#f08a3c"
+    "accent": "#f08a3c",
+    "relationship": {
+      "default": "Guarded Heart",
+      "labels": [
+        {"when": {"minIntimacy": 70, "minTension": 60}, "label": "Dangerous Passion"},
+        {"when": {"minIntimacy": 70}, "label": "Devoted"},
+        {"when": {"minIntimacy": 45, "minTension": 50}, "label": "Slow Burn"},
+        {"when": {"minTension": 75, "maxIntimacy": 30}, "label": "Open Enemy"},
+        {"when": {"minIntimacy": 40}, "label": "Drawn Together"}
+      ]
+    }
   },
   "tari": {
     "name": "Tari",
@@ -33,7 +43,17 @@
     "lips": "#4e2620",
     "necklace": "coral",
     "outfit": {"style": "etibo", "color": "#f4efe6", "color2": "#c7362a"},
-    "accent": "#2fa4a0"
+    "accent": "#2fa4a0",
+    "relationship": {
+      "default": "Unspoken Desire",
+      "labels": [
+        {"when": {"minIntimacy": 70, "minTension": 60}, "label": "Dangerous Passion"},
+        {"when": {"minIntimacy": 70}, "label": "Devoted"},
+        {"when": {"minIntimacy": 45, "minTension": 50}, "label": "Slow Burn"},
+        {"when": {"minTension": 75, "maxIntimacy": 30}, "label": "Open Enemy"},
+        {"when": {"minIntimacy": 40}, "label": "Drawn Together"}
+      ]
+    }
   },
   "hadiza": {
     "name": "Hadiza",
@@ -51,7 +71,17 @@
     "iris": "#2a170d",
     "blush": "#b0503a",
     "outfit": {"style": "abaya", "color": "#14523e", "color2": "#e8b84a"},
-    "accent": "#3fbf8f"
+    "accent": "#3fbf8f",
+    "relationship": {
+      "default": "Rival Intellect",
+      "labels": [
+        {"when": {"minIntimacy": 70, "minTension": 60}, "label": "Dangerous Passion"},
+        {"when": {"minIntimacy": 70}, "label": "Devoted"},
+        {"when": {"minIntimacy": 45, "minTension": 50}, "label": "Slow Burn"},
+        {"when": {"minTension": 75, "maxIntimacy": 30}, "label": "Open Enemy"},
+        {"when": {"minIntimacy": 40}, "label": "Drawn Together"}
+      ]
+    }
   },
   "kolade": {
     "name": "Kolade",
@@ -66,7 +96,17 @@
     "lips": "#5a2c22",
     "necklace": null,
     "outfit": {"style": "suit", "color": "#1d2a52", "color2": "#f7f4ee", "tie": "#c9a227"},
-    "accent": "#5b7cfa"
+    "accent": "#5b7cfa",
+    "relationship": {
+      "default": "Dangerous Alliance",
+      "labels": [
+        {"when": {"minIntimacy": 70, "minTension": 60}, "label": "Dangerous Passion"},
+        {"when": {"minIntimacy": 70}, "label": "Devoted"},
+        {"when": {"minIntimacy": 45, "minTension": 50}, "label": "Slow Burn"},
+        {"when": {"minTension": 75, "maxIntimacy": 30}, "label": "Open Enemy"},
+        {"when": {"minIntimacy": 40}, "label": "Drawn Together"}
+      ]
+    }
   },
   "gideon": {
     "name": "Chief Gideon",

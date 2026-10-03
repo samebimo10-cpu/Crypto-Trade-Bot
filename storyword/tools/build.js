@@ -80,6 +80,7 @@ ${css}
 </head>
 <body data-scene="none">
 <div id="scene" aria-hidden="true"></div>
+<div id="fx" aria-hidden="true"></div>
 <div id="app" aria-live="polite"><main class="screen center"><p class="muted">Loading…</p></main></div>
 <div id="toasts" aria-live="polite"></div>
 <script>

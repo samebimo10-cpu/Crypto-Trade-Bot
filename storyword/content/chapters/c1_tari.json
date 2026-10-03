@@ -39,31 +39,33 @@
         {
           "id": "c_crew",
           "text": "\"Gather the crew. We sail for Port Harcourt tonight.\"",
-          "effects": {"reputation": 10},
+          "effects": {"reputation": 10, "loyalty": 10},
           "setFlags": ["crew_loyal"],
           "response": [
             {
               "speaker": "narrator",
               "text": "Twelve boats. Twelve men. Every one of them owes the Chief their life."
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_alone_t",
           "text": "Go alone. Fewer eyes, fewer mouths.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "setFlags": ["travels_light"],
           "response": [
             {
               "speaker": "tari",
               "text": "If someone poisoned an old lion in his own house, they'll be watching the river."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_killer",
           "text": "\"First, I find out who killed him.\"",
-          "effects": {"trust": 5, "reputation": -5},
+          "effects": {"trust": 5, "reputation": -5, "desire": 10},
           "setFlags": ["suspects_poison"],
           "response": [
             {
@@ -71,7 +73,8 @@
               "mood": "angry",
               "text": "Old men don't die of 'tiredness' the same week they rewrite their will. Somebody did this."
             }
-          ]
+          ],
+          "tag": "DESIRE"
         }
       ],
       "puzzle": "t_waters",
@@ -94,25 +97,27 @@
         {
           "id": "c_defy",
           "text": "\"With respect, Madam, I'll be there.\"",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "loyalty": 5},
           "setFlags": ["defied_ibiere"],
-          "response": [{"speaker": "ibiere", "mood": "angry", "text": "Then come. And see how quickly respect runs out."}]
+          "response": [{"speaker": "ibiere", "mood": "angry", "text": "Then come. And see how quickly respect runs out."}],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_lie_ib",
           "text": "\"Of course, Madam. I'll stay in the creeks.\"",
-          "effects": {"trust": -5},
+          "effects": {"trust": -5, "control": 10},
           "setFlags": ["lied_ibiere"],
           "echo": "Ibiere believed you.",
           "response": [
             {"speaker": "ibiere", "mood": "smile", "text": "Good boy."},
             {"speaker": "narrator", "text": "He's already untying the boat."}
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_ask_ib",
           "text": "\"Madam, who was with him the night he died?\"",
-          "effects": {"trust": 5, "reputation": -5},
+          "effects": {"trust": 5, "reputation": -5, "control": 5},
           "setFlags": ["suspects_ibiere", "clue_moreau"],
           "response": [
             {"speaker": "ibiere", "mood": "surprised", "text": "How dare you."},
@@ -120,7 +125,8 @@
               "speaker": "narrator",
               "text": "She hangs up, but not before he hears another woman's voice in the room. An accent. French, or Swiss."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         }
       ],
       "next": "t3_night"
@@ -144,7 +150,7 @@
         {
           "id": "c_chase",
           "text": "Chase the boat.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "desire": 5},
           "setFlags": ["chased", "suspects_kolade"],
           "response": [
             {
@@ -152,12 +158,14 @@
               "text": "He loses them in the mangroves, but they drop something in the chase: a bank card. First Lagoon Bank, Lagos."
             },
             {"speaker": "tari", "mood": "angry", "text": "Kolade Balogun's bank."}
-          ]
+          ],
+          "tag": "DESIRE",
+          "rel": {"kolade": {"tension": 15}}
         },
         {
           "id": "c_save",
           "text": "Save the drowning man.",
-          "effects": {"affection": 5, "trust": 5},
+          "effects": {"affection": 5, "trust": 5, "loyalty": 5},
           "setFlags": ["saved_attacker", "clue_moreau"],
           "response": [
             {"speaker": "narrator", "text": "Tari hauls him into the boat, coughing up river."},
@@ -165,7 +173,9 @@
               "speaker": "narrator",
               "text": "'The white woman pays in francs,' the man gasps. 'She said nobody from the creeks reaches Port Harcourt.'"
             }
-          ]
+          ],
+          "tag": "LOYALTY",
+          "keepsake": "k_francs"
         }
       ],
       "puzzle": "t_rivers",
@@ -195,22 +205,28 @@
         {
           "id": "c_hug",
           "text": "Pull her into a hug. Fish later.",
-          "effects": {"affection": 10},
+          "effects": {"affection": 10, "desire": 10},
           "setFlags": ["spark_nabyen"],
-          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Okay. Okay! You smell like the river."}]
+          "response": [{"speaker": "nabyen", "mood": "smile", "text": "Okay. Okay! You smell like the river."}],
+          "tag": "DESIRE",
+          "rel": {"nabyen": {"intimacy": 15}}
         },
         {
           "id": "c_warn",
           "text": "\"Someone tried to kill me last night. Stay close.\"",
-          "effects": {"trust": 10},
+          "effects": {"trust": 10, "loyalty": 5},
           "setFlags": ["ally_nabyen"],
-          "response": [{"speaker": "nabyen", "mood": "worried", "text": "Then we stay close."}]
+          "response": [{"speaker": "nabyen", "mood": "worried", "text": "Then we stay close."}],
+          "tag": "LOYALTY",
+          "rel": {"nabyen": {"intimacy": 5, "tension": 5}}
         },
         {
           "id": "c_formal",
           "text": "\"Miss Dalyop. The Chief asked me to look after you.\"",
-          "effects": {"reputation": 5},
-          "response": [{"speaker": "nabyen", "mood": "sad", "text": "Miss Dalyop. Wow. Okay, Captain."}]
+          "effects": {"reputation": 5, "control": 10},
+          "response": [{"speaker": "nabyen", "mood": "sad", "text": "Miss Dalyop. Wow. Okay, Captain."}],
+          "tag": "CONTROL",
+          "rel": {"nabyen": {"tension": 10}}
         }
       ],
       "next": null
@@ -259,6 +275,14 @@
       "title": "Ambush at Midnight",
       "background": "creek_night",
       "text": "Fireflies, bullets, and a man who couldn't swim."
+    }
+  },
+  "keepsakes": {
+    "k_francs": {
+      "type": "memento",
+      "title": "A wet ten-franc note",
+      "from": "The man in the water",
+      "text": "What a life costs on the creeks, apparently. Paid in Swiss money."
     }
   }
 }

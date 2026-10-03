@@ -33,6 +33,8 @@ export function newProfile() {
     streak: 0, // consecutive puzzles solved without a reveal
     bestStreak: 0,
     memories: [], // memory ids
+    keepsakes: [], // keepsake ids: voice notes, letters, mementos
+    settings: { sound: false },
     secrets: [], // secret ids
     completedChapters: [], // chapter ids
     endings: [], // outcome ids seen
@@ -87,6 +89,12 @@ export function rewardPuzzle(profile, puzzleState, stars) {
 export function addSecret(profile, secretId) {
   if (profile.secrets.includes(secretId)) return { profile, isNew: false };
   return { profile: { ...profile, secrets: [...profile.secrets, secretId] }, isNew: true };
+}
+
+export function addKeepsake(profile, id) {
+  const have = profile.keepsakes || [];
+  if (have.includes(id)) return { profile, isNew: false };
+  return { profile: { ...profile, keepsakes: [...have, id] }, isNew: true };
 }
 
 export function addMemory(profile, memoryId) {
@@ -158,7 +166,8 @@ export function load(storage) {
     if (!raw) return newProfile();
     const data = JSON.parse(raw);
     if (data.version !== SAVE_VERSION) return newProfile();
-    return { ...newProfile(), ...data, daily: { ...newProfile().daily, ...data.daily } };
+    const base = newProfile();
+    return { ...base, ...data, daily: { ...base.daily, ...data.daily }, settings: { ...base.settings, ...data.settings } };
   } catch {
     return newProfile();
   }

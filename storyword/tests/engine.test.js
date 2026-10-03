@@ -34,7 +34,7 @@ function playSaga(pov, { prefer = [], random = null, secrets = false } = {}) {
       if (view.type === 'line') {
         run = Story.advance(chapter, run);
       } else if (view.type === 'choice') {
-        const ids = view.choices.map((c) => c.id);
+        const ids = view.choices.filter((c) => !c.locked).map((c) => c.id);
         const id =
           ids.find((i) => i === `pick_${pov}`) ??
           prefer.find((p) => ids.includes(p)) ??
@@ -106,7 +106,7 @@ test('ending: confessing to the others redeems Kolade', () => {
 });
 
 test('ending: taking the crown alone, or sharing it', () => {
-  assert.equal(ending(playSaga('hadiza', { prefer: ['c_honest', 'c_stay_n', 'c_crown_self'] }).run), 'end_crown');
+  assert.equal(ending(playSaga('tari', { prefer: ['c_formal', 'c_honest', 'c_stay_n', 'c_crown_self'] }).run), 'end_crown');
   assert.equal(ending(playSaga('hadiza', { prefer: ['c_honest', 'c_stay_n', 'c_council'] }).run), 'end_council');
 });
 
@@ -266,4 +266,58 @@ test('every speaker and background in the content can be drawn', () => {
 test('the offline single-file build is up to date', async () => {
   const current = await readFile(OUTPUT, 'utf8');
   assert.equal(current, await build(), 'run: npm run build');
+});
+
+const ending2 = (run) => run.flags.find((f) => f.startsWith('end_') && f !== 'end_secret');
+
+test('locked choices: tension gates show locked, leverage hides until held, and spends once', () => {
+  const ch = byId('c2_funeral');
+  const base = { pov: 'nabyen', flags: ['pov_nabyen'], stats: {}, rel: { kolade: { intimacy: 20, tension: 40 } } };
+  const run = { ...Story.newRun(ch, { ...base, stats: { control: 50 } }), sceneId: 'f4_moment', phase: 'choice' };
+  let view = Story.currentView(ch, run);
+  const close = view.choices.find((c) => c.id === 'c_close_distance');
+  assert.equal(close.locked.kind, 'gate');
+  assert.ok(!view.choices.some((c) => c.id === 'c_use_secret'), 'leverage hidden without the secret');
+  assert.throws(() => Story.choose(ch, run, 'c_close_distance'));
+
+  const armed = { ...run, flags: [...run.flags, 's_spoon'], rel: { kolade: { intimacy: 20, tension: 60 } } };
+  view = Story.currentView(ch, armed);
+  assert.ok(!view.choices.find((c) => c.id === 'c_close_distance').locked);
+  const after = Story.choose(ch, armed, 'c_use_secret').run;
+  assert.ok(after.flags.includes('spent_s_spoon'));
+  assert.equal(after.rel.kolade.tension, 75);
+  assert.deepEqual(Story.heldLeverage(after, ['s_spoon']), []);
+});
+
+test('relationship status labels follow intimacy and tension', () => {
+  const rel = characters.kolade.relationship;
+  assert.equal(Story.relStatus(rel, { intimacy: 20, tension: 60 }), 'Dangerous Alliance');
+  assert.equal(Story.relStatus(rel, { intimacy: 50, tension: 55 }), 'Slow Burn');
+  assert.equal(Story.relStatus(rel, { intimacy: 80, tension: 70 }), 'Dangerous Passion');
+  assert.equal(Story.relStatus(rel, { intimacy: 10, tension: 90 }), 'Open Enemy');
+});
+
+test('relationships and axes carry from chapter to chapter', () => {
+  const { run } = playSaga('nabyen', { prefer: ['c_jet'] });
+  assert.ok(run.rel.kolade.intimacy > 20);
+  for (const k of ['desire', 'control', 'loyalty']) assert.equal(typeof run.stats[k], 'number');
+});
+
+test('ending: rivalry turned passion', () => {
+  const { run } = playSaga('nabyen', { prefer: ['c_jet', 'c_close_distance', 'c_kiss_kolade', 'c_send_tari', 'c_council'] });
+  assert.equal(ending2(run), 'end_rival_passion');
+});
+
+test('ending: dangerous power couple', () => {
+  const { run } = playSaga('hadiza', {
+    prefer: ['c_silent', 'c_leverage', 'c_refuse_k', 'c_calm', 'c_trust_nabyen', 'c_hold', 'c_doubt', 'c_lone', 'c_kiss_n', 'c_grab', 'c_send_kolade', 'c_deal', 'c_stand', 'c_wary', 'c_crown_self'],
+  });
+  assert.equal(ending2(run), 'end_power_couple');
+});
+
+test('ending: solitary empress', () => {
+  const { run } = playSaga('hadiza', {
+    prefer: ['c_silent', 'c_leverage', 'c_refuse_k', 'c_calm', 'c_trust_tari', 'c_honest', 'c_doubt', 'c_lone', 'c_walk_back', 'c_grab', 'c_send_kolade', 'c_deal', 'c_wary', 'c_crown_self'],
+  });
+  assert.equal(ending2(run), 'end_empress');
 });

@@ -66,7 +66,10 @@ export function validateChapter(chapter, { characters, puzzles }) {
     checkNextList(s.next, at);
     if (s.puzzle && !puzzles[s.puzzle]) err(`${at}: unknown puzzle "${s.puzzle}"`);
     if (s.memory && !memories[s.memory]) err(`${at}: unknown memory "${s.memory}"`);
+    if (s.keepsake && !(chapter.keepsakes || {})[s.keepsake]) err(`${at}: unknown keepsake "${s.keepsake}"`);
     if (s.choices?.length && !s.prompt) err(`${at}: has choices but no prompt`);
+    if (Array.isArray(s.prompt) && s.prompt[s.prompt.length - 1].if) err(`${at}: a prompt list must end with an unconditional entry`);
+    if (s.choices?.length && s.choices.every((c) => c.gate || c.leverage)) err(`${at}: every choice is locked; add one without gate/leverage`);
     const ids = new Set();
     for (const c of s.choices || []) {
       if (ids.has(c.id)) err(`${at}: duplicate choice id "${c.id}"`);
@@ -74,6 +77,10 @@ export function validateChapter(chapter, { characters, puzzles }) {
       checkLines(c.response, `${at}/${c.id}`);
       checkNextList(c.next, `${at}/${c.id}`);
       if (c.pov && !characters[c.pov]) err(`${at}/${c.id}: unknown pov character "${c.pov}"`);
+      if (c.gate && !c.gate.label) err(`${at}/${c.id}: gate needs a label`);
+      for (const who of Object.keys(c.rel || {})) if (!characters[who]) err(`${at}/${c.id}: rel on unknown character "${who}"`);
+      if (c.tag && !['DESIRE', 'CONTROL', 'LOYALTY', 'LUXURY', 'LEVERAGE'].includes(c.tag)) err(`${at}/${c.id}: unknown tag "${c.tag}"`);
+      if (c.keepsake && !(chapter.keepsakes || {})[c.keepsake]) err(`${at}/${c.id}: unknown keepsake "${c.keepsake}"`);
       for (const f of c.setFlags || []) {
         if (f.startsWith('s_') && !secrets[f]) err(`${at}/${c.id}: flag "${f}" looks like a secret but is not defined`);
       }
@@ -121,6 +128,13 @@ export function validateStory(story, chapters, { characters }) {
     }
   }
   const defined = new Set(chapters.flatMap((c) => Object.keys(c.secrets || {})));
+  for (const ch of chapters) {
+    for (const sc of ch.scenes) {
+      for (const c of sc.choices || []) {
+        if (c.leverage && !defined.has(c.leverage)) errors.push(`${ch.id}/${sc.id}/${c.id}: leverage "${c.leverage}" is not a defined secret`);
+      }
+    }
+  }
   for (const f of story.secretFlags || []) if (!defined.has(f)) errors.push(`story: secret "${f}" is not defined in any chapter`);
   if ((story.secretFlags || []).length !== story.totalSecrets) errors.push('story: totalSecrets does not match secretFlags');
   return errors;

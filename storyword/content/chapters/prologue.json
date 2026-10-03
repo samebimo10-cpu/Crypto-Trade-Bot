@@ -5,7 +5,7 @@
   "place": "Port Harcourt, Rivers State",
   "teaser": "A storm over the Bonny River. Four letters sealed in red wax. One old lion who won't see morning.",
   "start": "pr_storm",
-  "initialStats": {"trust": 50, "affection": 50, "reputation": 50},
+  "initialStats": {"trust": 50, "affection": 50, "reputation": 50, "desire": 50, "control": 50, "loyalty": 50},
   "scenes": [
     {
       "id": "pr_storm",
@@ -41,7 +41,8 @@
         {"speaker": "gideon", "text": "If I do not wake up, send them. All four. Before the vultures land."}
       ],
       "puzzle": "pr_crown",
-      "next": "pr_dawn"
+      "next": "pr_dawn",
+      "keepsake": "k_voice_gideon"
     },
     {
       "id": "pr_dawn",
@@ -94,6 +95,20 @@
       "title": "The Last Storm",
       "background": "ph_night",
       "text": "Red wax, four letters, and a cold cup of tea."
+    }
+  },
+  "initialRel": {
+    "tari": {"intimacy": 10, "tension": 30},
+    "kolade": {"intimacy": 20, "tension": 60},
+    "hadiza": {"intimacy": 15, "tension": 40},
+    "nabyen": {"intimacy": 15, "tension": 30}
+  },
+  "keepsakes": {
+    "k_voice_gideon": {
+      "type": "voice",
+      "title": "A voice note, never sent",
+      "from": "Chief Gideon Okoro",
+      "text": "Kaneng. It's me. Thirty years, and I still can't say it properly. I'm sorry. Tell her... no. I'll tell her myself. Soon."
     }
   }
 }

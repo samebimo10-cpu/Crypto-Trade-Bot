@@ -41,7 +41,7 @@
         {
           "id": "c_press",
           "text": "\"Mama. What aren't you telling me?\"",
-          "effects": {"trust": -5, "affection": 5},
+          "effects": {"trust": -5, "affection": 5, "control": 5},
           "setFlags": ["pressed_mama"],
           "response": [
             {
@@ -49,12 +49,13 @@
               "mood": "sad",
               "text": "Not here. Not in front of the whole market. Tonight, at the rocks."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_watch",
           "text": "Say nothing. Watch her face.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "loyalty": 5},
           "setFlags": ["watched_mama"],
           "response": [
             {
@@ -62,12 +63,13 @@
               "text": "Kaneng folds the letter into her wrapper the way you fold away a prayer. Her eyes are wet."
             },
             {"speaker": "kaneng", "text": "Close the stall early, my daughter. We need to talk."}
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_burn",
           "text": "Drop the letter in the brazier. Rich men's problems are not hers.",
-          "effects": {"reputation": 5, "affection": -5},
+          "effects": {"reputation": 5, "affection": -5, "control": 5, "loyalty": -10},
           "setFlags": ["burned_letter"],
           "echo": "Mama will remember this.",
           "response": [
@@ -80,7 +82,8 @@
               "mood": "angry",
               "text": "This IS your problem. It has been your problem since before you were born."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         }
       ],
       "puzzle": "n_stones",
@@ -115,7 +118,7 @@
         {
           "id": "c_father",
           "text": "\"Chief Gideon was my father.\"",
-          "effects": {"affection": 5},
+          "effects": {"affection": 5, "loyalty": 5},
           "setFlags": ["knows_father"],
           "response": [
             {"speaker": "kaneng", "text": "Was. Is. Blood doesn't care about funerals."},
@@ -123,12 +126,13 @@
               "speaker": "narrator",
               "text": "She presses half a coral bracelet into Nabyen's palm. \"He kept the other half. Every day of his life.\""
             }
-          ]
+          ],
+          "tag": "LOYALTY"
         },
         {
           "id": "c_why",
           "text": "\"Why did you never tell me?\"",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "response": [
             {
               "speaker": "kaneng",
@@ -139,12 +143,13 @@
               "speaker": "narrator",
               "text": "She presses half a coral bracelet into Nabyen's palm. \"He kept the other half.\""
             }
-          ]
+          ],
+          "tag": "CONTROL"
         },
         {
           "id": "c_go",
           "text": "\"Then I'm going to Port Harcourt.\"",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "desire": 5},
           "setFlags": ["determined"],
           "response": [
             {
@@ -156,11 +161,13 @@
               "speaker": "narrator",
               "text": "She presses half a coral bracelet into Nabyen's palm. \"Take this. He has the other half.\""
             }
-          ]
+          ],
+          "tag": "DESIRE"
         }
       ],
       "puzzle": "n_plateau",
-      "next": "n3_market"
+      "next": "n3_market",
+      "keepsake": "k_bracelet"
     },
     {
       "id": "n3_market",
@@ -199,7 +206,7 @@
         {
           "id": "c_jet",
           "text": "Fly with Kolade.",
-          "effects": {"affection": 5, "reputation": 5},
+          "effects": {"affection": 5, "reputation": 5, "loyalty": -10},
           "setFlags": ["ally_kolade", "spark_kolade"],
           "response": [
             {
@@ -207,12 +214,14 @@
               "mood": "smile",
               "text": "Smart woman. Lagos and the Plateau. Together we'd be unstoppable."
             }
-          ]
+          ],
+          "tag": "LUXURY",
+          "rel": {"kolade": {"intimacy": 10, "tension": 5}}
         },
         {
           "id": "c_tari",
           "text": "Tell Tari to come and get her.",
-          "effects": {"trust": 5, "affection": 5},
+          "effects": {"trust": 5, "affection": 5, "loyalty": 10},
           "setFlags": ["ally_tari", "spark_tari"],
           "echo": "Kolade will remember this.",
           "response": [
@@ -222,12 +231,14 @@
               "text": "Take the bus to Makurdi. I'll meet you at the river. I'm already on my way."
             },
             {"speaker": "kolade", "text": "Suit yourself. I'll save you a seat at the table."}
-          ]
+          ],
+          "tag": "LOYALTY",
+          "rel": {"tari": {"intimacy": 15, "tension": 5}}
         },
         {
           "id": "c_alone",
           "text": "Take the night bus. Alone.",
-          "effects": {"reputation": 5, "trust": 5},
+          "effects": {"reputation": 5, "trust": 5, "control": 10},
           "setFlags": ["independent"],
           "response": [
             {
@@ -235,7 +246,8 @@
               "mood": "smile",
               "text": "I carry my own stones down the hill, Mr Balogun. I can carry myself to Port Harcourt."
             }
-          ]
+          ],
+          "tag": "CONTROL"
         }
       ],
       "next": "n4_road"
@@ -270,24 +282,27 @@
         {
           "id": "c_keep_card",
           "text": "Keep the card hidden. Whoever sent it is watching.",
-          "effects": {"trust": 5},
+          "effects": {"trust": 5, "control": 5},
           "setFlags": ["clue_moreau"],
-          "response": [{"speaker": "nabyen", "text": "Moreau. I'll remember you."}]
+          "response": [{"speaker": "nabyen", "text": "Moreau. I'll remember you."}],
+          "tag": "CONTROL"
         },
         {
           "id": "c_tear_card",
           "text": "Tear it in half. She doesn't take orders from strangers.",
-          "effects": {"reputation": 5},
+          "effects": {"reputation": 5, "desire": 5},
           "setFlags": ["clue_moreau", "defiant"],
           "response": [
             {
               "speaker": "narrator",
               "text": "She keeps the half with the name on it, though. She's angry, not foolish."
             }
-          ]
+          ],
+          "tag": "DESIRE"
         }
       ],
-      "next": null
+      "next": null,
+      "keepsake": "k_card"
     }
   ],
   "outcomes": [
@@ -333,6 +348,20 @@
       "title": "The Road South",
       "background": "road_night",
       "text": "A card that says 'Stay in Jos.' She didn't."
+    }
+  },
+  "keepsakes": {
+    "k_bracelet": {
+      "type": "memento",
+      "title": "Half a coral bracelet",
+      "from": "Mama Kaneng",
+      "text": "Warm from Mama's hand. The break is clean, as if someone always meant to mend it."
+    },
+    "k_card": {
+      "type": "memento",
+      "title": "A cream business card",
+      "from": "Banque Moreau, Genève",
+      "text": "'Stay in Jos.' Neat handwriting. A woman's, she thinks."
     }
   }
 }

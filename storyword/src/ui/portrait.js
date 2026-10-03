@@ -4,7 +4,7 @@
 // dialogue line's `mood`. CSS animates the `.breathe`, `.lid` and `.sway`
 // groups (idle breathing, blinking, swaying earrings).
 
-const MOODS = ['neutral', 'smile', 'sad', 'angry', 'surprised', 'worried'];
+const MOODS = ['neutral', 'smile', 'sad', 'angry', 'surprised', 'worried', 'intimate', 'defiant'];
 
 // Brows: [left, right] paths, eyes centred at x=82 and x=118, y=98.
 const BROWS = {
@@ -14,6 +14,8 @@ const BROWS = {
   angry: ['M70 81 Q82 84 93 89', 'M107 89 Q118 84 130 81'],
   surprised: ['M70 80 Q81 74 92 79', 'M108 79 Q119 74 130 80'],
   worried: ['M70 87 Q81 84 92 80', 'M108 80 Q119 84 130 87'],
+  intimate: ['M70 87 Q81 84 92 86', 'M108 86 Q119 84 130 87'],
+  defiant: ['M70 86 Q81 85 92 87', 'M108 82 Q119 74 130 80'],
 };
 
 function mouth(mood, lips, full) {
@@ -29,6 +31,16 @@ function mouth(mood, lips, full) {
     return `<path d="M85 129 Q92 122 100 124 Q108 122 115 129 Q100 128 85 129Z" fill="${upper}"/>
       <path d="M85 129 Q100 128 115 129 Q110 137 100 137 Q90 137 85 129Z" fill="${lower}"/>
       <ellipse cx="102" cy="133" rx="4" ry="1.4" fill="#fff" opacity="0.3"/>`;
+  }
+  if (mood === 'intimate') {
+    return `<path d="M84 125 Q91 120 96 122 Q100 123.5 104 122 Q109 120 116 125 Q100 128.5 84 125Z" fill="${upper}"/>
+      <path d="M84 125 Q100 128.5 116 125 Q110 135 100 136 Q90 135 84 125Z" fill="${lower}"/>
+      ${full ? '<ellipse cx="102" cy="131" rx="5" ry="1.5" fill="#fff" opacity="0.32"/>' : ''}`;
+  }
+  if (mood === 'defiant') {
+    return `<path d="M85 127 Q92 123 98 124 Q104 122 116 121 Q102 127.5 85 127Z" fill="${upper}"/>
+      <path d="M85 127 Q102 127.5 116 121 Q112 132 100 134 Q90 134 85 127Z" fill="${lower}"/>
+      ${full ? '<ellipse cx="104" cy="129.5" rx="4.5" ry="1.4" fill="#fff" opacity="0.3"/>' : ''}`;
   }
   switch (mood) {
     case 'smile':
@@ -264,7 +276,7 @@ function earrings(c) {
 
 function eye(cx, c, mood) {
   const big = c.lashes ? 1.15 : 1;
-  const open = (mood === 'surprised' ? 8 : mood === 'smile' ? 5.4 : 6.6) * big;
+  const open = (mood === 'surprised' ? 8 : mood === 'smile' ? 5.4 : mood === 'intimate' ? 4 : mood === 'defiant' ? 5.6 : 6.6) * big;
   const w = 10 * big;
   const shape = `M${cx - w} 98 Q${cx} ${98 - open - 1} ${cx + w} 98 Q${cx} ${98 + open - 1} ${cx - w} 98Z`;
   const lid = shade(c.skin, 0.08);

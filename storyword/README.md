@@ -42,8 +42,9 @@ the game can't start, it shows a help screen instead of hanging on "Loading…".
   WhatsApp, Gmail, Files and file-manager previews show HTML without running it. After a
   few seconds the page explains this itself.
 - **Android:** tap ⋮ → *Open with* → **Chrome**.
-- **iPhone:** iOS only previews HTML files saved on the phone, so use the web link
-  instead:
+- **iPhone:** iOS only previews HTML files saved on the phone, so send iPhone players
+  `offline/StoryWord-iPhone.html`. It's a small launcher that needs no script, so it
+  opens as a preview. Its *Tap to play* button opens the game in Safari at
   https://raw.githack.com/samebimo10-cpu/Crypto-Trade-Bot/ccr-9622801a-sxd12y/storyword/offline/StoryWord.html
 - **Update the browser** if the help screen still appears.
 - **Use the file, not the claude.ai link.** The artifact link is private to its owner.

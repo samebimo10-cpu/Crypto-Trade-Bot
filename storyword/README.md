@@ -38,9 +38,13 @@ There are three ways to play.
 The offline file runs on Android Chrome 61+ and iOS Safari 11+ (iPhone 5s and newer). If
 the game can't start, it shows a help screen instead of hanging on "Loading…".
 
-- **Open it in a real browser.** WhatsApp, Gmail and file-manager previews often show
-  HTML files without running them. Save the file, then open it with **Chrome** on
-  Android. On iPhone, open it from **Files**, then Share → **Safari**.
+- **"Loading…" that never goes away means the file is being previewed, not run.**
+  WhatsApp, Gmail, Files and file-manager previews show HTML without running it. After a
+  few seconds the page explains this itself.
+- **Android:** tap ⋮ → *Open with* → **Chrome**.
+- **iPhone:** iOS only previews HTML files saved on the phone, so use the web link
+  instead:
+  https://raw.githack.com/samebimo10-cpu/Crypto-Trade-Bot/ccr-9622801a-sxd12y/storyword/offline/StoryWord.html
 - **Update the browser** if the help screen still appears.
 - **Use the file, not the claude.ai link.** The artifact link is private to its owner.
 

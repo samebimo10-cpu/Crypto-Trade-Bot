@@ -93,7 +93,7 @@ const FALLBACK = `(function () {
       '<p>This browser or file viewer can\\u2019t run the game. Try one of these:</p>' +
       '<ol><li>Save the file to your phone, then open it with <b>Chrome</b> (Android) or <b>Safari</b> (iPhone), not WhatsApp or a file preview.</li>' +
       '<li>Update Chrome / Safari, or your phone\\u2019s software, and try again.</li>' +
-      '<li>On iPhone: open the file in <b>Files</b>, tap Share \\u2192 open in Safari.</li></ol>' +
+      '<li>On iPhone, use the game\\u2019s web link in Safari: iPhones only preview saved HTML files.</li></ol>' +
       '<p class="muted"><small>' + String(detail || '').replace(/[<>&]/g, '') + '</small></p></main>';
   }
   window.addEventListener('error', function (e) { fail(e && e.message); });
@@ -128,7 +128,11 @@ ${css}
 <body data-scene="none">
 <div id="scene" aria-hidden="true"></div>
 <div id="fx" aria-hidden="true"></div>
-<div id="app" aria-live="polite"><main class="screen center"><p class="muted">Loading…</p></main></div>
+<div id="app" aria-live="polite"><main class="screen center"><p class="muted">Loading…</p>
+<div class="boot-hint"><h2>Still loading?</h2>
+<p>You're seeing a <b>preview</b> of the file (WhatsApp, Files, Gmail and similar apps only preview it). Preview apps can't run the game.</p>
+<p><b>Android:</b> tap ⋮ → <i>Open with</i> → <b>Chrome</b>. Or save it, open the <i>Files</i> app, and open it with Chrome.</p>
+<p><b>iPhone:</b> iPhones can't run a game file saved on the phone. Open the game's web link in Safari instead.</p></div></main></div>
 <noscript><main class="screen center boot-fail"><h2>StoryWord needs JavaScript</h2><p>This viewer won't run the game. Save the file, then open it with Chrome (Android) or Safari (iPhone).</p></main></noscript>
 <div id="toasts" aria-live="polite"></div>
 <script>

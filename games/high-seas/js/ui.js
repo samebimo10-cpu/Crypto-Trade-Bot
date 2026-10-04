@@ -893,20 +893,28 @@
       const p = g.player;
       if (!p) return;
       const w = g.w, h = g.h, pl = g.pl;
-      const compact = w < 760;
+      // three layouts: desktop, phone landscape, phone portrait
+      const compact = w < 760 || h < 520;
+      const portrait = compact && h > w;
+      const short = h < 430;
+      const touch = this.isTouch;
       ctx.save();
       ctx.textAlign = 'left';
+
       // --- ship status panel
-      const px = 12, py = 12, pw = compact ? 200 : 250;
-      this._panel(ctx, px, py, pw, pl ? 150 : 104);
+      const px = 10, py = 10, pw = compact ? Math.min(210, Math.floor(w * 0.6)) : 250;
+      const ph = pl ? (short ? 116 : 150) : 104;
+      this._panel(ctx, px, py, pw, ph);
       ctx.fillStyle = '#f2e6c4'; ctx.font = 'bold 15px Georgia, serif';
-      ctx.fillText(p.name, px + 12, py + 22);
+      ctx.fillText(p.name, px + 12, py + 22, pw - 24);
       ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#c8b890';
-      ctx.fillText(`${p.T.name}${pl ? ' · ' + g.rank() : ''}`, px + 12, py + 37);
+      ctx.fillText(`${p.T.name}${pl ? ' · ' + g.rank() : ''}`, px + 12, py + 37, pw - 24);
+      const bx0 = px + (compact ? 56 : 70);
       const bar = (y, label, v, max, col) => {
         ctx.fillStyle = '#c8b890'; ctx.font = '11px Georgia, serif'; ctx.fillText(label, px + 12, y + 8);
-        ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fillRect(px + 70, y, pw - 84, 9);
-        ctx.fillStyle = col; ctx.fillRect(px + 70, y, (pw - 84) * HS.clamp(v / max, 0, 1), 9);
+        const bw = px + pw - 14 - bx0;
+        ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fillRect(bx0, y, bw, 9);
+        ctx.fillStyle = col; ctx.fillRect(bx0, y, bw * HS.clamp(v / max, 0, 1), 9);
         ctx.fillStyle = '#fff'; ctx.font = '9px sans-serif'; ctx.textAlign = 'right'; ctx.fillText(`${Math.round(v)}/${max}`, px + pw - 16, y + 8); ctx.textAlign = 'left';
       };
       const hk = p.hull / p.hullMax;
@@ -914,116 +922,172 @@
       bar(py + 63, p.T.steam ? 'Boilers' : 'Sails', p.sails, p.sailsMax, '#e8e2cf');
       bar(py + 78, 'Crew', p.crew, p.T.crewMax, p.crew < p.T.crewMin ? '#e8564a' : '#7aa8e8');
       if (pl) {
-        bar(py + 93, 'Hold', p.cargoUsed(), p.cargoCap(), '#c89a5a');
+        let gy = py + 106;
+        if (!short) { bar(py + 93, 'Hold', p.cargoUsed(), p.cargoCap(), '#c89a5a'); gy = py + 124; }
         ctx.fillStyle = '#f2d77a'; ctx.font = 'bold 13px Georgia, serif';
-        ctx.fillText(`💰 ${HS.fmtGold(pl.gold)}`, px + 12, py + 124);
+        ctx.fillText(`💰 ${HS.fmtGold(pl.gold)}`, px + 12, gy);
         const days = Math.floor(pl.rations / Math.max(1, p.crew));
         ctx.fillStyle = days < 4 ? '#ff8a7a' : '#d8cba8'; ctx.font = '12px Georgia, serif';
-        ctx.fillText(`🍖 ${days} days`, px + 110, py + 124);
-        ctx.fillStyle = pl.notoriety >= 55 ? '#ff8a7a' : '#a89a78'; ctx.font = '10px Georgia, serif';
-        ctx.fillText(`Fame ${Math.round(pl.fame)} · Notoriety ${Math.round(pl.notoriety)}`, px + 12, py + 141);
+        ctx.fillText(`🍖 ${days} days`, px + (compact ? 100 : 110), gy);
+        if (!short) {
+          ctx.fillStyle = pl.notoriety >= 55 ? '#ff8a7a' : '#a89a78'; ctx.font = '10px Georgia, serif';
+          ctx.fillText(`Fame ${Math.round(pl.fame)} · Notoriety ${Math.round(pl.notoriety)}`, px + 12, py + 141, pw - 24);
+        }
       } else if (g.skirmish) {
         const foes = g.ships.filter((s) => s.team === 'B' && !s.sinking && !s.struck).length;
-        ctx.fillStyle = '#ffb39a'; ctx.font = 'bold 12px Georgia, serif'; ctx.fillText(`Enemy ships remaining: ${foes}`, px + 12, py + 98);
+        ctx.fillStyle = '#ffb39a'; ctx.font = 'bold 12px Georgia, serif'; ctx.fillText(`Enemy ships remaining: ${foes}`, px + 12, py + 98, pw - 24);
       }
+      const statusBottom = py + ph;
 
       // --- compass & navigation
-      const cr = compact ? 44 : 56, cx = w - cr - 20, cy = cr + 20;
+      const cr = compact ? 38 : 56, cx = w - cr - 14, cy = cr + 12;
       this._compass(ctx, cx, cy, cr, p, g);
       const deg = HS.headingDeg(p.angle);
       const rel = Math.abs(p.relWind(g.wind));
       const bf = HS.beaufort(g.wind.speed);
       const fromDeg = HS.headingDeg(g.wind.dir + Math.PI);
       const { lon, lat } = HS.toLonLat(p.x, p.y);
-      const lines = [
-        [`Heading ${String(Math.round(deg)).padStart(3, '0')}° ${HS.compassPoint(deg)}`, '#f2e6c4', 'bold 13px'],
-        [`${Math.abs(p.speed).toFixed(1)} knots`, '#f2e6c4', 'bold 13px'],
-        [`Wind: ${bf.name} (F${bf.force}) from ${HS.compassPoint(fromDeg)}`, '#bcd8f0', '11px'],
-        [p.T.steam ? HS.STEAM_NAMES[p.sail] : `${HS.SAIL_NAMES[p.sail]} · ${HS.pointOfSail(rel)}`, rel > 2.4 && !p.T.steam && p.sail ? '#ff9c7a' : '#d8cba8', '11px'],
-        [`${HS.fmtLat(lat)}  ${HS.fmtLon(lon)}`, '#d8cba8', '11px'],
-      ];
-      if (pl) lines.push([`${g.dateString()} · ${g.watch()}`, '#a89a78', '10px']);
+      const sailTxt = p.T.steam ? HS.STEAM_NAMES[p.sail] : `${HS.SAIL_NAMES[p.sail]} · ${HS.pointOfSail(rel)}`;
+      const sailCol = rel > 2.4 && !p.T.steam && p.sail ? '#ff9c7a' : '#d8cba8';
+      let lines;
+      if (compact) {
+        lines = [
+          [`${String(Math.round(deg)).padStart(3, '0')}° ${HS.compassPoint(deg)} · ${Math.abs(p.speed).toFixed(1)} kn`, '#f2e6c4', 'bold 12px'],
+          [`Wind F${bf.force} from ${HS.compassPoint(fromDeg)}`, '#bcd8f0', '11px'],
+          [sailTxt, sailCol, '11px'],
+        ];
+      } else {
+        lines = [
+          [`Heading ${String(Math.round(deg)).padStart(3, '0')}° ${HS.compassPoint(deg)}`, '#f2e6c4', 'bold 13px'],
+          [`${Math.abs(p.speed).toFixed(1)} knots`, '#f2e6c4', 'bold 13px'],
+          [`Wind: ${bf.name} (F${bf.force}) from ${HS.compassPoint(fromDeg)}`, '#bcd8f0', '11px'],
+          [sailTxt, sailCol, '11px'],
+          [`${HS.fmtLat(lat)}  ${HS.fmtLon(lon)}`, '#d8cba8', '11px'],
+        ];
+        if (pl) lines.push([`${g.dateString()} · ${g.watch()}`, '#a89a78', '10px']);
+      }
       if (g.timeScale > 1) lines.push([`Time ×${g.timeScale}`, '#9fe8a0', 'bold 11px']);
-      const tx = compact ? w - 12 : cx - cr - 14;
-      let ty = compact ? cy + cr + 22 : 26;
-      ctx.textAlign = 'right';
-      this._panel(ctx, tx - 250, ty - 16, 258, lines.length * 16 + 10, 0.45);
-      for (const [txt, col, f] of lines) { ctx.fillStyle = col; ctx.font = `${f} Georgia, serif`; ctx.fillText(txt, tx - 4, ty); ty += 16; }
-      ctx.textAlign = 'left';
+      let navBottom;
+      if (portrait) {
+        // full-width strip beneath the status panel
+        const ny = statusBottom + 6, nh = lines.length * 15 + 8;
+        this._panel(ctx, px, ny, w - 20, nh, 0.45);
+        let ty = ny + 16;
+        for (const [txt, col, f] of lines) { ctx.fillStyle = col; ctx.font = `${f} Georgia, serif`; ctx.fillText(txt, px + 12, ty, w - 44); ty += 15; }
+        navBottom = ny + nh;
+      } else {
+        const nw = compact ? Math.min(220, w * 0.34) : 258;
+        const tx = compact ? w - 12 : cx - cr - 14;
+        let ty = compact ? cy + cr + 22 : 26;
+        ctx.textAlign = 'right';
+        this._panel(ctx, tx - nw + 8, ty - 16, nw, lines.length * 16 + 10, 0.45);
+        for (const [txt, col, f] of lines) { ctx.fillStyle = col; ctx.font = `${f} Georgia, serif`; ctx.fillText(txt, tx - 4, ty, nw - 16); ty += 16; }
+        ctx.textAlign = 'left';
+        navBottom = ty;
+      }
 
-      // --- gunnery & helm (bottom centre)
-      const bx = w / 2, by = h - (this.isTouch ? 150 : 22);
-      this._panel(ctx, bx - 190, by - 58, 380, 62, 0.55);
+      // --- gunnery & helm (bottom centre; clear of the touch pads)
+      const bx = w / 2;
+      const by = touch ? (portrait ? h - 172 : h - 6) : h - 22;
+      const gw = touch && !portrait ? HS.clamp(w - 470, 230, 380) : Math.min(380, w - 16);
+      const half = gw / 2, barW = Math.max(60, (gw - 150) / 2);
+      this._panel(ctx, bx - half, by - 58, gw, 62, 0.55);
       if (p.T.guns > 0) {
         for (const side of [-1, 1]) {
-          const x0 = side < 0 ? bx - 182 : bx + 62;
+          const x0 = side < 0 ? bx - half + 8 : bx + half - 8 - barW;
           const ready = p.reload[side] <= 0;
-          ctx.fillStyle = ready ? '#9fe8a0' : '#e8b06a'; ctx.font = 'bold 11px Georgia, serif';
-          ctx.fillText(side < 0 ? '◀ LARBOARD (Q)' : 'STARBOARD (E) ▶', x0, by - 42);
-          ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x0, by - 36, 120, 8);
+          ctx.fillStyle = ready ? '#9fe8a0' : '#e8b06a'; ctx.font = `bold ${compact ? 10 : 11}px Georgia, serif`;
+          ctx.textAlign = side < 0 ? 'left' : 'right';
+          ctx.fillText(side < 0 ? (compact ? '◀ LARBOARD' : '◀ LARBOARD (Q)') : (compact ? 'STARBOARD ▶' : 'STARBOARD (E) ▶'), side < 0 ? x0 : x0 + barW, by - 42, barW);
+          ctx.textAlign = 'left';
+          ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x0, by - 36, barW, 8);
           ctx.fillStyle = ready ? '#6cc35a' : '#e8a04a';
-          ctx.fillRect(x0, by - 36, 120 * (ready ? 1 : 1 - p.reload[side] / p.reloadTime()), 8);
+          ctx.fillRect(x0, by - 36, barW * (ready ? 1 : 1 - p.reload[side] / p.reloadTime()), 8);
         }
-        ctx.textAlign = 'center'; ctx.fillStyle = '#f2e6c4'; ctx.font = 'bold 11px Georgia, serif';
-        ctx.fillText(HS.AMMO[p.ammo].name, bx, by - 42);
-        ctx.font = '9px Georgia, serif'; ctx.fillStyle = '#a89a78'; ctx.fillText('1·2·3 to change', bx, by - 30);
+        ctx.textAlign = 'center'; ctx.fillStyle = '#f2e6c4'; ctx.font = `bold ${compact ? 10 : 11}px Georgia, serif`;
+        ctx.fillText(HS.AMMO[p.ammo].name, bx, by - 42, gw - 2 * barW - 20);
+        ctx.font = '9px Georgia, serif'; ctx.fillStyle = '#a89a78'; ctx.fillText(touch ? 'tap to change' : '1·2·3 to change', bx, by - 30, gw - 2 * barW - 20);
       } else {
         ctx.textAlign = 'center'; ctx.fillStyle = '#f2e6c4'; ctx.font = 'bold 11px Georgia, serif';
         const rdy = p.turretReload.map((r) => (r <= 0 ? '●' : '○')).join(' ');
-        ctx.fillText(`Turrets ${rdy}   ·   Torpedoes: ${p.torps}${p.torpReload > 0 ? ' (reloading)' : ''}`, bx, by - 40);
-        ctx.font = '9px Georgia, serif'; ctx.fillStyle = '#a89a78'; ctx.fillText('Mouse to aim · click to fire · F torpedo', bx, by - 28);
+        ctx.fillText(`Turrets ${rdy}  ·  Torpedoes: ${p.torps}${p.torpReload > 0 ? ' (reloading)' : ''}`, bx, by - 40, gw - 16);
+        ctx.font = '9px Georgia, serif'; ctx.fillStyle = '#a89a78'; ctx.fillText(touch ? 'Tap the sea to aim & fire' : 'Mouse to aim · click to fire · F torpedo', bx, by - 28, gw - 16);
       }
+      this.ammoHit = { x: bx - 60, y: by - 58, w: 120, h: 34 };
       // helm
+      const hw = Math.min(70, half - 30);
       ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(bx - 70, by - 12); ctx.lineTo(bx + 70, by - 12); ctx.stroke();
-      ctx.fillStyle = '#e8c86a'; ctx.beginPath(); ctx.arc(bx + p.rudder * 70, by - 12, 5, 0, HS.TAU); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(bx - hw, by - 12); ctx.lineTo(bx + hw, by - 12); ctx.stroke();
+      ctx.fillStyle = '#e8c86a'; ctx.beginPath(); ctx.arc(bx + p.rudder * hw, by - 12, 5, 0, HS.TAU); ctx.fill();
       ctx.font = '9px Georgia, serif'; ctx.fillStyle = '#a89a78';
       ctx.fillText('helm', bx, by - 1);
       ctx.textAlign = 'left';
 
       // --- minimap
-      this._minimap(ctx, g, compact ? 60 : 88);
-
-      // --- messages
-      const now = g.t;
-      let my = h - (this.isTouch ? 230 : 110);
-      ctx.font = '13px Georgia, serif';
-      for (let i = g.messages.length - 1; i >= 0; i--) {
-        const m = g.messages[i];
-        const age = now - m.t;
-        if (age > 9) continue;
-        const a = HS.clamp(9 - age, 0, 1);
-        const tw = Math.min(ctx.measureText(m.text).width, w * 0.5);
-        ctx.fillStyle = `rgba(10,14,22,${0.55 * a})`; ctx.fillRect(10, my - 15, tw + 16, 21);
-        ctx.fillStyle = m.color; ctx.globalAlpha = a;
-        ctx.fillText(m.text, 18, my, w * 0.5);
-        ctx.globalAlpha = 1;
-        my -= 24;
-        if (my < 200) break;
-      }
+      const mr = compact ? 44 : 88;
+      let mcx, mcy;
+      if (!compact) { mcx = w - mr - 16; mcy = h - mr - 16; }
+      else if (portrait) { mcx = w - mr - 12; mcy = by - 58 - mr - 10; }
+      else { mcx = w / 2; mcy = mr + 10; }
+      this._minimap(ctx, g, mr, mcx, mcy);
 
       // --- contextual prompts
       const prompts = [];
       if (g.mode === 'campaign') {
-        if (g.dockable) prompts.push(g.portHostile(g.dockable) ? `${g.dockable.name} — harbour closed to you!` : `⚓ ENTER — drop anchor at ${g.dockable.name}`);
+        if (g.dockable) prompts.push(g.portHostile(g.dockable) ? `${g.dockable.name} — harbour closed to you!` : `⚓ ${touch ? 'Dock' : 'ENTER'} — drop anchor at ${g.dockable.name}`);
         const near = g.nearestShip(p.L + 90, (s) => s.struck);
-        if (near) prompts.push(`B — board the ${near.name}`);
-        if (pl && pl.maps.some((m) => !m.found && HS.distW(p.x, p.y, m.x, m.y) < 300)) prompts.push('L — send the landing party ashore to dig!');
+        if (near) prompts.push(`${touch ? 'Board' : 'B'} — board the ${near.name}`);
+        if (pl && pl.maps.some((m) => !m.found && HS.distW(p.x, p.y, m.x, m.y) < 300)) prompts.push(`${touch ? 'Dig' : 'L'} — send the landing party ashore!`);
         const hailable = g.nearestShip(420);
-        if (hailable && !near) prompts.push(`G — hail the ${hailable.name}`);
+        if (hailable && !near) prompts.push(`${touch ? 'Hail' : 'G'} — hail the ${hailable.name}`);
       } else if (g.mode === 'skirmish') {
         const near = g.nearestShip(p.L + 90, (s) => s.struck);
-        if (near) prompts.push(`B — board and take the ${near.name}!`);
+        if (near) prompts.push(`${touch ? 'Board' : 'B'} — board and take the ${near.name}!`);
       }
-      ctx.textAlign = 'center'; ctx.font = 'bold 14px Georgia, serif';
+      ctx.textAlign = 'center'; ctx.font = `bold ${compact ? 12 : 14}px Georgia, serif`;
       prompts.forEach((t, i) => {
-        const y = by - 74 - i * 26;
-        const tw = ctx.measureText(t).width;
-        ctx.fillStyle = 'rgba(10,14,22,0.6)'; ctx.fillRect(w / 2 - tw / 2 - 12, y - 17, tw + 24, 24);
-        ctx.fillStyle = '#ffe6a0'; ctx.fillText(t, w / 2, y);
+        const y = portrait ? navBottom + 22 + i * 24 : by - 74 - i * 26;
+        const tw = Math.min(ctx.measureText(t).width, w - 40);
+        ctx.fillStyle = 'rgba(10,14,22,0.6)'; ctx.fillRect(w / 2 - tw / 2 - 12, y - 16, tw + 24, 22);
+        ctx.fillStyle = '#ffe6a0'; ctx.fillText(t, w / 2, y, w - 40);
       });
+      ctx.textAlign = 'left';
+
+      // --- messages (word-wrapped, newest at the bottom)
+      let region;
+      if (!compact) region = { yBottom: h - (touch ? 230 : 110), yTop: 200, maxW: w * 0.45, size: 13 };
+      else if (portrait) region = { yBottom: by - 70, yTop: navBottom + 16 + prompts.length * 24, maxW: w - 2 * mr - 44, size: 11 };
+      else region = { yBottom: h - (touch ? 170 : 80), yTop: statusBottom + 18, maxW: Math.min(w * 0.42, w / 2 - mr - 30), size: 11 };
+      const lh = region.size + 6;
+      ctx.font = `${region.size}px Georgia, serif`;
+      let my = region.yBottom;
+      for (let i = g.messages.length - 1; i >= 0 && my > region.yTop; i--) {
+        const m = g.messages[i];
+        const age = g.t - m.t;
+        if (age > 9) continue;
+        const a = HS.clamp(9 - age, 0, 1);
+        const wrapped = this._wrap(ctx, m.text, region.maxW);
+        for (let k = wrapped.length - 1; k >= 0 && my > region.yTop; k--) {
+          const tw = ctx.measureText(wrapped[k]).width;
+          ctx.fillStyle = `rgba(10,14,22,${0.55 * a})`; ctx.fillRect(10, my - region.size - 2, tw + 14, lh);
+          ctx.globalAlpha = a; ctx.fillStyle = m.color; ctx.fillText(wrapped[k], 17, my);
+          ctx.globalAlpha = 1;
+          my -= lh;
+        }
+        my -= 4;
+      }
       if (g.state === 'paused' && !this.chartPaused) { ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0, 0, w, h); }
       ctx.restore();
+    },
+    _wrap(ctx, text, maxW) {
+      const words = text.split(' '), out = [];
+      let line = '';
+      for (const wd of words) {
+        const t = line ? line + ' ' + wd : wd;
+        if (ctx.measureText(t).width > maxW && line) { out.push(line); line = wd; } else line = t;
+      }
+      if (line) out.push(line);
+      return out;
     },
     _panel(ctx, x, y, w, h, a = 0.6) {
       ctx.fillStyle = `rgba(14,18,26,${a})`;
@@ -1060,9 +1124,8 @@
       ctx.restore();
       ctx.textBaseline = 'alphabetic';
     },
-    _minimap(ctx, g, r) {
-      const w = g.w, h = g.h, p = g.player;
-      const cx = w - r - 16, cy = h - r - (this.isTouch ? 170 : 16);
+    _minimap(ctx, g, r, cx, cy) {
+      const p = g.player;
       const range = 3200, k = r / range;
       ctx.save();
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, HS.TAU);

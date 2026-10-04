@@ -225,6 +225,11 @@
       if (steer) p.rudder = HS.clamp(p.rudder + steer * dt * 2.6, -1, 1);
       else p.rudder *= 1 - Math.min(1, dt * 2.5);
       if (I.hit('KeyX')) p.rudder = 0;
+      const ah = HS.UI.ammoHit, m = I.mouse;
+      if (m.clicked && ah && !p.T.turrets && m.x > ah.x && m.x < ah.x + ah.w && m.y > ah.y && m.y < ah.y + ah.h) {
+        const order = ['round', 'chain', 'grape'];
+        I.press('Digit' + (((order.indexOf(p.ammo) + 1) % 3) + 1));
+      }
       if (I.hit('Digit1')) { p.ammo = 'round'; this.log('Load round shot!'); }
       if (I.hit('Digit2')) { p.ammo = 'chain'; this.log('Load chain shot — aim for her rigging!'); }
       if (I.hit('Digit3')) { p.ammo = 'grape'; this.log('Load grape — sweep her decks!'); }

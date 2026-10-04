@@ -207,3 +207,26 @@ table.market .btn.tiny { min-width: 32px; }
   .dlg-portrait canvas { width: 100px; height: 111px; }
   .dlg-text { font-size: 15px; min-height: 0; }
 }
+
+/* ---------------------------------------------------------------- phones */
+@media (max-width: 520px), (max-height: 430px) {
+  #touch { padding: 6px; }
+  .tpad, .trow { gap: 4px; }
+  #touch button { min-width: 44px; min-height: 40px; font-size: 13px; padding: 0 6px; border-radius: 8px; }
+  #touch button.fire { min-width: 62px; }
+}
+@media (max-width: 760px) {
+  .npc { display: grid; grid-template-columns: 90px 1fr; column-gap: 12px; align-items: start; }
+  .npc canvas { grid-row: 1 / span 3; }
+  .npc-name, .npc-title { text-align: left; margin-top: 0; }
+  .npc .speech { grid-column: 2; margin-top: 6px; }
+  .speech::before { display: none; }
+  .port-nav .tab { font-size: 13px; padding: 6px 9px; }
+  .port-header { padding: 6px 10px; }
+  .port-stats { gap: 8px; font-size: 12px; }
+  .port-title .sub { font-size: 11px; }
+  img.flag.big { width: 40px; height: 27px; }
+  .port-body { padding: 10px; }
+  .cols { grid-template-columns: 1fr; }
+  #modal .sheet { padding: 16px 14px; }
+}

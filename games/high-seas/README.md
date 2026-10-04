@@ -6,8 +6,18 @@ fonts or image files: the graphics, music and sound are all generated in code.
 
 ## How to play
 
-Open `index.html` in any modern browser (Chrome, Edge, Firefox or Safari). It
-works straight from disk (`file://`) with no server and no internet connection.
+**On a phone or tablet, or anywhere you have just one file:** use
+**`high-seas-standalone.html`**. It holds the whole game in one file, so you can
+download it and open it from your Downloads folder. Phones open a downloaded
+`index.html` on its own, which leaves a blank page because the separate `css/`
+and `js/` folders can't be reached.
+
+**On a computer, with the whole folder:** open `index.html` in any modern
+browser (Chrome, Edge, Firefox or Safari). It works straight from disk
+(`file://`) with no server and no internet connection.
+
+If you change any code, rebuild the single-file version with
+`python3 build-standalone.py`.
 
 To install it as an app that keeps working offline, serve the folder once over
 HTTP, for example with `python3 -m http.server` run in this folder, and open

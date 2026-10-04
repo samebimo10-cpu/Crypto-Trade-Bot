@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#0b1a26">
+  <meta name="description" content="High Seas — an offline Age of Sail adventure: trade between real world ports, hunt buried treasure, fight pirates and coast guards, and command men-of-war in naval battles.">
+  <title>High Seas</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- main menu -->
+  <div id="menu" class="screen hidden"></div>
+
+  <!-- port -->
+  <div id="port" class="screen hidden">
+    <canvas id="portScene"></canvas>
+    <div class="port-ui">
+      <header id="portHeader" class="port-header"></header>
+      <nav id="portNav" class="port-nav"></nav>
+      <section class="port-body parchment">
+        <aside class="npc">
+          <canvas id="npcPortrait" width="180" height="200"></canvas>
+          <div class="npc-name" id="npcName"></div>
+          <div class="npc-title" id="npcTitle"></div>
+          <div class="speech" id="npcSay"></div>
+        </aside>
+        <div class="port-content" id="portContent"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- sea chart -->
+  <div id="chart" class="screen hidden">
+    <canvas id="chartCanvas"></canvas>
+    <button class="btn close-chart" id="chartClose">✕ Roll up the chart</button>
+  </div>
+
+  <!-- dialogue -->
+  <div id="dialog" class="hidden">
+    <div class="dlg-portrait"><canvas width="180" height="200"></canvas><div class="dlg-name"></div><div class="dlg-title"></div></div>
+    <div class="dlg-body"><div class="dlg-text"></div><div class="dlg-options"></div></div>
+  </div>
+
+  <!-- generic modal -->
+  <div id="modal" class="hidden"></div>
+
+  <!-- touch controls -->
+  <div id="touch" class="hidden">
+    <div class="tpad left">
+      <button data-tap="KeyW">▲<small>sail</small></button>
+      <div class="trow"><button data-hold="KeyA">◀</button><button data-hold="KeyD">▶</button></div>
+      <button data-tap="KeyS">▼<small>sail</small></button>
+    </div>
+    <div class="tpad right">
+      <div class="trow"><button data-tap="KeyQ" class="fire">◀ Fire</button><button data-tap="KeyE" class="fire">Fire ▶</button></div>
+      <div class="trow"><button data-tap="KeyB">Board</button><button data-tap="KeyG">Hail</button><button data-tap="Enter">Dock</button></div>
+      <div class="trow"><button data-tap="KeyL">Dig</button><button data-tap="KeyM">Chart</button><button data-tap="KeyC">Log</button><button data-tap="Escape">❚❚</button></div>
+    </div>
+  </div>
+
+  <noscript><p style="color:#fff;padding:2em">High Seas needs JavaScript enabled.</p></noscript>
+
+  <script src="js/engine.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/ship.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/people.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    // Cache everything for offline play when served over http(s). Opening index.html directly also works.
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

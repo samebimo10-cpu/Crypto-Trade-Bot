@@ -1,0 +1,10 @@
+{
+  "name": "High Seas — A Voyage in the Age of Sail",
+  "short_name": "High Seas",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b1a26",
+  "theme_color": "#0b1a26",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

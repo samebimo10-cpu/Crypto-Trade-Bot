@@ -46,6 +46,7 @@ The race is drawn as a real 3D world with [three.js](https://threejs.org)
 - A camera that sweeps down from the sky at the start of each episode and
   circles the car at the finish.
 
+Use **Brightness** (title screen or pause menu) to make the picture lighter or darker.
 Use **Graphics** on the title screen to switch between *3D · High*
 (shadows, full detail), *3D · Fast* (for phones) and *Classic 2D*. Phones
 start on *3D · Fast*. If a device cannot run WebGL, the game falls back to

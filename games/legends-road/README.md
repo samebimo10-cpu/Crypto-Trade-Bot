@@ -50,6 +50,13 @@ The race is drawn as a real 3D world with [three.js](https://threejs.org)
   naming the next real place, and concrete overpasses.
 - Tyre smoke when braking hard or cornering at speed, dust when off-road,
   and the current gear next to the speed.
+- Port Harcourt and Lagos are dual carriageways like the real cities: a
+  grass median with clipped hedges, palms, monuments and twin-arm street
+  lights, oncoming traffic on the far side, painted kerbs (blue and white in
+  Port Harcourt, multicoloured at junctions) and zebra crossings. Port
+  Harcourt adds twin flyovers with service roads underneath, low-rise houses
+  with corrugated metal roofs and rooftop water tanks, and a glass tower
+  with a split, angled crown.
 - A camera that sweeps down from the sky at the start of each episode and
   circles the car at the finish.
 

@@ -1,5 +1,5 @@
 // Legends Road service worker: caches the game shell so it runs with no connection.
-const CACHE = 'legends-road-v6';
+const CACHE = 'legends-road-v7';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './icon.svg',
   './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png',

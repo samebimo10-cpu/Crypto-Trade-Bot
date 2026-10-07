@@ -71,8 +71,13 @@ photographic one.
 - **Shortcuts.** Two per episode, placed where the road bends back on itself.
   A green sign and Tobi announce each one. Steer into the blue-marked lane and
   stay in it to cut across.
-- **Garage.** Five cars with different top speed, acceleration, handling and
-  nitro. Fortune you collect on the road pays for them.
+- **Garage.** Thirteen original 3D car designs (coupe-crossover, city cube,
+  crossover, delivery van, compact SUV, shuttle pod, fastback sedan, family
+  SUV, boxy off-roader, red fastback, full-size pickup, three-row SUV and a
+  mid-engine roadster), shown in a studio line-up and three-quarter studio
+  shots. Each has its own top speed, acceleration, handling and nitro.
+  Fortune you collect on the road pays for them. Rivals and traffic drive
+  the same models.
 - **Steering assist** (on by default, toggle on the title or pause screen).
   It cuts drift in bends and eases the car back onto the road.
 - **Lucky spin.** Earn one spin per finished episode (two for a win): cash,

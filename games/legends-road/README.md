@@ -43,6 +43,13 @@ The race is drawn as a real 3D world with [three.js](https://threejs.org)
 - Sun shadows, fog, a sky for each city, night street lamps and headlights,
   and 3D landmarks (Eiffel Tower, Lekki–Ikoyi Link Bridge pylon, Space
   Needle, Starship on its launch tower, and more).
+- A racing-game finish on the picture: bloom on bright skies and lights,
+  colour grading, motion blur at the screen edges at high speed, and a soft
+  vignette (needs WebGL 2; older devices get the plain image).
+- Motorway details on open roads: steel guardrails, overhead sign gantries
+  naming the next real place, and concrete overpasses.
+- Tyre smoke when braking hard or cornering at speed, dust when off-road,
+  and the current gear next to the speed.
 - A camera that sweeps down from the sky at the start of each episode and
   circles the car at the finish.
 

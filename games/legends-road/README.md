@@ -25,6 +25,36 @@ and the angle of each turn come from the map. The maps are stylised (offline,
 with no map tiles), so treat positions as approximate. The couples are
 fictional.
 
+## 3D graphics
+
+The race is drawn as a real 3D world with [three.js](https://threejs.org)
+(MIT licence, bundled in `vendor/` so it works offline):
+
+- Roads, kerbs, pavements, terrain, bridges and water built from each
+  episode's track, with asphalt, lane paint, grass, sand and concrete
+  textures generated in code (no image downloads).
+- Buildings at real scale with window facades for each city: glass offices
+  in Lagos, Haussmann blocks in Paris, mud-brick houses in Kano, neon towers
+  in Hong Kong. Windows light up at night.
+- Palms, pines, poplars, baobabs and acacias, plus grass, bushes and stones
+  in the countryside.
+- Car models with clear-coat paint, glass reflections and spinning wheels;
+  Lagos traffic includes yellow danfo buses.
+- Sun shadows, fog, a sky for each city, night street lamps and headlights,
+  and 3D landmarks (Eiffel Tower, Lekki–Ikoyi Link Bridge pylon, Space
+  Needle, Starship on its launch tower, and more).
+- A camera that sweeps down from the sky at the start of each episode and
+  circles the car at the finish.
+
+Use **Graphics** on the title screen to switch between *3D · High*
+(shadows, full detail), *3D · Fast* (for phones) and *Classic 2D*. Phones
+start on *3D · Fast*. If a device cannot run WebGL, the game falls back to
+Classic 2D automatically.
+
+The scenery is generated in code rather than built from photos or modelled
+assets, so it reads as a stylised, realistic-looking world rather than a
+photographic one.
+
 ## Features
 
 - **Minimap** in the top-right corner, with your position, the rivals and the

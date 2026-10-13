@@ -1,7 +1,7 @@
 # Legends Road
 
-**Season One: The Fortune Trail.** An offline racing series in ten episodes.
-Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across ten
+**Season One: The Fortune Trail.** An offline racing series in twelve episodes.
+Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across twelve
 cities to win the Fortune Trail and save Tobi's late father's garage. Each
 episode opens with a cinematic fly-in, the couple talk to each other as you drive,
 and every finish line tells the story of a famous person whose fortune began
@@ -11,14 +11,16 @@ in that city.
 | --- | --- | --- | --- |
 | 1 | Lagos, Nigeria | Street map: Ikeja, Third Mainland Bridge, Lagos Island, Ikoyi, Lekki–Ikoyi Link Bridge, Victoria Island, Eko Atlantic | Mike Adenuga |
 | 2 | Port Harcourt, Nigeria | Street map: Rumuokoro, Pleasure Park, Trans-Amadi, Isaac Boro Park, Mile 1, the port | Folorunso Alakija |
-| 3 | Kano, Nigeria | Route map | Aliko Dangote |
-| 4 | A Coruña, Spain | Route map | Amancio Ortega |
-| 5 | Paris, France | Street map: Arc de Triomphe to the Eiffel Tower along the Seine | Bernard Arnault |
-| 6 | Mumbai, India | Route map | Mukesh Ambani |
-| 7 | Hong Kong | Route map | Li Ka-shing |
-| 8 | Omaha, USA | Route map | Warren Buffett |
-| 9 | Seattle, USA | Route map | Bill Gates |
-| 10 | Starbase, USA | Route map, with a night rocket launch at the finish | Elon Musk |
+| 3 | Yenagoa, Bayelsa State, Nigeria | Street map: Igbogene, Tombia Junction, Okaka, Epie Creek, Ekeki, Swali Market, Oxbow Lake, Peace Park | Oloibiri Well No. 1 (Nigeria's first commercial oil find, 1956) |
+| 4 | Asaba, Delta State, Nigeria | Street map: across the River Niger from Onitsha, Head Bridge, Nnebisi Road, Stephen Keshi Stadium, Summit Road, Okpanam Road, Asaba Airport | Tony Elumelu |
+| 5 | Kano, Nigeria | Route map | Aliko Dangote |
+| 6 | A Coruña, Spain | Route map | Amancio Ortega |
+| 7 | Paris, France | Street map: Arc de Triomphe to the Eiffel Tower along the Seine | Bernard Arnault |
+| 8 | Mumbai, India | Route map | Mukesh Ambani |
+| 9 | Hong Kong | Route map | Li Ka-shing |
+| 10 | Omaha, USA | Route map | Warren Buffett |
+| 11 | Seattle, USA | Route map | Bill Gates |
+| 12 | Starbase, USA | Route map, with a night rocket launch at the finish | Elon Musk |
 
 "Street map" episodes are built from real coordinates: the length of each leg
 and the angle of each turn come from the map. The maps are stylised (offline,
@@ -57,6 +59,15 @@ The race is drawn as a real 3D world with [three.js](https://threejs.org)
   Harcourt adds twin flyovers with service roads underneath, low-rise houses
   with corrugated metal roofs and rooftop water tanks, and a glass tower
   with a split, angled crown.
+- Nigerian street life in Lagos, Port Harcourt, Yenagoa, Asaba and Kano:
+  pedestrians walking the pavements, cyclists, okadas (motorbike taxis, with
+  passengers), kekes (tricycles), roadside kiosks, umbrella market stalls,
+  walled compounds with gates, unfinished concrete frames, fuel stations,
+  and concrete power poles with sagging wires.
+- Side streets at junctions, lined with houses and traffic lights, like a
+  normal city grid.
+- Yenagoa has an oil derrick with a wellhead at the finish; Asaba starts on
+  the steel-truss Niger Bridge from Onitsha.
 - A camera that sweeps down from the sky at the start of each episode and
   circles the car at the finish.
 
@@ -70,21 +81,31 @@ The scenery is generated in code rather than built from photos or modelled
 assets, so it reads as a stylised, realistic-looking world rather than a
 photographic one.
 
+## Time of day and weather
+
+On the episode map, pick **Time** (story default, morning, midday, sunset or
+night) and **Weather** (story default, clear, cloudy or rain) before you
+start. Night lights the street lamps, windows and headlights; rain adds
+falling rain, a wet, reflective road and spray from the tyres.
+
 ## Features
 
 - **Minimap** in the top-right corner, with your position, the rivals and the
   next real place. Press **N** or tap the minimap for the full map with every
   place described.
-- **Shortcuts.** Two per episode, placed where the road bends back on itself.
+- **Shortcuts.** Up to three per episode, placed where the road bends back on itself.
   A green sign and Tobi announce each one. Steer into the blue-marked lane and
   stay in it to cut across.
-- **Garage.** Thirteen original 3D car designs (coupe-crossover, city cube,
-  crossover, delivery van, compact SUV, shuttle pod, fastback sedan, family
-  SUV, boxy off-roader, red fastback, full-size pickup, three-row SUV and a
-  mid-engine roadster), shown in a studio line-up and three-quarter studio
-  shots. Each has its own top speed, acceleration, handling and nitro.
-  Fortune you collect on the road pays for them. Rivals and traffic drive
-  the same models.
+- **Garage.** *Everyday cars* modelled on the body styles you see on real
+  roads: a family saloon, a city hatchback, a seven-seat people carrier, a
+  square-backed estate, an executive saloon with a tall chrome grille, a
+  mid-size luxury SUV, a double-cab pickup and a full-size 4x4. They have
+  real-car details (headlight clusters, grilles, door lines and handles,
+  pillars, roof rails) but no maker badges or names. The original
+  *Concept collection* (thirteen designs) is still there too. Each car has
+  its own top speed, acceleration, handling and nitro, and fortune you
+  collect on the road pays for them. Rivals and traffic drive the everyday
+  cars, plus minibuses, okadas and kekes on Nigerian roads.
 - **Steering assist** (on by default, toggle on the title or pause screen).
   It cuts drift in bends and eases the car back onto the road.
 - **Lucky spin.** Earn one spin per finished episode (two for a win): cash,

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>Legends Road</title>
-<meta name="description" content="An offline racing series: a Lagos couple race rival couples across ten cities, from Lagos and Port Harcourt to Starbase, meeting the legends whose fortunes began there.">
+<meta name="description" content="An offline racing series: a Lagos couple race rival couples across twelve cities, from Lagos, Port Harcourt, Yenagoa and Asaba to Starbase, meeting the legends whose fortunes began there.">
 <meta name="theme-color" content="#0a1322">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -73,6 +73,11 @@ button{font:inherit;color:inherit}
 .toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--paper);transition:transform .2s}
 .toggle[aria-pressed="true"] .sw{background:var(--gold)}
 .toggle[aria-pressed="true"] .sw::after{transform:translateX(18px);background:var(--ink)}
+.pick{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--paper)}
+.pick select{font-family:var(--body);font-size:1rem;letter-spacing:0;text-transform:none;padding:.45em .6em;border-radius:3px;border:1.5px solid rgba(244,234,214,.45);background:var(--deep);color:var(--paper)}
+.pick select:focus-visible{outline:3px solid var(--gold-2);outline-offset:2px}
+.conds{margin-top:10px}
+.cards-h{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.4rem;margin:8px 0 0;grid-column:1/-1;color:var(--gold)}
 .slider{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--paper)}
 .slider input{width:min(160px,40vw);accent-color:var(--gold)}
 .badge{display:inline-block;min-width:1.5em;padding:0 .4em;margin-left:.4em;border-radius:1em;background:var(--signal);color:#fff;font-size:.8em;text-align:center}
@@ -247,7 +252,7 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
   <div class="title-wrap">
     <p class="eyebrow">Season One · The Fortune Trail</p>
     <h1 class="logo">Legends<span>Road</span></h1>
-    <p class="lede">Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across ten cities to win the Fortune Trail and save Tobi's late father's garage. Every episode ends where a famous fortune began.</p>
+    <p class="lede">Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across twelve cities to win the Fortune Trail and save Tobi's late father's garage. Every episode ends where a famous fortune began.</p>
     <div class="row">
       <button id="btnPlay" class="btn primary">Play season</button>
       <button id="btnMap" class="btn">Episodes</button>
@@ -270,8 +275,12 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
     <header>
       <div>
         <p class="eyebrow">Season One · The Fortune Trail</p>
-        <h2>Ten episodes, ten cities</h2>
+        <h2>Twelve episodes, twelve cities</h2>
         <p class="sum" id="atlasSum"></p>
+        <div class="row conds">
+          <label class="pick" for="selTod">Time of day <select id="selTod"><option value="story">As in the story</option><option value="morning">Morning</option><option value="midday">Midday</option><option value="sunset">Sunset</option><option value="night">Night</option></select></label>
+          <label class="pick" for="selWx">Weather <select id="selWx"><option value="story">As in the story</option><option value="clear">Clear</option><option value="cloudy">Cloudy</option><option value="rain">Rain</option></select></label>
+        </div>
       </div>
       <button id="btnBack" class="btn">Back</button>
     </header>
@@ -454,7 +463,7 @@ const STAGES = [
       story:'Born in Ibadan in 1953, Mike Adenuga studied in the United States, paying his way partly by driving a taxi. Back home he built a trading business in Lagos. In 1991 his Consolidated Oil became the first Nigerian-owned company to strike oil in commercial quantities. In 2003 he launched Globacom, known as Glo, which grew into one of Africa\'s biggest mobile networks, and later laid the Glo-1 undersea cable linking Lagos to Europe.',
       fact:'He is nicknamed "The Bull" and almost never gives interviews.'},
     script:{
-      intro:[['Narrator','Lagos, six in the morning. Six couples. Ten cities. One prize: the Fortune Trail.'],
+      intro:[['Narrator','Lagos, six in the morning. Six couples. Twelve cities. One prize: the Fortune Trail.'],
         ['Tobi','Third Mainland Bridge at sunrise. You ready, Kemi?'],
         ['Kemi','Born ready. Your dad\'s garage is counting on us.'],
         ['Ada','Enjoy the view of our bumper, Adeyemis!']],
@@ -463,7 +472,7 @@ const STAGES = [
     theme:{sky:['#2a5d9c','#79aedb','#f4dcaa'], sun:{x:.76,y:.66,r:.055,c:'#fff1c8',glow:'rgba(255,230,170,.5)'},
       fog:'#e3dac6', grass:['#6c9a3e','#628f38'], road:['#55575c','#505257'], rumble:['#f4f4f4','#1f8a4c'], lane:'#f4f4f4',
       water:['#2f7fae','#2a76a3'], far:{type:'sea',color:'#2e6f9c',land:'#5d7a6a'}, mid:{type:'skyline',color:'#5a6a80',lit:.04},
-      clouds:.8, weather:'none', scenery:['palm','palm','office','colonial','phhouse','bush'], traffic:'danfo', landmark:'linkBridge', landmarkAt:'Lekki–Ikoyi Link Bridge', dual:true}
+      clouds:.8, weather:'none', scenery:['palm','palm','office','colonial','phhouse','bush','kiosk','stall','compound'], traffic:'danfo', landmark:'linkBridge', naija:true, landmarkAt:'Lekki–Ikoyi Link Bridge', dual:true}
   },
   {
     id:'portharcourt', place:'Port Harcourt', country:'Rivers State, Nigeria', era:'The Garden City · founded 1912',
@@ -494,12 +503,79 @@ const STAGES = [
         ['Tobi','I\'ve got the map, Kemi. And I\'ve got shortcuts.'],
         ['Kemi','Then let\'s use them.']],
       outro:['Kemi','Tell Chidi the Garden City says hello.'],
-      next:'Next time: the ancient walls of Kano, and a legend who started with a loan from his uncle.'},
+      next:'Next time: the creeks of Bayelsa, where Nigeria\'s oil story began.'},
     theme:{sky:['#4a7fae','#a5c4dc','#eef2f2'], sun:{x:.3,y:.42,r:.045,c:'#fff8e8',glow:'rgba(255,248,232,.45)'},
       fog:'#d4dde0', grass:['#4f8f36','#468530'], road:['#4f5155','#4a4c50'], rumble:['#f4f4f4','#1d4fa8'], lane:'#f4f4f4',
       water:['#4a7a86','#44727e'], far:{type:'hills',color:'#5a7a5a'}, mid:{type:'skyline',color:'#6a7a78',lit:.04},
-      clouds:1.7, weather:'none', scenery:['phhouse','phhouse','phhouse','palm','tree','bush','office'], traffic:'danfo', landmark:'portCranes',
+      clouds:1.7, weather:'none', scenery:['phhouse','phhouse','phhouse','palm','tree','bush','office','kiosk','stall','compound','frame','fuel'], traffic:'danfo', landmark:'portCranes', naija:true,
       dual:true, flyovers:['Pleasure Park','Isaac Boro Park'], towers:['Trans-Amadi','Old GRA']}
+  },
+  {
+    id:'yenagoa', place:'Yenagoa', country:'Bayelsa State, Nigeria', era:'Capital since 1996 · oil since 1956',
+    ep:'Creek City', tag:'From Igbogene to Peace Park, across the creeks of the Niger Delta',
+    history:'Yenagoa became the capital of Bayelsa when the state was created on 1 October 1996. The city grew up on the creeks and mangrove swamps of the Niger Delta, and for years the only reliable way in was by water, until the Mbiama–Yenagoa road linked it to the East–West Road. Its Oxbow Lake, an old channel of the Nun River, is now a favourite place to unwind.',
+    facts:['Bayelsa State was created on 1 October 1996, with Yenagoa as its capital.','Oxbow Lake formed from an old channel of the Nun River.','Nigeria\'s first commercial oil was found at Oloibiri, in today\'s Bayelsa, in 1956.'],
+    route:[
+      {n:'Igbogene', lat:4.9750, lon:6.3450, d:'Gateway on the Mbiama–Yenagoa road into the capital.'},
+      {n:'Tombia Junction', lat:4.9550, lon:6.3150, d:'A busy junction on the way into town.'},
+      {n:'Okaka', lat:4.9450, lon:6.2960, d:'Residential district on the edge of the city centre.'},
+      {n:'Epie Creek', lat:4.9330, lon:6.2860, d:'A tidal creek that winds through the city.', bridgeIn:true},
+      {n:'Ekeki', lat:4.9300, lon:6.2780, d:'Bustling neighbourhood of shops and markets.'},
+      {n:'Swali Market', lat:4.9270, lon:6.2680, d:'The main market, by the waterside.'},
+      {n:'Oxbow Lake', lat:4.9180, lon:6.2700, d:'A lake formed from an old channel of the Nun River.'},
+      {n:'Peace Park', lat:4.9150, lon:6.2820, d:'Gardens and a boating lake beside the government offices.'}
+    ],
+    water:[
+      [[4.938,6.25],[4.934,6.27],[4.936,6.282],[4.931,6.292],[4.928,6.31],[4.924,6.31],[4.927,6.292],[4.93,6.282],[4.929,6.27],[4.932,6.25]],
+      [[4.921,6.262],[4.92,6.276],[4.915,6.277],[4.914,6.266],[4.917,6.26]],
+      [[4.89,6.2],[4.905,6.23],[4.9,6.26],[4.89,6.29],[4.86,6.29],[4.86,6.2]]
+    ],
+    person:{name:'Oloibiri Well No. 1', initials:'OB', role:'Nigeria\'s first commercial oil discovery, 1956',
+      story:'For years, geologists searched the swamps of the Niger Delta for oil. In 1956 the Shell-BP partnership struck it in commercial quantities at Oloibiri, in what is now Bayelsa State. In its first year the field produced around 5,000 barrels a day, and in 1958 the first cargo of Nigerian crude left for export. Oil became the backbone of the country\'s economy, and many of Nigeria\'s great fortunes trace back to it. Oloibiri itself, a small riverside community, is often remembered as a reminder of how little of that wealth stayed where it began.',
+      fact:'The first well is usually called Oloibiri Well No. 1; its exact strike date is given differently in different histories.'},
+    script:{
+      intro:[['Narrator','Yenagoa, Bayelsa. Creeks, mangroves and the warm rain of the Niger Delta.'],
+        ['Lukas','Water on both sides of the road? Where are the hills?'],
+        ['Tobi','This is the Delta, Lukas. The water is the hills.'],
+        ['Kemi','Then let\'s not fall in.']],
+      outro:['Tobi','Seventy years ago, Nigeria\'s oil story began just up the creek from here.'],
+      next:'Next time: across the River Niger to Asaba.'},
+    theme:{sky:['#3f6f98','#9cbcd2','#e8eeea'], sun:{x:.6,y:.5,r:.045,c:'#fff6e0',glow:'rgba(255,246,224,.45)'},
+      fog:'#cdd8d2', grass:['#3f8a34','#37802e'], road:['#4f5155','#4a4c50'], rumble:['#f4f4f4','#d9a21b'], lane:'#f4f4f4',
+      water:['#3f6e6a','#3a6662'], far:{type:'hills',color:'#4a6e52'}, mid:{type:'skyline',color:'#6a7a74',lit:.04},
+      clouds:1.6, weather:'none', scenery:['phhouse','phhouse','palm','palm','tree','kiosk','stall','compound','frame','bush'], traffic:'danfo', landmark:'derrick',
+      dual:true, naija:true}
+  },
+  {
+    id:'asaba', place:'Asaba', country:'Delta State, Nigeria', era:'On the Niger · bridge of 1965',
+    ep:'Over the Niger', tag:'Across the Niger Bridge and out to the airport',
+    history:'Asaba sits on a bend of the River Niger, facing Onitsha across the water. In the 1880s it was the administrative headquarters of the Royal Niger Company, and in 1991 it became the capital of the new Delta State. The steel Niger Bridge, completed in 1965, carries traffic between the two cities, and its partner, the Second Niger Bridge, opened downstream in 2022.',
+    facts:['The Niger Bridge between Onitsha and Asaba was completed in 1965.','Delta State was created in 1991, with Asaba as its capital.','Stephen Keshi Stadium hosted the 2018 African Championships in Athletics.'],
+    route:[
+      {n:'Onitsha approach', lat:6.1520, lon:6.7880, d:'The eastern end of the Niger Bridge.'},
+      {n:'Head Bridge', lat:6.1420, lon:6.7660, d:'Where the Niger Bridge lands in Asaba.', bridgeIn:true},
+      {n:'Nnebisi Road', lat:6.1880, lon:6.7360, d:'One of the city\'s main roads, through the old town.'},
+      {n:'Stephen Keshi Stadium', lat:6.2063, lon:6.7224, d:'22,000-seat stadium named after the Super Eagles legend.'},
+      {n:'Summit Road', lat:6.2160, lon:6.7040, d:'Government offices along a broad avenue.'},
+      {n:'Okpanam Road', lat:6.2260, lon:6.6880, d:'Road out toward Okpanam and the airport.'},
+      {n:'Asaba Airport', lat:6.2042, lon:6.6653, d:'Asaba International Airport, west of the city.'}
+    ],
+    water:[[[6.25,6.74],[6.2,6.76],[6.16,6.768],[6.13,6.778],[6.1,6.79],[6.1,6.81],[6.13,6.796],[6.16,6.786],[6.2,6.78],[6.25,6.765]]],
+    person:{name:'Tony Elumelu', initials:'TE', role:'Chairman of Heirs Holdings and UBA, founder of the Tony Elumelu Foundation',
+      story:'Born in Jos in 1963 to a family from Onicha-Ukwu in Delta State, Tony Elumelu began his career as a salesman at Union Bank. In 1997 he led a group of investors that took over a small, struggling bank and turned it into Standard Trust Bank. In 2005 it merged with United Bank for Africa, which he led as chief executive and now chairs, with operations across Africa and beyond. In 2010 he created the Tony Elumelu Foundation, which committed $100 million over ten years to fund and train young African entrepreneurs.',
+      fact:'His foundation\'s programme has funded more than 20,000 young African entrepreneurs.'},
+    script:{
+      intro:[['Narrator','Asaba, Delta State. A city on a bend of the great river.'],
+        ['Marc','A bridge race! I love a bridge race.'],
+        ['Kemi','Then you\'ll love the view of our tail lights.'],
+        ['Tobi','Over the Niger, up Nnebisi Road, past the stadium and out to the airport.']],
+      outro:['Kemi','Four Nigerian cities down. From here the Trail heads north.'],
+      next:'Next time: the ancient walls of Kano, and a legend who started with a loan from his uncle.'},
+    theme:{sky:['#3a74b4','#8fbbe0','#f0e6d0'], sun:{x:.3,y:.6,r:.05,c:'#fff2d4',glow:'rgba(255,236,200,.5)'},
+      fog:'#dcd8cc', grass:['#5a8f3a','#518534'], road:['#4f5155','#4a4c50'], rumble:['#f4f4f4','#c22a2a'], lane:'#f4f4f4',
+      water:['#5a7a6a','#537264'], far:{type:'hills',color:'#5a7a5a'}, mid:{type:'skyline',color:'#6a7472',lit:.04},
+      clouds:1.1, weather:'none', scenery:['phhouse','phhouse','phhouse','colonial','palm','tree','kiosk','stall','compound','frame','fuel','bush'], traffic:'danfo', landmark:'nigerBridge',
+      dual:true, naija:true}
   },
   {
     id:'kano', place:'Kano', country:'Nigeria', era:'Over 1,000 years of trade',
@@ -520,7 +596,7 @@ const STAGES = [
     theme:{sky:['#3a2758','#c96a4c','#f7c27a'], sun:{x:.72,y:.84,r:.085,c:'#ffd590',glow:'rgba(255,165,90,.55)'},
       fog:'#e3a873', grass:['#c79e5a','#bb9250'], road:['#6c5a4b','#645243'], rumble:['#f2e3c4','#a8442e'], lane:'#f2e3c4',
       far:{type:'mesas',color:'#9a5a4a'}, mid:{type:'dunes',color:'#c48a58'}, clouds:.35, weather:'dust',
-      scenery:['adobe','adobe','baobab','acacia','bush','bush'], landmark:'kanoGate'}
+      scenery:['adobe','adobe','baobab','acacia','bush','bush','kiosk','stall','compound'], landmark:'kanoGate', naija:true, traffic:'danfo'}
   },
   {
     id:'coruna', place:'A Coruña', country:'Galicia, Spain', era:'Roman lighthouse · 1st–2nd century AD',
@@ -536,7 +612,7 @@ const STAGES = [
         ['Élise','Paris is next. Marc and I will be waiting for you there.'],
         ['Tobi','That sounded like a threat.'],
         ['Kemi','That sounded like a challenge.']],
-      outro:['Kemi','If that lighthouse can last two thousand years, we can last ten episodes.'],
+      outro:['Kemi','If that lighthouse can last two thousand years, we can last twelve episodes.'],
       next:'Next time: the Laurents race on home soil, under the Eiffel Tower.'},
     theme:{sky:['#2a66a6','#76acd8','#d9ecf5'], sun:{x:.24,y:.24,r:.045,c:'#fffbe8',glow:'rgba(255,255,230,.45)'},
       fog:'#cfe2ec', grass:['#5a9440','#518a39'], road:['#5d6268','#575c61'], rumble:['#f4f4f4','#3a6fb0'], lane:'#f4f4f4',
@@ -670,7 +746,7 @@ const STAGES = [
       fact:'SpaceX catches returning Super Heavy boosters with the tower\'s mechanical arms, nicknamed "chopsticks".'},
     script:{
       intro:[['Narrator','Season finale. Starbase, Texas. Tonight a rocket flies, and so do we.'],
-        ['Ada','Ten cities, Adeyemis. It ends here.'],
+        ['Ada','Twelve cities, Adeyemis. It ends here.'],
         ['Kemi','It ends at the finish line. Let\'s see who\'s there first.'],
         ['Tobi','For the garage. For Dad.']],
       outro:['Tobi','Look up, Kemi. They\'re launching.'],
@@ -696,9 +772,27 @@ const SPEAKER_COLOR = {Kemi:'#ffd27a', Tobi:'#7fe0d0', Narrator:'#d8cfe8', Chidi
 const POINTS = [25,18,15,12,10,8];
 
 /* Cars in the garage: 13 original designs. Stats are multipliers on the base car; style is the 2D fallback look. */
-const CARS = [
-  {id:'coupex', name:'Lagoon Coupe X', style:'coupe', color:'#e8a51c', roof:'black', price:0, top:1, acc:1, grip:1, nitro:1,
-    desc:'A sharp coupe-crossover with a black roof. The car Tobi\'s father rebuilt.'},
+const CARS_REAL = [
+  {id:'saloon', name:'Family Saloon', style:'coupe', color:'#c9a24a', roof:'body', price:0, top:1, acc:1, grip:1, nitro:1,
+    desc:'The mid-size saloon Tobi\'s father rebuilt. The car you see on every Nigerian street.'},
+  {id:'hatch', name:'City Hatch', style:'coupe', color:'#d8dadc', roof:'body', price:20, top:.94, acc:1.1, grip:1.15, nitro:.95,
+    desc:'A small five-door hatchback. Light and easy to thread through traffic.'},
+  {id:'minivan', name:'People Carrier', style:'rally', color:'#5a6068', roof:'body', price:60, top:.95, acc:1, grip:1.05, nitro:1.1, tough:true,
+    desc:'A seven-seat minivan with sliding doors. Built for school runs and long trips.'},
+  {id:'estate', name:'Nordic Estate', style:'rally', color:'#2a4a6e', roof:'body', price:90, top:1.02, acc:1.02, grip:1.08, nitro:1.05,
+    desc:'A long, square-backed estate with tall tail lights and a slatted grille.'},
+  {id:'exec', name:'Executive Saloon', style:'gt', color:'#15171a', roof:'body', price:140, top:1.07, acc:1.04, grip:1.04, nitro:1.05,
+    desc:'A long-bonnet executive saloon with a tall chrome grille. Quick and composed.'},
+  {id:'suvmid', name:'Luxury SUV', style:'rally', color:'#e6e6e2', roof:'body', price:160, top:1, acc:1.05, grip:1.02, nitro:1.05, tough:true,
+    desc:'A smooth mid-size luxury SUV, the favourite of Lagos executives.'},
+  {id:'hilux', name:'Double-Cab Pickup', style:'muscle', color:'#f0f0ee', roof:'body', price:180, top:.98, acc:1.08, grip:.98, nitro:1.1, tough:true,
+    desc:'A tough double-cab pickup. Nothing on the road slows it down.'},
+  {id:'offroad', name:'Bush Cruiser', style:'rally', color:'#3a3d40', roof:'body', price:230, top:1, acc:1.06, grip:1.05, nitro:1.12, tough:true,
+    desc:'A big, square full-size 4x4 with roof rails and a chrome grille.'}
+];
+const CARS_CONCEPT = [
+  {id:'coupex', name:'Lagoon Coupe X', style:'coupe', color:'#e8a51c', roof:'black', price:70, top:1, acc:1, grip:1, nitro:1,
+    desc:'A sharp electric coupe-crossover with a black roof.'},
   {id:'micro', name:'Pip City', style:'rally', color:'#b7d43a', roof:'body', price:30, top:.9, acc:1.18, grip:1.3, nitro:1,
     desc:'A tiny two-seat city cube. Slow on the straights, unbeatable in the bends.'},
   {id:'cross', name:'Arc Crossover', style:'coupe', color:'#c9cbcf', roof:'black', price:40, top:.98, acc:1.05, grip:1.08, nitro:1,
@@ -724,6 +818,18 @@ const CARS = [
   {id:'sports', name:'Sol Roadster', style:'roadster', color:'#f2b01a', roof:'black', price:300, top:1.09, acc:1.15, grip:1.2, nitro:1.25,
     desc:'The fastest car in the garage: a low mid-engine sports car.'}
 ];
+
+CARS_CONCEPT.forEach(c=>c.concept=true);
+const CARS = CARS_REAL.concat(CARS_CONCEPT);
+
+/* Time of day and weather, chosen before a race. */
+const TOD = {
+  morning:{sky:['#3a78c8','#9cc4e8','#f6e6c8'], sun:{x:.25,y:.72,r:.05,c:'#fff0d0',glow:'rgba(255,230,190,.5)'}, fog:'#e8e4da'},
+  midday:{sky:['#2a6cc8','#7ab4ea','#d8ecfa'], sun:{x:.4,y:.12,r:.04,c:'#fffef4',glow:'rgba(255,255,240,.45)'}, fog:'#d8e6ee'},
+  sunset:{sky:['#2e3a78','#c8687a','#ffb070'], sun:{x:.6,y:.86,r:.075,c:'#ffd090',glow:'rgba(255,150,90,.55)'}, fog:'#e6a88a'},
+  night:{sky:['#03061a','#0d1640','#2a2f5a'], moon:{x:.75,y:.18,r:.03}, stars:.8, fog:'#1a2038'}
+};
+const COND_LABEL={story:'As in the story',morning:'Morning',midday:'Midday',sunset:'Sunset',night:'Night',clear:'Clear',cloudy:'Cloudy',rain:'Rain'};
 
 /* Lucky spin prizes. */
 const PRIZES = [
@@ -1114,6 +1220,36 @@ const ART = {
 
 /* ---------- extra art for the Nigerian episodes and shortcuts ---------- */
 Object.assign(ART, {
+  kiosk(g,w,h,o){const R=o.r, col=pick(R,['#2f6fb0','#c8321f','#2a8a4a','#e0a82a','#7a4a9a']);
+    g.fillStyle=col; g.fillRect(w*.05,h*.2,w*.9,h*.78); g.strokeStyle='rgba(0,0,0,.25)'; g.lineWidth=2; for(let x=w*.05;x<w*.95;x+=8){g.beginPath(); g.moveTo(x,h*.2); g.lineTo(x,h*.98); g.stroke();}
+    g.fillStyle='#1a1c20'; g.fillRect(w*.2,h*.42,w*.6,h*.56); g.fillStyle='#e8d090'; for(let y=h*.5;y<h*.92;y+=h*.12) g.fillRect(w*.22,y,w*.56,h*.03);
+    g.fillStyle=shade(col,-.2); poly(g,[w*.02,h*.42,w*.98,h*.42,w*.9,h*.3,w*.1,h*.3]);
+    g.fillStyle='#fff'; g.font=`900 ${h*.1}px ${FD}`; g.textAlign='center'; g.fillText(pick(R,['PROVISIONS','RECHARGE CARD','POS · TRANSFER','BUKA']),w/2,h*.27);},
+  stall(g,w,h,o){const R=o.r, cols=pick(R,[['#e8322a','#f4f4f4'],['#2f6fb0','#f4c21b'],['#2a8a4a','#f4f4f4']]);
+    for(let i=0;i<8;i++){g.fillStyle=cols[i%2]; g.beginPath(); g.moveTo(w/2,h*.08); g.arc(w/2,h*.34,w*.48,Math.PI+i*Math.PI/8,Math.PI+(i+1)*Math.PI/8); g.closePath(); g.fill();}
+    g.fillStyle='#3a3a3a'; g.fillRect(w*.485,h*.3,w*.03,h*.7); g.fillStyle='#8a6a4a'; g.fillRect(w*.15,h*.68,w*.7,h*.08);
+    for(let i=0;i<6;i++){g.fillStyle=pick(R,['#e8a020','#c83a22','#5aa03a','#f0d050']); ell(g,w*(.22+i*.11),h*.66,w*.05,w*.05); g.fill();}
+    g.fillStyle='#5a3a2a'; ell(g,w*.8,h*.52,w*.06,w*.06); g.fill(); g.fillStyle=pick(R,['#2f6fb0','#c8321f','#7a4a9a']); g.fillRect(w*.75,h*.58,w*.1,h*.2);},
+  compound(g,w,h,o){const R=o.r;
+    g.fillStyle=pick(R,['#b8442e','#6e4a34','#2f5f9e']); poly(g,[w*.15,h*.32,w*.5,h*.06,w*.85,h*.32]);
+    g.fillStyle=pick(R,['#f0e6d0','#e8d8c0','#d8e8d8']); g.fillRect(w*.2,h*.3,w*.6,h*.3);
+    g.fillStyle='#e8e0cc'; g.fillRect(0,h*.55,w,h*.45); g.fillStyle='rgba(0,0,0,.12)'; g.fillRect(0,h*.55,w,h*.04);
+    g.fillStyle='#1f4a2a'; g.fillRect(w*.38,h*.6,w*.24,h*.4); g.strokeStyle='#e8c25a'; g.lineWidth=3; g.strokeRect(w*.38,h*.6,w*.24,h*.4); g.beginPath(); g.moveTo(w*.5,h*.6); g.lineTo(w*.5,h); g.stroke();},
+  frame(g,w,h){g.fillStyle='#9a9690';
+    for(let f=0;f<3;f++){g.fillRect(w*.05,h*(.95-f*.3),w*.9,h*.05); [.08,.36,.64,.9].forEach(x=>g.fillRect(w*x-6,h*(.66-f*.3),12,h*.3));}
+    g.strokeStyle='#5a3a2a'; g.lineWidth=2; [.08,.36,.64,.9].forEach(x=>{g.beginPath(); g.moveTo(w*x,h*.06); g.lineTo(w*x,h*0); g.stroke();});
+    g.fillStyle='#b8b4ac'; g.fillRect(w*.1,h*.7,w*.25,h*.25);},
+  fuel(g,w,h,o){g.fillStyle='#2a5aa8'; g.fillRect(w*.05,h*.1,w*.75,h*.12); g.fillStyle='#e8e8e8'; g.fillRect(w*.05,h*.22,w*.75,h*.04);
+    [.12,.42,.72].forEach(x=>{g.fillStyle='#d8d8d8'; g.fillRect(w*x,h*.26,w*.04,h*.74); g.fillStyle='#e83a2a'; g.fillRect(w*x+w*.06,h*.6,w*.08,h*.4);});
+    g.fillStyle='#e8e8e8'; g.fillRect(w*.86,h*.05,w*.1,h*.5); g.fillStyle='#2a5aa8'; g.fillRect(w*.87,h*.07,w*.08,h*.2); g.fillStyle='#1a1c20'; g.fillRect(w*.9,h*.55,w*.02,h*.45);
+    g.fillStyle='#fff'; g.font=`900 ${h*.08}px ${FD}`; g.textAlign='center'; g.fillText('FUEL',w*.42,h*.19);},
+  derrick(g,w,h){g.strokeStyle='#6a6e74'; g.lineWidth=6; g.beginPath(); g.moveTo(w*.15,h); g.lineTo(w*.45,h*.05); g.lineTo(w*.55,h*.05); g.lineTo(w*.85,h); g.stroke();
+    g.lineWidth=3; for(let y=.12;y<1;y+=.1){const a=.15+(1-y)*.0+(y)*.0, xl=w*(.45-.3*y), xr=w*(.55+.3*y); g.beginPath(); g.moveTo(xl,h*y); g.lineTo(xr,h*y); g.moveTo(xl,h*y); g.lineTo(w*(.55+.3*(y+.1)),h*(y+.1)); g.stroke();}
+    g.fillStyle='#c8321f'; g.fillRect(w*.42,h*.02,w*.16,h*.04); g.fillStyle='#4a4e54'; g.fillRect(w*.05,h*.92,w*.9,h*.08);},
+  nigerBridge(g,w,h){g.fillStyle='#6a7078'; g.fillRect(0,h*.62,w,h*.08); g.strokeStyle='#5a6068'; g.lineWidth=7;
+    for(let k=0;k<4;k++){const x0=k*w/4, x1=(k+1)*w/4; g.beginPath(); g.moveTo(x0,h*.62); g.quadraticCurveTo((x0+x1)/2,h*.1,x1,h*.62); g.stroke();
+      g.lineWidth=3; for(let i=1;i<8;i++){const x=x0+(x1-x0)*i/8, t=i/8, y=h*.62-(h*.52)*4*t*(1-t); g.beginPath(); g.moveTo(x,h*.62); g.lineTo(x,y); g.stroke();} g.lineWidth=7;}
+    g.fillStyle='#8a8e92'; for(let k=0;k<=4;k++) g.fillRect(k*w/4-10,h*.7,20,h*.3);},
   office(g,w,h,o){
     const R=o.r, top=h*(.04+R()*.12), tint=pick(R,[['#4f7fae','#a9c9e2','#3f6690'],['#3f6f80','#9fd0d6','#2f5a68'],['#6a7f9a','#c9d6e6','#506682']]);
     g.fillStyle=lg(g,w*.1,0,w*.9,0,[[0,tint[2]],[.55,tint[1]],[1,tint[0]]]); g.fillRect(w*.1,top,w*.8,h-top);
@@ -1368,6 +1504,11 @@ const SCEN = {
   haussmann:{fn:'haussmann',w:600,h:720,wW:4200,min:1.8,spread:1.2,n:2},
   colonial:{fn:'colonial',w:520,h:600,wW:3600,min:1.8,spread:1.5,n:3},
   office:{fn:'office',w:420,h:1000,wW:3400,min:1.9,spread:2.2,n:3},
+  kiosk:{fn:'kiosk',w:420,h:300,wW:1500,min:1.3,spread:.8,n:3},
+  stall:{fn:'stall',w:300,h:330,wW:1100,min:1.25,spread:.6,n:3},
+  compound:{fn:'compound',w:620,h:420,wW:3600,min:1.7,spread:2.2,n:2},
+  frame:{fn:'frame',w:520,h:520,wW:3200,min:1.9,spread:2.4,n:2},
+  fuel:{fn:'fuel',w:700,h:420,wW:5200,min:2.2,spread:1.2,n:1},
   phhouse:{fn:'cottage',w:520,h:440,wW:2700,min:1.7,spread:3.4,n:3},
   tower:{fn:'tower',w:400,h:1200,wW:3200,min:1.9,spread:2.2,n:3,lit:true},
   neon:{fn:'neon',w:160,h:540,wW:700,min:1.2,spread:.5,n:4,emissive:true},
@@ -1380,6 +1521,7 @@ const LANDMARK = {
   kanoGate:{w:900,h:620,wW:9500}, hercules:{w:420,h:1100,wW:4800}, eiffel:{w:620,h:1200,wW:8200},
   gateway:{w:1000,h:720,wW:10000}, hkTower:{w:420,h:1300,wW:5000}, locomotive:{w:1100,h:520,wW:9000},
   needle:{w:520,h:1300,wW:5600}, starship:{w:640,h:1400,wW:6800},
+  derrick:{w:500,h:1100,wW:5000}, nigerBridge:{w:1400,h:500,wW:16000},
   linkBridge:{w:900,h:900,wW:9000}, portCranes:{w:1100,h:700,wW:11000}
 };
 const RIVAL_STYLE = {okafor:'muscle', laurent:'gt', chen:'coupe', muller:'rally', sharma:'roadster'};
@@ -1392,16 +1534,34 @@ function buildCarArt(){
     rivals:TEAMS.map(t=>mkCar({col:t.color,kind:'rival',style:RIVAL_STYLE[t.id],accent:'#f4ead6',plate:t.name.toUpperCase()})),
     traffic:['#6a7a8a','#8a6a4a','#4a6a5a','#9a9aa0','#5a4a6a'].map(c=>Object.assign(mkCar({col:c,kind:'traffic'}),{_col:c})),
     trucks:['#e8e4dc','#c84a2a','#3a5a8a'].map(c=>Object.assign(mkCar({col:c,kind:'truck'},300,300),{_col:c})),
-    danfo:SLOGANS.map(s=>Object.assign(mkCar({kind:'danfo',slogan:s},300,300),{_danfo:s}))
+    danfo:SLOGANS.map(s=>Object.assign(mkCar({kind:'danfo',slogan:s},300,300),{_danfo:s})),
+    okada:['#c8321f','#1d1f24','#2f5f9e'].map(c=>Object.assign(mk(200,260,(g,w,h)=>drawTwoWheeler(g,w,h,c)),{_okada:c})),
+    keke:['#f2c21b','#2a8a4a'].map(c=>Object.assign(mk(300,300,(g,w,h)=>drawKeke(g,w,h,c)),{_keke:c}))
   };
+}
+function drawTwoWheeler(g,w,h,col){
+  g.fillStyle='rgba(0,0,0,.4)'; ell(g,w/2,h*.95,w*.3,h*.04); g.fill();
+  g.fillStyle='#111'; rr(g,w*.43,h*.62,w*.14,h*.34,8); g.fill();
+  g.fillStyle=col; rr(g,w*.32,h*.5,w*.36,h*.18,10); g.fill();
+  g.fillStyle='#ff3a2a'; g.fillRect(w*.44,h*.6,w*.12,h*.04);
+  [[.5,.16,'#2a2c30'],[.5,.02,'#d8dcde']].forEach(([x,y,c],k)=>{g.fillStyle=k?'#3a3d42':'#2f5f9e'; rr(g,w*(x-.17),h*(y+.14),w*.34,h*.24,12); g.fill(); g.fillStyle=c; ell(g,w*x,h*(y+.1),w*.11,w*.11); g.fill();});
+}
+function drawKeke(g,w,h,col){
+  g.fillStyle='rgba(0,0,0,.4)'; ell(g,w/2,h*.94,w*.42,h*.05); g.fill();
+  g.fillStyle='#111'; rr(g,w*.12,h*.74,w*.12,h*.2,6); g.fill(); rr(g,w*.76,h*.74,w*.12,h*.2,6); g.fill();
+  g.fillStyle=col; rr(g,w*.14,h*.42,w*.72,h*.36,10); g.fill();
+  g.fillStyle='#1a1c20'; rr(g,w*.1,h*.08,w*.8,h*.12,10); g.fill(); g.fillRect(w*.14,h*.18,w*.05,h*.26); g.fillRect(w*.81,h*.18,w*.05,h*.26);
+  g.fillStyle='#2a3240'; g.fillRect(w*.24,h*.24,w*.52,h*.18);
+  g.fillStyle='#ff3a2a'; g.fillRect(w*.18,h*.62,w*.1,h*.05); g.fillRect(w*.72,h*.62,w*.1,h*.05);
 }
 function buildPlayerArt(c){
   const o=t=>({col:c.color,turn:t,kind:'player',style:c.style,accent:c.accent,plate:'ADEYEMI'});
   playerArt={s:mkCar(o(0)),l:mkCar(o(-1)),r:mkCar(o(1))};
 }
-function buildArt(idx){
-  if(artCache[idx]) return artCache[idx];
-  const st=STAGES[idx], th=st.theme, night=!!th.night, R=rng(77+idx*131);
+function buildArt(idx,th0,key){
+  const ck=idx+'|'+(key||'base');
+  if(artCache[ck]) return artCache[ck];
+  const st=STAGES[idx], th=th0||st.theme, night=!!th.night, R=rng(77+idx*131);
   const scen={};
   [...new Set(th.scenery.concat(['lamp']))].forEach(name=>{
     const d=SCEN[name], imgs=[];
@@ -1427,7 +1587,7 @@ function buildArt(idx){
     signs:{}, placeBoards:{}
   };
   a.landmark._k='landmark'; a.rail._k='rail'; a.welcome._k=a.mid._k='board'; a.start._k=a.finish._k='banner';
-  artCache[idx]=a;
+  artCache[ck]=a;
   return a;
 }
 
@@ -1510,8 +1670,8 @@ function buildGeoRoad(st,R){
 }
 
 function buildTrack(idx){
-  const st=STAGES[idx], th=st.theme, R=rng(1000+idx*7919), diff=.85+idx*.04;
-  art=buildArt(idx);
+  const st=stage, th=stage.theme, R=rng(1000+idx*7919), diff=.85+idx*.04;
+  art=buildArt(idx,th,condKey);
   segments=[]; branches=[]; places=[];
   startLine=START_SEG+8;
   addRoad(0,START_SEG+30,0,0,0);
@@ -1550,9 +1710,14 @@ function buildTrack(idx){
   (th.flyovers||[]).forEach(name=>{const p=places.find(q=>q.name===name); if(!p) return;
     for(let i=p.seg-70;i<p.seg+110;i++){const sg=segments[i]; if(sg&&!sg.water&&!sg.branch) sg.fly=true;}});
 
+  // side streets at junctions, like a normal city grid
+  const urban=th.naija||th.scenery.some(x=>['office','haussmann','colonial','tower','craftsman'].includes(x));
+  if(urban) for(let i=startLine+120;i<finishIdx-60;i+=150+Math.floor(R()*120)){
+    if(segments.slice(i-10,i+10).some(sg=>sg.water||sg.fly||sg.branch)) continue;
+    const side=R()<.5?-1:1; for(let k=i-7;k<=i+7;k++) segments[k].street=side; segments[i].streetC=side;}
   // scenery (kept clear of bridges and shortcut lanes)
   const names=th.scenery, end=finishIdx+DRAWD;
-  const blocked=(i,side)=>{const s=segments[i]; if(!s) return true; if(s.water||s.fly) return true;
+  const blocked=(i,side)=>{const s=segments[i]; if(!s) return true; if(s.water||s.fly||s.street===side) return true;
     for(const br of branches) if(br.side===side&&i>=br.b0-6&&i<=br.b0+BL+12) return true; return false;};
   for(let i=startLine+6;i<end;i+=2+Math.floor(R()*3)){
     const sides=R()<.4?[-1,1]:[R()<.5?-1:1];
@@ -1671,7 +1836,7 @@ function findShortcuts(R){
   cands.sort((a,b)=>b.save-a.save);
   const chosen=[];
   for(const c of cands){
-    if(chosen.length>=2) break;
+    if(chosen.length>=3) break;
     if(wet(c.i-10,c.i+BL+10)||wet(c.i+c.N-5,c.i+c.N+5)) continue;
     if(chosen.some(o=>!(c.i>o.i+o.N+80||c.i+c.N<o.i-80))) continue;
     chosen.push(c);
@@ -1697,6 +1862,10 @@ function spawnCars(idx){
       img:carArt.rivals[k],wW:CAR_W,percent:0,finished:false,time:0};
     rivals.push(c); cars.push(c);
   });
+  if(danfo){ // okadas weave through traffic near the kerb; kekes trundle in the slow lane
+    for(let i=0;i<12;i++){const ok=i<8, z=(startLine+120+R()*(finishIdx-startLine-200))*SEG;
+      cars.push({rival:false,offset:ok?pick(R,[-.82,.82,.3,-.3]):pick(R,[.7,-.7]),z,speed:MAXSPEED*(ok?.4+R()*.15:.28+R()*.08),
+        img:ok?pick(R,carArt.okada):pick(R,carArt.keke),wW:ok?280:460,percent:0});}}
   const n=16+idx*3;
   for(let i=0;i<n;i++){
     const big=R()<.32, z=(startLine+90+R()*(finishIdx-startLine-160))*SEG;
@@ -1706,8 +1875,24 @@ function spawnCars(idx){
   cars.forEach(c=>findSeg(c.z).cars.push(c));
 }
 
+let condKey='base';
+/* Builds the theme for the chosen time of day and weather. */
+function variantTheme(th){
+  let t=Object.assign({},th); const tod=save.tod||'story', wx=save.wx||'story';
+  if(tod!=='story'){t=Object.assign(t,TOD[tod]);
+    if(tod==='night'){t.night=true; delete t.sun; t.grass=th.grass.map(c=>shade(c,-.5)); t.road=th.road.map(c=>shade(c,-.2));}
+    else {t.night=false; delete t.moon; t.stars=0; if(th.night){t.grass=th.grass.map(c=>shade(c,.35)); t.road=th.road.map(c=>shade(c,.15));}}}
+  if(wx==='rain'){t.weather='rain'; t.clouds=1.6; if(!t.night){t.sky=['#3a4450','#6a7682','#9aa6b0']; delete t.sun; t.fog='#8e9aa4';} else t.fog='#141a2a';}
+  else if(wx==='cloudy'){t.clouds=1.9; if(t.weather==='rain') t.weather='none';
+    if(!t.night){t.sky=t.sky.map(c=>mix(c,'#9aa4ae',.45)); t.fog=mix(t.fog,'#b8c0c6',.4); if(t.sun) t.sun=Object.assign({},t.sun,{glow:'rgba(255,255,255,.18)'});}}
+  else if(wx==='clear'){if(t.weather==='rain') t.weather='none'; t.clouds=Math.min(t.clouds||.5,.5);}
+  return t;
+}
+function condText(){const a=[]; if((save.tod||'story')!=='story') a.push(COND_LABEL[save.tod]); if((save.wx||'story')!=='story') a.push(COND_LABEL[save.wx]); return a.join(' · ');}
 function startStage(idx,attract){
-  stageIdx=idx; stage=STAGES[idx]; buildSerial++;
+  stageIdx=idx; const base=STAGES[idx];
+  condKey=attract?'base':(save.tod||'story')+'-'+(save.wx||'story');
+  stage=Object.assign({},base,{theme:attract?base.theme:variantTheme(base.theme)}); buildSerial++;
   position=START_SEG*SEG; speed=0; playerX=0; raceTime=0; fortune=0; rank=6; lastRank=6; factIdx=0; placeIdx=1;
   storyShown=false; farOff=nearOff=skyOff=0; particles.length=0; weather.length=0; autoLane=0; launchT=0; flash=0; finalSaid=false; ledOnce=false;
   buildTrack(idx); spawnCars(idx);
@@ -2119,6 +2304,7 @@ function drawTitleCard(){
   let fs=96*s; ctx.font=`900 ${fs}px ${FD}`; const t=stage.ep.toUpperCase(); while(ctx.measureText(t).width>W-x*2&&fs>20){fs-=4; ctx.font=`900 ${fs}px ${FD}`;}
   ctx.fillStyle='#fff8ea'; ctx.fillText(t,x,y);
   ctx.font=`italic 400 ${24*s}px ${FB}`; ctx.fillStyle='#e7dcc6'; ctx.fillText(stage.place+', '+stage.country+' — '+stage.tag,x,y+38*s);
+  const ct=condText(); if(ct){ctx.font=`800 ${16*s}px ${FD}`; ctx.fillStyle='#7fd3ff'; ctx.fillText(ct.toUpperCase(),x,y+70*s);}
   ctx.restore();
 }
 function ordinal(n){return n+(n===1?'st':n===2?'nd':n===3?'rd':'th');}
@@ -2262,8 +2448,8 @@ let save={unlocked:1,best:{},bank:0,owned:['eko'],car:'eko',spins:0,perks:{},ass
 try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null'); if(s&&typeof s==='object') save=Object.assign(save,s);}catch(e){}
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 Sound.muted=!!save.muted;
-save.owned=(save.owned||[]).filter(id=>CARS.some(c=>c.id===id)); if(!save.owned.includes('coupex')) save.owned.unshift('coupex');
-if(!CARS.some(c=>c.id===save.car)) save.car='coupex';
+save.owned=(save.owned||[]).filter(id=>CARS.some(c=>c.id===id)); if(!save.owned.includes('saloon')) save.owned.unshift('saloon');
+if(!CARS.some(c=>c.id===save.car)) save.car='saloon';
 activeCar=CARS.find(c=>c.id===save.car)||CARS[0];
 
 /* =====================================================================
@@ -2368,6 +2554,7 @@ function postcard(idx){
 }
 function openAtlas(){
   hideAll(); el.select.hidden=false;
+  $('selTod').value=save.tod||'story'; $('selWx').value=save.wx||'story';
   if(!playerArt) buildPlayerArt(activeCar);
   const wrap=$('cards'); wrap.innerHTML=''; let done=0;
   STAGES.forEach((st,i)=>{
@@ -2392,8 +2579,9 @@ function openGarage(){
   hideAll(); el.garage.hidden=false;
   $('bank').textContent='Bank: $'+save.bank+'M';
   const wrap=$('carCards'); wrap.innerHTML='';
-  const lu=$('lineup'); if(lu&&!lu.firstChild&&typeof TH!=='undefined'&&TH&&save.gfx!=='2d'){const shot=lineupShot(); if(shot){shot.setAttribute('role','img'); shot.setAttribute('aria-label','The full line-up of 13 cars in the garage'); lu.append(shot);}}
-  CARS.forEach(c=>{
+  const lu=$('lineup'); if(lu&&!lu.firstChild&&typeof TH!=='undefined'&&TH&&save.gfx!=='2d'){const shot=lineupShot(); if(shot){shot.setAttribute('role','img'); shot.setAttribute('aria-label','The garage line-up of everyday cars'); lu.append(shot);}}
+  CARS.forEach((c,ci)=>{
+    if(ci===0||c.concept!==CARS[ci-1].concept){const hd=document.createElement('h3'); hd.className='cards-h'; hd.textContent=c.concept?'Concept collection':'Everyday cars'; wrap.append(hd);}
     const owned=save.owned.includes(c.id), sel=save.car===c.id;
     const d=document.createElement('div'); d.className='car'+(sel?' selected':'');
     const pv=(typeof TH!=='undefined'&&TH&&save.gfx!=='2d')?carPreview(c):null;
@@ -2496,6 +2684,8 @@ $('btnMap').addEventListener('click',()=>{Sound.init(); openAtlas();});
 $('btnGarage').addEventListener('click',()=>{garageReturn='title'; openGarage();});
 $('btnSpinT').addEventListener('click',()=>openSpin('title'));
 $('btnBack').addEventListener('click',toTitle);
+$('selTod').addEventListener('change',e=>{save.tod=e.target.value; persist();});
+$('selWx').addEventListener('change',e=>{save.wx=e.target.value; persist();});
 $('btnGarageBack').addEventListener('click',()=>garageReturn==='standings'?showStandings():toTitle());
 $('btnDoSpin').addEventListener('click',doSpin);
 $('btnSpinDone').addEventListener('click',()=>{if(spinning) return; spinReturn==='standings'?showStandings():toTitle();});
@@ -2798,9 +2988,10 @@ class Bucket{
   build(group){for(const key in this.m){const list=this.m[key], mat=MAT[key]; if(!mat||!list.length) continue;
     const mesh=new TH.Mesh(gMerge(list),mat); mesh.castShadow=!NOSHADOW.has(key); mesh.receiveShadow=true; mesh.matrixAutoUpdate=false; group.add(mesh); list.forEach(g=>g.dispose());}}
 }
-const RIVAL_MODEL={okafor:'fastback',laurent:'sedan',chen:'cross',muller:'cruiser',sharma:'sports'};
-const TRAFFIC_MODELS=['sedan','suv','smallsuv','cross','micro','van','pod','bigsuv'];
-const NOSHADOW=new Set(['zebra','kerbBW','kerbMulti','leafCard','road','curb','walk','ground','groundFar','water','branch','check','bulb','glow','neonCut']);
+const RIVAL_MODEL={okafor:'exec',laurent:'estate',chen:'hatch',muller:'offroad',sharma:'suvmid'};
+const TRAFFIC_MODELS=['saloon','saloon','hatch','minivan','suvmid','hilux','estate','exec','offroad','saloon','bus','hatch'];
+const TRAFFIC_COLS=['#c8ccd2','#1d1f24','#8a8f96','#e8e8ea','#c9a24a','#5a1a22','#2a3a5a','#f0f0ee','#6a6e72'];
+const NOSHADOW=new Set(['zebra','kerbBW','kerbMulti','leafCard','road','curb','walk','ground','groundFar','water','branch','check','bulb','glow','neonCut','tlRed','tlAmber','tlGreen']);
 function hash3(x,y,z){const s=Math.sin(x*12.9898+y*78.233+z*37.719)*43758.5453; return s-Math.floor(s);}
 function blob(r,col,R,squash=1,lumpy=.3){
   const g=new TH.IcosahedronGeometry(r,2), p=g.attributes.position, nrm=new Float32Array(p.count*3);
@@ -3004,6 +3195,18 @@ function landmark3D(kind,night){
       const edge=new TH.LineSegments(new TH.EdgesGeometry(g),new TH.LineBasicMaterial({color:0xcfe6ff})); edge.position.y=100; G.add(edge);
       add(new TH.CylinderGeometry(.3,.5,40,6),lmMat('#c0c8d8'),0,220,0);
       size=34; break;}
+    case 'derrick':{const steel=lmMat('#c8cdd2',{alphaMap:latticeTex(),alphaTest:.4,side:TH.DoubleSide,metalness:.6,roughness:.4}), solid=lmMat('#9aa0a6',{metalness:.6,roughness:.4});
+      const red=lmMat('#c8321f',{roughness:.5}), conc=lmMat('#bdbab2',{roughness:.95});
+      add(new TH.BoxGeometry(18,1,18),conc,0,.5,0);
+      const g=new TH.CylinderGeometry(1.2,6.5,40,4,4,true); g.rotateY(Math.PI/4); add(g,steel,0,21,0);
+      add(new TH.BoxGeometry(3.4,1.2,3.4),red,0,41.5,0); add(new TH.BoxGeometry(12,4.5,.4),solid,0,3.4,-6.2);
+      add(new TH.BoxGeometry(9,.4,9),solid,0,9,0);
+      const tree=[[0,1.6,.5],[0,3.0,.42]]; tree.forEach(([x,y,r])=>add(new TH.CylinderGeometry(r,r,1.2,10),red,x,y,0));
+      add(new TH.CylinderGeometry(.18,.18,2,8),solid,0,2.5,1.4).rotation.x=Math.PI/2;
+      add(new TH.BoxGeometry(3,1.6,.2),lmMat('#f4f4f4'),5,1.8,6);
+      if(night){const lights=new TH.Points(new TH.BufferGeometry().setFromPoints(Array.from({length:40},(_,i)=>new TH.Vector3((Math.random()-.5)*(7-i*.12),i,(Math.random()-.5)*(7-i*.12)))),new TH.PointsMaterial({color:0xffd080,size:1.1,fog:false})); G.add(lights);}
+      size=20; break;}
+    case 'nigerBridge':{size=4; break;} // trusses are built along the river crossing
     case 'locomotive':{const black=lmMat('#1a1a1e',{metalness:.5,roughness:.4}), red=lmMat('#9a2a22');
       const b=new TH.CylinderGeometry(1.4,1.4,11,16); b.rotateZ(Math.PI/2); add(b,black,0,2.9,0);
       add(new TH.BoxGeometry(4,4.2,3.4),black,7,3.6,0); add(new TH.CylinderGeometry(.5,.7,2.2,10),black,-4,5,0);
@@ -3155,6 +3358,11 @@ function stageMaterials(th,night){
     slate:new TH.MeshStandardMaterial({color:C3('#56607a'),roughness:.6,metalness:.2,vertexColors:true}),
     brick:new TH.MeshStandardMaterial({color:C3('#8a5a48'),roughness:.9,vertexColors:true}),
     glassLow:new TH.MeshStandardMaterial({roughness:.3,vertexColors:true}),
+    cloth:new TH.MeshStandardMaterial({roughness:.85,vertexColors:true}),
+    canopyMat:new TH.MeshStandardMaterial({roughness:.8,vertexColors:true,side:TH.DoubleSide}),
+    tlRed:new TH.MeshStandardMaterial({color:C3('#3a0806'),emissive:C3('#ff2a14'),emissiveIntensity:night?3:1.6}),
+    tlAmber:new TH.MeshStandardMaterial({color:C3('#2a1a04'),emissive:C3('#ffa020'),emissiveIntensity:.25}),
+    tlGreen:new TH.MeshStandardMaterial({color:C3('#062a0e'),emissive:C3('#20ff70'),emissiveIntensity:.25}),
     bulb:new TH.MeshStandardMaterial({color:C3('#fff3d0'),emissive:C3('#ffe2a0'),emissiveIntensity:night?3:.4,vertexColors:true})
   };
   MAT.waterTex=gt.water;
@@ -3279,19 +3487,22 @@ function build3DWorld(){
     let m;
     if(c.rival) m=carModel({model:RIVAL_MODEL[c.team.id],color:c.team.color,roof:'black'});
     else if(c.wW>600) m=carModel(c.img._danfo?{kind:'danfo',slogan:c.img._danfo}:{kind:'truck',color:c.img._col||'#e8e4dc'});
-    else m=carModel({model:TRAFFIC_MODELS[(c.z/SEG|0)%TRAFFIC_MODELS.length],color:c.img._col||'#8a8f96',roof:(c.z/SEG|0)%3?'body':'black'});
+    else if(c.img._okada) m=okadaModel(c.img._okada);
+    else if(c.img._keke) m=kekeModel(c.img._keke);
+    else {const k=(c.z/SEG|0); m=carModel({model:TRAFFIC_MODELS[k%TRAFFIC_MODELS.length],color:TRAFFIC_COLS[(k>>2)%TRAFFIC_COLS.length],roof:'body'});}
     c.m3=m; m.visible=false; W3.add(m);
   });
   (th.towers||[]).forEach((name,k)=>{const pl=places.find(p=>p.name===name); if(!pl) return; const p=pose(Math.min(pl.seg+20,segments.length-1)), sd=1, d=HW+46+k*8;
     const T=phTower(night); T.position.set(p.x+Math.cos(p.h)*sd*d,p.y-1.2,p.z+Math.sin(p.h)*sd*d); T.rotation.y=-p.h+.3; W3.add(T);});
   R3.oncoming=[];
-  if(th.dual){for(let k=0;k<10;k++){const m=carModel({model:TRAFFIC_MODELS[k%TRAFFIC_MODELS.length],color:['#c8ccd2','#1d1f24','#8a8f96','#e8e8ea','#2f5f9e','#9a2e24'][k%6],roof:k%3?'body':'black'});
+  if(th.dual){for(let k=0;k<10;k++){const m=th.naija&&k%4===3?okadaModel(['#c8321f','#1d1f24'][k%2]):carModel({model:TRAFFIC_MODELS[k%TRAFFIC_MODELS.length],color:TRAFFIC_COLS[k%TRAFFIC_COLS.length],roof:'body'});
     m.visible=false; W3.add(m); R3.oncoming.push({m,z:position+playerZ+(60+k*55)*SEG,lane:k%2?-3.224:-4.558,v:MAXSPEED*(.45+(k%4)*.06)});}}
-  initSmoke();
+  initSmoke(); initCrowd();
   R3.builtFor=buildSerial; R3.snap=true;
   R3.buildMs=performance.now()-t0;
 }
 function placeLandmark(sp,i,th,night){
+  if(th.landmark==='nigerBridge') return;
   const key='lm_'+stageIdx; let proto=R3[key];
   if(!proto) proto=R3[key]=landmark3D(th.landmark,night);
   const G=proto.clone(); G.traverse(o=>{if(o.isMesh) o.userData.shared=true;});
@@ -3404,7 +3615,7 @@ function buildChunk(C,city,night){
     B.add('concrete',gPrep(tr(new TH.BoxGeometry(70,1,.25),0,9.4,5.4)),M); B.add('concrete',gPrep(tr(new TH.BoxGeometry(70,1,.25),0,9.4,-5.4)),M);
     [-1,1].forEach(sd=>{B.add('concrete',gPrep(tr(new TH.BoxGeometry(1.4,7.6,8),sd*(HW+3.4),3.8,0)),M); B.add('concrete',gPrep(tr(new TH.BoxGeometry(6,7.6,10),sd*32,3.8,0)),M);});}
   for(const br of branches){const s0=Math.max(i0,br.b0), s1=Math.min(i1,br.b0+BL); if(s1<=s0) continue;
-    B.raw('branch',ribbon(s0,s1,-BW*HW,BW*HW,.05,.05,0,1,6,{off:i=>br.side*branchOff(br,i)*HW}));}
+    B.raw(city?'road':'branch',ribbon(s0,s1,-BW*HW,BW*HW,.05,.05,0,1,6,{off:i=>br.side*branchOff(br,i)*HW}));}
   [[startLine,2],[finishIdx,3]].forEach(([s,len])=>{const s0=Math.max(i0,s), s1=Math.min(i1,s+len); if(s1>s0) B.raw('check',ribbon(s0,s1,-HW,HW,.02,.02,0,4,1.1));});
   // scenery
   const glows=[]; const cut=new TH.Group();
@@ -3418,6 +3629,7 @@ function buildChunk(C,city,night){
     const dd=(stage.theme.dual&&lat<-HW-1&&!s.median)?Math.max(0,d-(MW+2*HW+1.4)):d;
     const px=p.x+Math.cos(p.h)*lat, pz=p.z+Math.sin(p.h)*lat, py=p.y+(s.median?.2:(dd<HW+4.1&&city?.16:terrainY(dd)))+(dd>HW+1&&R3.flyDrop?R3.flyDrop(i):0);
     if(TREES.has(k)){const v=templates(k,k==='palm'?4:3), sc=s.wW/SCEN[k].wW; B.addParts(v[(s.img._v||0)%v.length],mat4(px,py-.05,pz,R()*6.28,sc),null);}
+    else if(KIT[k]){KIT[k](B,{M:mat4(px,py,pz,-p.h+(side>0?Math.PI:0),1),R,w:s.wW*LS,x:px,y:py,z:pz,ry:-p.h,night});}
     else if(STYLE_OF[k]){addBuilding(B,k,px,py,pz,-p.h+(R()-.5)*.08,s.wW*LS,R,night);}
     else if(k==='lamp'&&s.median){B.addParts(templates('lamp2',1)[0],mat4(px,py,pz,-p.h+Math.PI/2,1),null);
       if(night) for(const sd of [-1,1]) glows.push(px+Math.cos(p.h)*sd*1.7,py+7.1,pz+Math.sin(p.h)*sd*1.7);}
@@ -3439,6 +3651,7 @@ function buildChunk(C,city,night){
       const set=k<.55?tuft:k<.8?stone:bush;
       B.addParts(set[Math.floor(R()*set.length)],mat4(px,py-.03,pz,R()*6.28,(set===bush?.55:.7)+R()*.6),null);}
   }
+  streetFurniture(B,C,city,night,dual,SH);
   B.build(C.group);
   if(glows.length){const gm=new TH.Points(new TH.BufferGeometry(),new TH.PointsMaterial({map:glowTex(),size:6,transparent:true,depthWrite:false,blending:TH.AdditiveBlending,color:0xffd8a0}));
     gm.geometry.setAttribute('position',new TH.Float32BufferAttribute(glows,3)); C.group.add(gm);}
@@ -3503,6 +3716,7 @@ function render3D(dt){
   // cars
   for(const c of cars){const di=Math.floor(c.z/SEG)-pIdx, vis=di>-40&&di<R3.view;
     c.m3.visible=vis; if(vis){placeCar(c.m3,c.z,c.offset,0); const ws=c.speed/MAXSPEED*60*dt/.34*SL; c.m3.userData.wheels.forEach(w=>w.rotation.x-=ws);}}
+  updateCrowd(dt,pIdx);
   // coins
   const spinA=tNow*3; let dc=false, dn=false;
   for(const o of R3.coinList){const di=o.i-pIdx; if(di<-20||di>R3.view) continue;
@@ -3679,6 +3893,9 @@ function updateSmoke(dt,P,f){
     const col=offroad?C3(stage.theme.grass[0]):C3('#e8eaee');
     if(Math.random()<(braking?.9:offroad?.8:.55)){emitSmoke(back.clone().addScaledVector(r,.8),col,1); emitSmoke(back.clone().addScaledVector(r,-.8),col,1);}
   }
+  if(mode==='race'&&stage.theme.weather==='rain'&&sp>.35&&Math.random()<sp*.9){ // spray off the rear tyres
+    const r=new TH.Vector3(Math.cos(P.h),0,Math.sin(P.h)), back=new TH.Vector3(P.x,P.y-.15,P.z).addScaledVector(f,-2.1);
+    emitSmoke(back.clone().addScaledVector(r,(Math.random()<.5?1:-1)*.75),C3('#aab2ba'),1);}
   for(const m of R3.smoke){const u=m.userData; if(!m.visible) continue; u.life-=dt/u.max; if(u.life<=0){m.visible=false; continue;}
     m.position.y+=u.vy*dt; const s=1+(1-u.life)*4; m.scale.set(s,s,1); m.material.opacity=Math.min(.45,u.life*.55);}
 }
@@ -3745,6 +3962,36 @@ const VEH = {
     body:[[0,.44,1.08,.9],[.04,.42,1.12,.98],[.5,.42,1.1,1],[.88,.44,1.04,.98],[1,.48,.9,.88]],
     cab:{u0:.03,u1:.79,top:.82,keys:[[.03,1.12],[.12,1.76],[.68,1.8],[.79,1.07]],roofU:[.12,.68]}}
 };
+/* Everyday cars: the body types common on Nigerian roads (no makes or badges). */
+Object.assign(VEH,{
+  saloon:{L:4.75,W:1.82,R:.33,ax:[.2,.79],k:.95,real:true,grille:'wide',lights:'saloon',
+    body:[[0,.36,.95,.86],[.04,.33,.99,.95],[.2,.31,1.0,.99],[.5,.3,.97,1],[.78,.31,.93,.99],[.93,.33,.84,.95],[1,.38,.7,.86]],
+    cab:{u0:.17,u1:.76,top:.74,keys:[[.17,1.0],[.3,1.42],[.6,1.44],[.76,.94]],roofU:[.31,.59]},pillars:[[.45,.09,'dark'],[.29,.07,'paint']],doors:[.32,.47,.62]},
+  exec:{L:4.95,W:1.85,R:.34,ax:[.19,.79],k:.9,real:true,grille:'chromeTall',lights:'exec',chrome:true,
+    body:[[0,.36,.96,.86],[.04,.33,1.0,.95],[.3,.31,1.0,1],[.7,.31,.97,1],[.93,.33,.9,.97],[1,.38,.82,.9]],
+    cab:{u0:.16,u1:.72,top:.74,keys:[[.16,.99],[.29,1.42],[.57,1.44],[.72,.95]],roofU:[.3,.56]},pillars:[[.44,.08,'dark'],[.28,.08,'paint']],doors:[.3,.45,.6]},
+  estate:{L:4.95,W:1.86,R:.35,ax:[.17,.79],k:.8,real:true,grille:'slats',lights:'tall',rails:true,
+    body:[[0,.38,1.0,.92],[.03,.35,1.03,.97],[.4,.33,1.0,1],[.78,.33,.96,1],[.93,.35,.88,.96],[1,.4,.76,.88]],
+    cab:{u0:.03,u1:.74,top:.82,keys:[[.03,1.02],[.07,1.47],[.6,1.49],[.74,.95]],roofU:[.06,.6]},pillars:[[.44,.08,'dark'],[.2,.09,'paint'],[.05,.05,'paint']],doors:[.29,.44,.6]},
+  hatch:{L:3.95,W:1.72,R:.31,ax:[.16,.8],k:.95,real:true,grille:'wide',lights:'saloon',
+    body:[[0,.38,.98,.9],[.04,.35,1.0,.97],[.5,.32,.96,1],[.85,.33,.86,.96],[1,.38,.72,.86]],
+    cab:{u0:.05,u1:.74,top:.8,keys:[[.05,1.0],[.12,1.46],[.55,1.48],[.74,.92]],roofU:[.12,.55]},pillars:[[.42,.09,'dark'],[.1,.1,'paint']],doors:[.26,.43,.62]},
+  suvmid:{L:4.85,W:1.9,R:.38,ax:[.18,.8],k:.85,real:true,grille:'chromeWide',lights:'saloon',clad:true,rails:true,
+    body:[[0,.44,1.06,.9],[.04,.41,1.1,.97],[.5,.4,1.08,1],[.86,.42,1.02,.98],[1,.46,.9,.88]],
+    cab:{u0:.06,u1:.76,top:.8,keys:[[.06,1.08],[.16,1.62],[.62,1.66],[.76,1.04]],roofU:[.16,.62]},pillars:[[.44,.08,'dark'],[.2,.1,'paint']],doors:[.28,.45,.62]},
+  offroad:{L:4.95,W:1.98,R:.41,ax:[.17,.8],k:.45,real:true,grille:'chromeWide',lights:'square',clad:true,rails:true,
+    body:[[0,.48,1.08,.95],[.03,.46,1.12,.99],[.5,.46,1.12,1],[.95,.46,1.1,.99],[1,.5,1.0,.95]],
+    cab:{u0:.04,u1:.74,top:.9,keys:[[.04,1.12],[.07,1.86],[.66,1.88],[.74,1.12]],roofU:[.07,.66]},pillars:[[.44,.08,'dark'],[.2,.09,'paint'],[.06,.05,'paint']],doors:[.28,.45,.62]},
+  hilux:{L:5.3,W:1.86,R:.38,ax:[.17,.8],k:.7,real:true,grille:'chromeWide',lights:'saloon',clad:true,
+    body:[[0,.5,1.0,.92],[.04,.47,1.04,.97],[.5,.46,1.06,1],[.88,.47,1.04,.98],[1,.5,.92,.9]],
+    cab:{u0:.36,u1:.75,top:.84,keys:[[.36,1.06],[.39,1.76],[.66,1.8],[.75,1.06]],roofU:[.39,.66]},pillars:[[.53,.06,'dark']],doors:[.4,.53,.66],bed:[.02,.35]},
+  minivan:{L:5.1,W:1.98,R:.36,ax:[.15,.8],k:.8,real:true,grille:'wide',lights:'tall',
+    body:[[0,.4,1.0,.92],[.03,.37,1.03,.98],[.5,.36,1.02,1],[.86,.37,.95,.98],[1,.42,.8,.88]],
+    cab:{u0:.02,u1:.8,top:.86,keys:[[.02,1.03],[.05,1.74],[.6,1.78],[.8,.98]],roofU:[.05,.6]},pillars:[[.5,.07,'dark'],[.27,.06,'dark'],[.06,.05,'paint']],doors:[.29,.5,.66]},
+  bus:{L:7,W:2.05,R:.42,ax:[.15,.75],k:.45,real:true,grille:'wide',lights:'square',
+    body:[[0,.45,1.05,.97],[.02,.43,1.08,1],[.98,.43,1.08,1],[1,.45,1.0,.97]],
+    cab:{u0:.01,u1:.99,top:.95,keys:[[.01,1.08],[.02,2.6],[.95,2.62],[.99,1.08]],roofU:[.02,.95]},pillars:[[.16,.03,'paint'],[.3,.03,'paint'],[.44,.03,'paint'],[.58,.03,'paint'],[.72,.03,'paint'],[.86,.03,'paint']],doors:[]}
+});
 const ROOFCOL={black:'#0e1013',white:'#f2f3f5'};
 function kInterp(keys,u,idx){
   if(u<=keys[0][0]) return keys[0][idx]; const n=keys.length; if(u>=keys[n-1][0]) return keys[n-1][idx];
@@ -3785,10 +4032,34 @@ function vehicleGeometry(id){
   // lights, grille, bumpers, mirrors
   const box=(k,w,h,d,x,y,z)=>{const g=new TH.BoxGeometry(w,h,d); g.translate(x,y,z); parts[k].push(gPrep(g));};
   const uf=.995, ur=.005;
+  if(!V.real){
   box('white',.05,.045,hw(uf)*1.7,L*uf+.01,yS(uf)-.09,0);
   [-1,1].forEach(s=>box('white',.05,.09,.32,L*uf,yS(uf)-.16,s*hw(uf)*.66));
   box('red',.05,.06,hw(ur)*1.8,L*ur-.012,yS(ur)-.12,0);
   box('dark',.08,.22,hw(uf)*1.35,L-.02,yB(1)+.16,0);
+  } else {
+    // headlights and tail lights as separate lamps at the corners
+    const hl=V.lights==='square'?[.08,.2,.3]:V.lights==='exec'?[.06,.11,.42]:[.06,.12,.4];
+    [-1,1].forEach(s=>{box('white',hl[0],hl[1],hl[2],L*uf,yS(uf)-.14,s*hw(uf)*.66); box('chrome',.04,hl[1]+.03,hl[2]+.03,L*uf-.015,yS(uf)-.14,s*hw(uf)*.66);});
+    if(V.lights==='tall') [-1,1].forEach(s=>box('red',.06,.5,.12,L*ur-.02,yS(ur)-.12,s*hw(ur)*.88));
+    else [-1,1].forEach(s=>box('red',.06,.14,.44,L*ur-.02,yS(ur)-.1,s*hw(ur)*.68));
+    const gy=yS(uf)-.26, gw=hw(uf);
+    if(V.grille==='chromeTall'){box('chrome',.05,.36,gw*.6,L-.005,gy+.02,0); box('dark',.06,.3,gw*.52,L,gy+.02,0); box('chrome',.065,.3,.02,L+.003,gy+.02,0);}
+    else if(V.grille==='slats'){box('dark',.05,.26,gw*.9,L-.005,gy,0); for(let k=-4;k<=4;k++) box('chrome',.06,.24,.025,L,gy,k*gw*.1); box('chrome',.065,.28,gw*.92,L-.01,gy,0);}
+    else if(V.grille==='chromeWide'){box('chrome',.05,.34,gw*1.3,L-.005,gy,0); box('dark',.06,.28,gw*1.22,L,gy,0); [-1,0,1].forEach(k=>box('chrome',.065,.03,gw*1.22,L+.002,gy+k*.08,0));}
+    else box('dark',.05,.2,gw*1.1,L-.005,gy,0);
+    box('dark',.08,.16,hw(uf)*1.2,L-.02,yB(1)+.14,0);
+    // doors: shut lines and handles
+    (V.doors||[]).forEach(u=>[-1,1].forEach(s=>box('dark',.012,(yS(u)-yB(u))*.62,.012,L*u,yB(u)+(yS(u)-yB(u))*.5,s*(hw(u)+.004))));
+    (V.doors||[]).slice(0,-1).forEach((u,i)=>[-1,1].forEach(s=>box('chrome',.14,.03,.03,L*(u+((V.doors[i+1]||u)-u)*.75),yS(u)-.14,s*(hw(u)+.01))));
+    // window pillars over the glass
+    (V.pillars||[]).forEach(([u,w,c])=>[-1,1].forEach(s=>{const yb=yS(u), yr=kInterp(C.keys,u,1), hb=hw(u)*.94, ht=hw(u)*C.top;
+      const pg=new TH.BufferGeometry(), x0=L*(u-w/2), x1=L*(u+w/2), o=1.015;
+      pg.setAttribute('position',new TH.Float32BufferAttribute([x0,yb,s*hb*o, x1,yb,s*hb*o, x1,yr-.04,s*ht*o, x0,yb,s*hb*o, x1,yr-.04,s*ht*o, x0,yr-.04,s*ht*o],3)); pg.computeVertexNormals();
+      parts[c==='paint'?'paint':'dark'].push(gPrep(pg));}));
+    if(V.chrome) [-1,1].forEach(s=>box('chrome',L*(C.u1-C.u0)*.92,.025,.02,L*(C.u0+C.u1)/2,yS((C.u0+C.u1)/2)+.005,s*hw(.5)*.95));
+    if(V.rails) [-1,1].forEach(s=>{const u=(C.roofU[0]+C.roofU[1])/2; box('dark',L*(C.roofU[1]-C.roofU[0])*.95,.05,.05,L*u,kInterp(C.keys,u,1)+.06,s*hw(u)*C.top*.85);});
+  }
   box('dark',.08,.16,hw(0)*1.6,.0,yB(0)+.12,0);
   box('white',.03,.12,.42,-.03,yB(0)+.33,0);
   [-1,1].forEach(s=>{const u=C.u1-.03; box('paint',.18,.1,.22,L*u,yS(u)+.1,s*(hw(u)*.96+.12)); box('glass',.04,.07,.18,L*u-.09,yS(u)+.1,s*(hw(u)*.96+.12));});
@@ -3876,10 +4147,201 @@ function carPreview(c){
 function lineupShot(){
   if(STUDIO.lineup) return STUDIO.lineup;
   // arranged like a manufacturer line-up photo: utility vehicles at the back, cars at the front
-  const back=[['pickup',-13.5,-9,.35],['cruiser',-9.4,-7,.25],['coupex',-5,-6.2,.12],['fastback',-1,-5.8,0],['sports',3.2,-5.8,-.1],['micro',7,-7,-.2],['van',10.6,-8.6,-.3],['pod',14.6,-10.6,-.35]];
-  const front=[['suv',-10.2,1.6,.32],['cross',-5.2,2.6,.15],['smallsuv',0,3,0],['sedan',5.2,2.6,-.15],['bigsuv',10.4,1.4,-.32]];
-  const cars=back.concat(front).map(([id,x,z,yaw])=>{const c=CARS.find(k=>k.id===id); return [vehicleModel({model:id,color:c.color,roof:c.roof}),x,z,Math.PI-(x/15)*.75];});
+  const back=[['bus',-12.5,-9.4,.35],['offroad',-6.8,-7,.2],['hilux',-1.6,-6.2,0],['minivan',3.6,-6.4,-.1],['suvmid',8.6,-7,-.2],['estate',13.4,-8.6,-.3]];
+  const front=[['hatch',-9.6,1.6,.32],['saloon',-3.4,2.8,.15],['exec',3,2.8,-.15],['coupex',9.4,1.6,-.32]];
+  const cars=back.concat(front).map(([id,x,z,yaw])=>{const c=CARS.find(k=>k.id===id)||{color:'#e8eaee',roof:'body'}; return [vehicleModel({model:id,color:c.color,roof:c.roof}),x,z,Math.PI-(x/15)*.75];});
   return STUDIO.lineup=studioShot(cars,1280,620,[0,8.5,23],[0,.4,-3.4]);
+}
+
+/* =====================================================================
+   STREET LIFE — pedestrians, cyclists, okadas, kekes, roadside kit,
+   power lines and side streets.
+   ===================================================================== */
+const SKIN=['#5a3a26','#4a2e1e','#6e4630','#3e2618','#7a5238','#8a6040','#c89070','#e0b090'];
+const CLOTH=['#c8321f','#2f6fb0','#2a8a4a','#e8a020','#7a4a9a','#f4f4f4','#1d1f24','#d86a1f','#3aa0a0','#e85a8a'];
+
+/* ---------- two- and three-wheelers ---------- */
+function riderParts(parts,y0,lean,col,skin,helmet){
+  const add=(k,g,x,y,z,rx)=>{if(rx) g.rotateX(rx); g.translate(x,y,z); parts.push([k,gPrep(g,C3(k==='cloth'?col:k==='skin'?skin:'#1a1c20'))]);};
+  add('cloth',new TH.BoxGeometry(.42,.6,.26),0,y0+.42,.05,lean);
+  add('skin',new TH.SphereGeometry(.13,10,8),0,y0+.86,-.08);
+  if(helmet) add('metalDark',new TH.SphereGeometry(.15,10,8,0,Math.PI*2,0,Math.PI/1.8),0,y0+.9,-.08);
+  add('cloth',new TH.BoxGeometry(.14,.5,.16),.14,y0+.05,-.25,1.1); add('cloth',new TH.BoxGeometry(.14,.5,.16),-.14,y0+.05,-.25,1.1);
+  add('cloth',new TH.BoxGeometry(.1,.5,.1),.26,y0+.48,-.3,1.0); add('cloth',new TH.BoxGeometry(.1,.5,.1),-.26,y0+.48,-.3,1.0);
+}
+const LIFEGEO={};
+function mergedModel(key,build){
+  if(!LIFEGEO[key]){const parts=[]; build(parts); const by={}; parts.forEach(([k,g])=>(by[k]||(by[k]=[])).push(g));
+    LIFEGEO[key]={}; for(const k in by){LIFEGEO[key][k]=gMerge(by[k]); by[k].forEach(g=>g.dispose());}}
+  const G=new TH.Group(), body=new TH.Group(); G.add(body);
+  for(const k in LIFEGEO[key]){const m=new TH.Mesh(LIFEGEO[key][k],lifeMat(k)); m.castShadow=true; body.add(m);}
+  G.userData={wheels:[],body,L:2}; return G;
+}
+const LIFEMAT={};
+function lifeMat(k){
+  if(LIFEMAT[k]) return LIFEMAT[k];
+  const o={cloth:{roughness:.85},skin:{roughness:.7},metalDark:{color:C3('#2a2d33'),metalness:.6,roughness:.4},tyre:{color:C3('#111'),roughness:.9},
+    chrome:{color:C3('#d8dce2'),metalness:1,roughness:.2},glass:{color:C3('#1c2733'),roughness:.05,metalness:.2},paint:{metalness:.3,roughness:.35},
+    canopy:{roughness:.8,side:TH.DoubleSide},light:{color:C3('#5a0a06'),emissive:C3('#ff2a14'),emissiveIntensity:1.8}}[k]||{};
+  return LIFEMAT[k]=new TH.MeshStandardMaterial(Object.assign({vertexColors:true},o));
+}
+function okadaModel(col){
+  return mergedModel('okada'+col,P=>{
+    const add=(k,g,x,y,z,c)=>{g.translate(x,y,z); P.push([k,gPrep(g,c?C3(c):null)]);};
+    [-.62,.62].forEach(z=>{const t=new TH.TorusGeometry(.3,.08,8,16); t.rotateY(Math.PI/2); add('tyre',t,0,.32,z);});
+    add('paint',new TH.BoxGeometry(.3,.32,1.0),0,.62,0,col); add('metalDark',new TH.BoxGeometry(.28,.12,.7),0,.84,.15);
+    add('chrome',new TH.BoxGeometry(.7,.04,.04),0,1.06,-.55); add('metalDark',new TH.CylinderGeometry(.03,.03,.6,6),0,.8,-.58);
+    add('light',new TH.BoxGeometry(.14,.06,.04),0,.74,.56);
+    riderParts(P,.86,-.15,pick(Math.random,CLOTH),pick(Math.random,SKIN),true);
+    if(col!=='#2f5f9e'){const q=[]; riderParts(q,.9,-.05,pick(Math.random,CLOTH),pick(Math.random,SKIN),false); q.forEach(([k,g])=>{g.translate(0,.02,.45); P.push([k,g]);});}
+  });
+}
+function kekeModel(col){
+  return mergedModel('keke'+col,P=>{
+    const add=(k,g,x,y,z,c)=>{g.translate(x,y,z); P.push([k,gPrep(g,c?C3(c):null)]);};
+    [[0,-1.05],[-.62,.75],[.62,.75]].forEach(([x,z])=>{const t=new TH.TorusGeometry(.25,.08,8,16); t.rotateY(Math.PI/2); add('tyre',t,x,.3,z);});
+    add('paint',new TH.BoxGeometry(1.3,.7,1.5),0,.75,.45,col); add('paint',new TH.BoxGeometry(.7,.6,.9),0,.7,-.7,col);
+    add('canopy',new TH.BoxGeometry(1.4,.06,2.3),0,1.95,.1,'#1a1c20');
+    [[-.66,-.9],[.66,-.9],[-.66,1.1],[.66,1.1]].forEach(([x,z])=>add('metalDark',new TH.BoxGeometry(.05,1.1,.05),x,1.4,z));
+    add('glass',new TH.BoxGeometry(1.1,.6,.04),0,1.45,-1.0); add('canopy',new TH.BoxGeometry(1.3,.9,.04),0,1.45,1.18,'#1a1c20');
+    add('light',new TH.BoxGeometry(.16,.08,.04),-.5,.9,1.22); add('light',new TH.BoxGeometry(.16,.08,.04),.5,.9,1.22);
+    riderParts(P,.78,-.05,pick(Math.random,CLOTH),pick(Math.random,SKIN),false);
+  });
+}
+
+/* ---------- roadside kit (models face +X; placed facing the road) ---------- */
+const KIT={
+  kiosk(B,o){const M=o.M, R=o.R, col=C3(pick(R,['#2f6fb0','#c8321f','#2a8a4a','#e0a82a','#7a4a9a']));
+    B.add('corr',gPrep(tr(new TH.BoxGeometry(2.4,2.6,6),0,1.3,0)),M,col);
+    B.add('metalDark',gPrep(tr(new TH.BoxGeometry(.06,2.0,5.2),1.21,1.1,0),C3('#141518')),M);
+    for(let y=.6;y<2;y+=.45) B.add('cloth',gPrep(tr(new TH.BoxGeometry(.3,.12,5),1.0,y,0),C3(pick(R,CLOTH))),M);
+    B.add('corr',gPrep(tr(new TH.BoxGeometry(1.6,.08,6.4),1.9,2.55,0)),M,col);
+    if(R()<.6) addPerson(B,M,2.4,0,(R()-.5)*3,R);},
+  stall(B,o){const M=o.M, R=o.R;
+    const u=new TH.ConeGeometry(1.5,.55,10,1,true); B.add('canopyMat',gPrep(tr(u,0,2.35,0),C3(pick(R,['#e8322a','#2f6fb0','#2a8a4a','#f4c21b']))),M);
+    B.add('metalDark',gPrep(tr(new TH.CylinderGeometry(.03,.03,2.3,6),0,1.15,0)),M);
+    B.add('wood',gPrep(tr(new TH.BoxGeometry(1.0,.08,1.6),.3,.85,0)),M); B.add('wood',gPrep(tr(new TH.BoxGeometry(.9,.8,.06),.3,.42,.7)),M);
+    for(let i=0;i<7;i++) B.add('cloth',gPrep(tr(new TH.SphereGeometry(.1,6,5),.3+(R()-.5)*.6,.97,(R()-.5)*1.3),C3(pick(R,['#e8a020','#c83a22','#5aa03a','#f0d050','#7a3a1a']))),M);
+    addPerson(B,M,-.5,0,0,R);},
+  compound(B,o){const M=o.M, R=o.R, wall=C3(pick(R,['#efe6d2','#e2d6be','#d8e2d0','#e8dcd0']));
+    const W2=o.w, D=o.w*.9;
+    B.add('concrete',gPrep(tr(new TH.BoxGeometry(.25,2.3,D),W2/2,1.15,0),wall),M);
+    [[-1],[1]].forEach(([s])=>B.add('concrete',gPrep(tr(new TH.BoxGeometry(W2,2.3,.25),0,1.15,s*D/2),wall),M));
+    B.add('concrete',gPrep(tr(new TH.BoxGeometry(.25,2.3,D),-W2/2,1.15,0),wall),M);
+    B.add('metalDark',gPrep(tr(new TH.BoxGeometry(.12,2.1,3.2),W2/2+.08,1.05,0),C3(pick(R,['#1f4a2a','#1a1c20','#5a1a1a']))),M);
+    addBuilding(B,'phhouse',o.x,o.y,o.z,o.ry,W2*.62,R,o.night);},
+  frame(B,o){const M=o.M, R=o.R, w=o.w, d=w*.8, floors=2+Math.floor(R()*2), c=C3('#a8a49c');
+    for(let f=0;f<=floors;f++) B.add('concrete',gPrep(tr(new TH.BoxGeometry(w,.25,d),0,f*3.2+.12,0),c),M);
+    for(let f=0;f<floors;f++) for(const x of [-w/2+.2,0,w/2-.2]) for(const z of [-d/2+.2,d/2-.2]) B.add('concrete',gPrep(tr(new TH.BoxGeometry(.32,3.0,.32),x,f*3.2+1.7,z),c),M);
+    for(const x of [-w/2+.2,0,w/2-.2]) for(const z of [-d/2+.2,d/2-.2]) B.add('metalDark',gPrep(tr(new TH.BoxGeometry(.04,1.2,.04),x,floors*3.2+.8,z),C3('#5a3a2a')),M);
+    B.add('concrete',gPrep(tr(new TH.BoxGeometry(w*.6,1.6,.22),-w*.1,1.05,d/2-.2),C3('#c0bcb2')),M);},
+  fuel(B,o){const M=o.M, R=o.R, brand=C3(pick(R,['#2a5aa8','#c8321f','#2a8a4a','#e8a020']));
+    B.add('concrete',gPrep(tr(new TH.BoxGeometry(14,.1,10),0,.05,0),C3('#bdbab2')),M);
+    B.add('roof',gPrep(tr(new TH.BoxGeometry(14,.5,9),0,5.4,0),C3('#f0f0f0')),M); B.add('cloth',gPrep(tr(new TH.BoxGeometry(14.1,.45,9.1),0,5.0,0),brand),M);
+    for(const x of [-5,5]) for(const z of [-3,3]) B.add('concrete',gPrep(tr(new TH.BoxGeometry(.4,5,.4),x,2.6,z),C3('#e8e8e8')),M);
+    for(const z of [-2.5,0,2.5]) B.add('cloth',gPrep(tr(new TH.BoxGeometry(.6,1.6,.9),0,.8,z),brand),M);
+    B.add('concrete',gPrep(tr(new TH.BoxGeometry(.3,7,.3),6,3.5,-4.5),C3('#e8e8e8')),M); B.add('cloth',gPrep(tr(new TH.BoxGeometry(.3,2.4,1.6),6,6.2,-4.5),brand),M);}
+};
+function addPerson(B,M,x,y,z,R){ // a standing figure merged into the chunk
+  const m=M.clone().multiply(new TH.Matrix4().makeTranslation(x,y,z)), col=C3(pick(R,CLOTH)), sk=C3(pick(R,SKIN));
+  B.add('cloth',gPrep(tr(new TH.BoxGeometry(.42,.62,.24),0,1.13,0),col),m); B.add('cloth',gPrep(tr(new TH.BoxGeometry(.32,.8,.2),0,.42,0),C3(pick(R,['#1d1f24','#2a3a5a','#5a4a3a']))),m);
+  B.add('cloth',gPrep(tr(new TH.SphereGeometry(.13,8,6),0,1.62,0),sk),m);
+}
+
+/* ---------- power lines, side streets, Niger Bridge trusses ---------- */
+function streetFurniture(B,C,city,night,dual,SH){
+  const {i0,i1}=C, segs=segments, th=stage.theme, wires=[];
+  // concrete power poles with sagging wires on Nigerian streets
+  if(th.naija){
+    const sd=1, lat=HW+(city?4.6:2.6);
+    let prev=null;
+    for(let i=i0-(i0%32);i<i1;i+=32){ if(i<i0) continue; const sg=segs[i]; if(!sg||sg.water||sg.fly||sg.street===sd){prev=null; continue;}
+      const p=pose(i), x=p.x+Math.cos(p.h)*lat, z=p.z+Math.sin(p.h)*lat, y=p.y+(city?.16:terrainY(lat));
+      B.add('concrete',gPrep(tr(new TH.CylinderGeometry(.12,.18,9.5,8),0,4.75,0),C3('#b8b4ac')),mat4(x,y,z,-p.h,1));
+      B.add('metalDark',gPrep(tr(new TH.BoxGeometry(.12,.12,2.2),0,9.0,0)),mat4(x,y,z,-p.h+Math.PI/2,1));
+      if(i%96===0) B.add('metalDark',gPrep(tr(new TH.BoxGeometry(.9,1.1,.7),.35,7.6,0),C3('#6a7076')),mat4(x,y,z,-p.h+Math.PI/2,1));
+      const pts=[-.9,0,.9].map(o=>new TH.Vector3(x+Math.cos(p.h)*o, y+9.05, z+Math.sin(p.h)*o));
+      if(prev) for(let w=0;w<3;w++){const a=prev[w], b=pts[w]; let last=a; for(let k=1;k<=6;k++){const t=k/6, q=a.clone().lerp(b,t); q.y-=Math.sin(Math.PI*t)*.9; wires.push(last.x,last.y,last.z,q.x,q.y,q.z); last=q;}}
+      prev=pts;}
+  }
+  // side streets at junctions, with houses and traffic lights
+  for(let i=i0;i<i1;i++){const sd=segs[i].streetC; if(!sd) continue;
+    const p=pose(i), off=(dual&&sd<0)?SH:0, d0=HW+.7+off, len=70, hwS=4.2, f={x:Math.sin(p.h),z:-Math.cos(p.h)}, r={x:Math.cos(p.h),z:Math.sin(p.h)};
+    const pos=[],uv=[],idx=[]; const rows=10;
+    for(let k=0;k<=rows;k++){const d=d0+len*k/rows, y=p.y+Math.min(.03,terrainY(d-off)+.03)+.02;
+      for(const s of [-1,1]){pos.push(p.x+r.x*sd*d+f.x*s*hwS, y, p.z+r.z*sd*d+f.z*s*hwS); uv.push(s<0?0:1,(d-d0)/11);}
+      if(k<rows){const a=k*2; idx.push(a,a+1,a+2,a+1,a+3,a+2);}}
+    const g=new TH.BufferGeometry(); g.setAttribute('position',new TH.Float32BufferAttribute(pos,3)); g.setAttribute('uv',new TH.Float32BufferAttribute(uv,2)); g.setIndex(idx); g.computeVertexNormals();
+    B.raw('road',gPrep(g));
+    const R=rng(i*7+3);
+    for(let k=0;k<4;k++){const d=d0+14+k*14; for(const s of [-1,1]){const w=8+R()*5, c=d+0, ox=p.x+r.x*sd*c+f.x*s*(hwS+3.5+w*.5), oz=p.z+r.z*sd*c+f.z*s*(hwS+3.5+w*.5);
+      addBuilding(B,R()<.25&&th.scenery.includes('office')?'office':'phhouse',ox,p.y+terrainY(d-off),oz,-p.h,w,R,night);}}
+    for(const s of [-1,1]){const cx=p.x+r.x*sd*(d0+.6)+f.x*s*(hwS+.6), cz=p.z+r.z*sd*(d0+.6)+f.z*s*(hwS+.6), M=mat4(cx,p.y+.16,cz,-p.h,1);
+      B.add('metalDark',gPrep(tr(new TH.CylinderGeometry(.08,.1,3.4,8),0,1.7,0)),M); B.add('metalDark',gPrep(tr(new TH.BoxGeometry(.32,.9,.3),0,3.6,0)),M);
+      [['tlRed',3.9],['tlAmber',3.6],['tlGreen',3.3]].forEach(([k,y])=>B.add(k,gPrep(tr(new TH.SphereGeometry(.09,8,6),0,y,-.16)),M));}
+  }
+  // Niger Bridge: steel through-trusses along the river crossing
+  if(th.landmark==='nigerBridge') for(let i=i0;i<i1;i++){ if(!segs[i].water) continue;
+    if(i%2===0) for(const s of [-1,1]){const L=s*(HW+.75); B.raw('truss',ribbon(i,Math.min(i+2,i1),L,L,1,8.5,0,1,6));}
+    if(i%12===0){const p=pose(i); B.add('truss',gPrep(tr(new TH.BoxGeometry(2*HW+1.6,.5,.5),0,8.4,0)),mat4(p.x,p.y,p.z,-p.h,1));}}
+  if(wires.length){const lg=new TH.BufferGeometry(); lg.setAttribute('position',new TH.Float32BufferAttribute(wires,3));
+    C.group.add(new TH.LineSegments(lg,new TH.LineBasicMaterial({color:0x1a1c20})));}
+}
+
+/* ---------- pedestrians and cyclists (instanced, animated) ---------- */
+function initCrowd(){
+  const th=stage.theme, city=th.scenery.some(s=>['office','haussmann','colonial','tower','craftsman','phhouse'].includes(s));
+  const N=(R3.quality==='high'?70:34)*(city?1:.5)|0, NC=th.naija?(R3.quality==='high'?10:5):4;
+  const mk=(geo,mat,n)=>{const m=new TH.InstancedMesh(geo,mat,n); m.instanceMatrix.setUsage(TH.DynamicDrawUsage); m.castShadow=true; m.frustumCulled=false; R3.world.add(m); return m;};
+  const mat=new TH.MeshStandardMaterial({roughness:.8});
+  const total=N+NC;
+  const leg=new TH.BoxGeometry(.14,.8,.16); leg.translate(0,-.4,0);
+  const arm=new TH.BoxGeometry(.1,.62,.11); arm.translate(0,-.31,0);
+  const C={torso:mk(new TH.BoxGeometry(.44,.62,.25),mat,total),head:mk(new TH.SphereGeometry(.125,10,8),mat,total),
+    legL:mk(leg,mat,total),legR:mk(leg.clone(),mat,total),armL:mk(arm,mat,total),armR:mk(arm.clone(),mat,total)};
+  const bike=[]; {const t1=new TH.TorusGeometry(.33,.04,6,16); t1.rotateY(Math.PI/2); bike.push(gPrep(tr(t1,0,.35,.52)),gPrep(tr(t1.clone(),0,.35,-.52)),gPrep(tr(new TH.BoxGeometry(.05,.05,1.0),0,.65,0)),gPrep(tr(new TH.BoxGeometry(.05,.5,.05),0,.75,-.45)),gPrep(tr(new TH.BoxGeometry(.5,.04,.04),0,1.0,-.45)));}
+  C.bike=mk(gMerge(bike),new TH.MeshStandardMaterial({color:C3('#1a1c20'),metalness:.6,roughness:.4}),Math.max(1,NC));
+  const peds=[];
+  for(let k=0;k<total;k++){const cyc=k>=N, cloth=new TH.Color(C3(pick(Math.random,CLOTH))), pants=new TH.Color(C3(pick(Math.random,['#1d1f24','#2a3a5a','#5a4a3a','#3a3a3a',pick(Math.random,CLOTH)])));
+    const skin=new TH.Color(C3(th.naija?pick(Math.random,SKIN.slice(0,6)):pick(Math.random,SKIN)));
+    C.torso.setColorAt(k,cloth); C.head.setColorAt(k,skin); C.legL.setColorAt(k,pants); C.legR.setColorAt(k,pants); C.armL.setColorAt(k,cloth); C.armR.setColorAt(k,cloth);
+    peds.push({cyc,s:0,side:1,lat:0,dir:1,v:0,ph:Math.random()*6,alive:false,stand:false});}
+  Object.values(C).forEach(m=>{if(m.instanceColor) m.instanceColor.needsUpdate=true;});
+  R3.crowd={C,peds,N,NC,city};
+}
+const _m1=TH?new TH.Matrix4():null, _m2=TH?new TH.Matrix4():null, _q1=TH?new TH.Quaternion():null, _p1=TH?new TH.Vector3():null, _s1=TH?new TH.Vector3(1,1,1):null, _eu=TH?new TH.Euler():null, _hide=TH?new TH.Matrix4().makeScale(0,0,0):null;
+function spawnPed(o,pIdx,anywhere){
+  const segs=segments, th=stage.theme, dual=!!th.dual, SH=dual?MW+2*HW+1.4:0, city=R3.crowd.city;
+  for(let tries=0;tries<12;tries++){
+    const i=Math.floor(pIdx+(anywhere?-20+Math.random()*R3.view:R3.view*.55+Math.random()*R3.view*.4));
+    const sg=segs[i]; if(!sg||sg.water||sg.fly||sg.branch||i<startLine) continue;
+    const side=Math.random()<.5?-1:1; if(sg.street===side) continue;
+    o.side=side; o.s=i+Math.random(); o.dir=Math.random()<.5?1:-1;
+    const base=o.cyc?HW+1.1:city?HW+1.4+Math.random()*2:HW+2+Math.random()*2.5;
+    o.lat=side*(base+(side<0?SH:0)); o.v=o.cyc?4+Math.random()*2:(Math.random()<.15?0:1.1+Math.random()*.6); o.stand=o.v===0; o.alive=true; return;}
+  o.alive=false;
+}
+function updateCrowd(dt,pIdx){
+  const cr=R3.crowd; if(!cr) return; const C=cr.C, segs=segments, city=cr.city;
+  let bi=0;
+  cr.peds.forEach((o,k)=>{
+    if(!o.alive||o.s<pIdx-40||o.s>pIdx+R3.view) spawnPed(o,pIdx,!o.alive&&!o.seen);
+    o.seen=true;
+    if(!o.alive){['torso','head','legL','legR','armL','armR'].forEach(n=>C[n].setMatrixAt(k,_hide)); return;}
+    if(mode!=='intro') o.s+=o.dir*o.v*dt/SL;
+    o.ph+=dt*(o.cyc?7:o.v*5.2);
+    const p=poseAt(o.s*SEG,o.lat/HW), d=Math.abs(o.lat)-(o.side<0&&stage.theme.dual?MW+2*HW+1.4:0);
+    const gy=p.y+(o.cyc?.04:(city&&d<HW+4.1?.16:terrainY(d)));
+    _eu.set(0,-p.h+(o.dir>0?0:Math.PI),0); _q1.setFromEuler(_eu); _p1.set(p.x,gy,p.z); _m1.compose(_p1,_q1,_s1);
+    const swing=o.stand?0:Math.sin(o.ph)*(o.cyc?.9:.55), hip=o.cyc?1.0:.82;
+    const part=(n,x,y,z,rx)=>{_m2.makeRotationX(rx); _m2.setPosition(0,0,0); const t=new TH.Matrix4().makeTranslation(x,y,z).multiply(_m2); C[n].setMatrixAt(k,_m1.clone().multiply(t));};
+    part('torso',0,hip+.31,o.cyc?.08:0,o.cyc?-.25:0); part('head',0,hip+.8,o.cyc?-.05:0,0);
+    if(o.cyc){part('legL',.12,hip,0,-1.1+swing*.6); part('legR',-.12,hip,0,-1.1-swing*.6); part('armL',.24,hip+.56,-.08,-1.0); part('armR',-.24,hip+.56,-.08,-1.0);
+      C.bike.setMatrixAt(bi++,_m1.clone());}
+    else{part('legL',.11,hip,0,swing); part('legR',-.11,hip,0,-swing); part('armL',.28,hip+.58,0,-swing*.8); part('armR',-.28,hip+.58,0,swing*.8);}
+  });
+  for(;bi<C.bike.count;bi++) C.bike.setMatrixAt(bi,_hide);
+  Object.values(C).forEach(m=>m.instanceMatrix.needsUpdate=true);
 }
 /* ---------- main loop ---------- */
 let last=performance.now(), acc=0;

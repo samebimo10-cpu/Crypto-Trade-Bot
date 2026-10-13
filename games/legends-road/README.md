@@ -88,6 +88,28 @@ night) and **Weather** (story default, clear, cloudy or rain) before you
 start. Night lights the street lamps, windows and headlights; rain adds
 falling rain, a wet, reflective road and spray from the tyres.
 
+## Road safety
+
+People walk, cross and ride on these streets, and hitting one has consequences:
+
+- **Pedestrians cross the road** at zebra crossings, and in Nigerian cities
+  people also cross away from them. Tobi or Kemi warns you when someone is
+  on the road ahead. Brake or steer round them.
+- **Hit a pedestrian, a cyclist, an okada or a keke** and the car stops dead.
+  The person goes down (they get up again after a few seconds) and the
+  police hold you at the roadside for 5 seconds while the rivals drive
+  past, with flashing police lights and a siren.
+- **Fines** come out of the fortune you have collected: $15M for a
+  pedestrian, $10M for a cyclist or okada rider, $8M for a keke. Your
+  fortune can go below zero, and the story screen shows what you paid.
+- **Three strikes** in one episode and the police suspend your licence:
+  the race ends and the episode restarts.
+- The Lucky spin shield protects the car, not people, so it does not cover
+  these hits.
+
+In *Classic 2D* there are no people on the pavements, but okadas and kekes
+still count.
+
 ## Features
 
 - **Minimap** in the top-right corner, with your position, the rivals and the

@@ -1608,6 +1608,7 @@ let stageIdx=0, stage=STAGES[0], art=null, pal=null, mapInfo=null, branches=[], 
 let position=0, speed=0, playerX=0, playerY=0, nitro=1, nitroCap=1, nitroOn=false, steerDir=0, onBranch=false;
 let cars=[], rivals=[], raceTime=0, countdown=0, mode='title', modeT=0, rank=6, lastRank=6, fortune=0, finalTime=0;
 let farOff=0, nearOff=0, skyOff=0, shake=0, flash=0, flashCol='255,255,255', tNow=0, autoLane=0, offroad=false;
+let penaltyT=0, strikes=0, fines=0, hitCD=0, banned=false;
 let storyShown=false, factIdx=0, placeIdx=1, cine=0, introDur=0, launchT=0, shield=0, boostT=0, perkBoost=false, finalSaid=false, ledOnce=false, legOrder=[];
 let activeCar=CARS[0], miniRect=null;
 const particles=[], weather=[], stars=[], clouds=[];
@@ -1896,7 +1897,7 @@ function startStage(idx,attract){
   position=START_SEG*SEG; speed=0; playerX=0; raceTime=0; fortune=0; rank=6; lastRank=6; factIdx=0; placeIdx=1;
   storyShown=false; farOff=nearOff=skyOff=0; particles.length=0; weather.length=0; autoLane=0; launchT=0; flash=0; finalSaid=false; ledOnce=false;
   buildTrack(idx); spawnCars(idx);
-  nitroCap=1; shield=0; perkBoost=false; boostT=0;
+  nitroCap=1; shield=0; perkBoost=false; boostT=0; penaltyT=0; strikes=0; fines=0; hitCD=0; banned=false;
   clearSubs();
   if(attract){mode='title'; modeT=0; rivals.forEach(r=>r.speed=r.base*.9);}
   else{
@@ -1927,8 +1928,36 @@ const LINES={
   nitro:[['Tobi','Nitro canister! Nice grab.']],
   lead:[['Tobi','We\'re leading, Kemi! We\'re actually leading!']],
   final:[['Tobi','Final stretch! I can see the arrival arch!']],
-  offroad:[['Tobi','Road\'s that way, Kemi.']]
+  offroad:[['Tobi','Road\'s that way, Kemi.']],
+  peds:[['Tobi','People crossing ahead! Slow down, Kemi!'],['Kemi','Pedestrians on the road. Easy, easy...'],['Tobi','Watch the crossing! Brake!']]
 };
+/* ---------- road safety: hitting a person or a rider has consequences ---------- */
+const ROAD_FINE={person:15,cyclist:10,okada:10,keke:8}, ROAD_NAME={person:'pedestrian',cyclist:'cyclist',okada:'okada rider',keke:'keke'};
+const ROAD_LINES={
+  person:[['Kemi','Oh no! Tobi, we hit someone! Stop, stop!'],['Tobi','Kemi! Someone\'s down! Pull over!']],
+  cyclist:[['Kemi','The cyclist! Is the rider okay?'],['Tobi','You knocked the cyclist off! Stop the car!']],
+  okada:[['Tobi','The okada! Kemi, the rider went down!'],['Kemi','I didn\'t see the bike! Is the rider alright?']],
+  keke:[['Tobi','We hit the keke! The passengers!'],['Kemi','Oh no, the keke! Everyone okay in there?']]
+};
+function hitRoadUser(kind){
+  if(mode!=='race'||hitCD>0||banned) return false;
+  hitCD=3; strikes++; const fine=ROAD_FINE[kind]; fortune-=fine; fines+=fine;
+  speed=0; shake=1.3; flash=.6; flashCol='255,70,60'; Sound.crash(); setTimeout(()=>Sound.siren(),300);
+  clearSubs(); const [who,text]=pick(Math.random,ROAD_LINES[kind]); say(who,text,2.6);
+  if(strikes>=3){
+    banned=true; penaltyT=7;
+    say('Narrator','Three road users hurt. The police suspend your licence and stop the race.',4);
+    showToast('Licence suspended','Three strikes: the police have ended your race. The episode restarts.');
+    const at=stageIdx; setTimeout(()=>{if(banned&&mode==='race'&&stageIdx===at) beginRace(at);},7000);
+  } else {
+    penaltyT=5;
+    say('Narrator',`Police stop. The ${ROAD_NAME[kind]} gets help, you pay a $${fine}M fine. Strike ${strikes} of 3.`,3.6);
+    say(strikes===2?'Tobi':'Kemi',strikes===2?'One more and they take your licence. Please, slow down.':'We drive carefully from here. Nobody else gets hurt.',3);
+    showToast(`Police stop · strike ${strikes} of 3`,`You hit a ${ROAD_NAME[kind]}: $${fine}M fine and held for 5 seconds. Three strikes ends your race.`);
+  }
+  return true;
+}
+const money=v=>(v<0?'−$'+(-v):'$'+v)+'M';
 let subQ=[], subCur=null, subT=0, eventCD=0;
 function say(who,text,dur){subQ.push({who,text,dur:dur||Math.max(2.3,text.length*.055)});}
 function clearSubs(){subQ=[]; subCur=null; el.subs.style.opacity=0;}
@@ -1996,6 +2025,8 @@ function autopilot(pSeg){
   }
   const err=autoLane-playerX+pSeg.curve*.05;
   keys.left=err<-.04; keys.right=err>.04; keys.up=true; keys.down=false; keys.nitro=false;
+  if(typeof R3!=='undefined'&&R3&&R3.crowd&&save.gfx!=='2d') for(const o of R3.crowd.peds){const di=o.s-pSeg.index; // stop for people crossing
+    if(o.alive&&o.cross&&di>1&&di<40+speed/MAXSPEED*50&&Math.abs(o.lat)<HW+.6){keys.up=false; keys.down=speed>MAXSPEED*.02; break;}}
 }
 function doShortcut(br){
   br.used=true; flash=1; flashCol='255,255,255';
@@ -2019,7 +2050,10 @@ function update(dt){
     if(countdown<=0){mode='race'; modeT=0; Sound.countBeep(true); if(perkBoost) boostT=2.5;
       const p=places[0]; if(p) showToast('Starting at · '+p.name,p.desc||stage.tag);}
   }
-  const frozen=mode==='intro'||mode==='countdown';
+  if(mode==='race'){hitCD=Math.max(0,hitCD-dt);
+    if(penaltyT>0){penaltyT-=dt;
+      if(penaltyT<=0&&!banned){showToast('Back on the road','Drive with care: people walk and ride on these streets.');}}}
+  const frozen=mode==='intro'||mode==='countdown'||penaltyT>0;
   updateCars(dt,pSeg);
   if(!frozen) position=U.increase(position,dt*speed,trackLength);
   steerDir=0;
@@ -2060,6 +2094,8 @@ function update(dt){
   }
   if(!frozen) for(const car of pSeg.cars){
     if(speed>car.speed && U.overlap(playerX,PLAYER_W,car.offset,car.wW/ROADW,.8)){
+      if(car.img&&(car.img._okada||car.img._keke)&&speed>MAXSPEED*.08&&hitRoadUser(car.img._okada?'okada':'keke')){ // a shield protects the car, not people
+        position=U.increase(car.z,-playerZ-SEG*3,trackLength); car.speed*=.3; break;}
       if(shield>0){shield--; flash=.8; flashCol='127,211,255'; Sound.power(); position=U.increase(car.z,-playerZ,trackLength); showToast('Shield used','Your Lucky spin shield took that hit.'); break;}
       const after=car.speed*(car.speed/speed);
       speed=C.tough?Math.max(after,speed*.62):after; position=U.increase(car.z,-playerZ,trackLength);
@@ -2340,6 +2376,14 @@ function drawHUD(){
   const rw=ctx.measureText(String(rank)).width;
   ctx.font=`800 ${26*s}px ${FD}`; ctx.fillStyle='#ffd27a'; ctx.fillText((rank===1?'ST':rank===2?'ND':rank===3?'RD':'TH')+' / 6',pad+rw+6*s,cy0+30*s);
   ctx.fillStyle='#fff8ea'; ctx.font=`700 ${20*s}px ${FD}`; ctx.fillText(fmtTime(raceTime),pad+rw+6*s,cy0+60*s);
+  if(strikes){ctx.font=`800 ${15*s}px ${FD}`; ctx.fillStyle='#ff6a5a'; ctx.fillText('STRIKES '+'●'.repeat(strikes)+'○'.repeat(Math.max(0,3-strikes)),pad,cy0+(touchMode?128:86)*s);}
+  if(penaltyT>0&&mode==='race'){ // flashing police lights at the screen edges
+    const ph=(tNow*5|0)%2, a=.32+.18*Math.sin(tNow*30);
+    [[0,ph?'255,40,40':'40,90,255'],[W,ph?'40,90,255':'255,40,40']].forEach(([x,c])=>{const g=ctx.createRadialGradient(x,H*.45,0,x,H*.45,W*.38);
+      g.addColorStop(0,`rgba(${c},${a})`); g.addColorStop(1,`rgba(${c},0)`); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);});}
+  if(penaltyT>0&&mode==='race'){ctx.save(); ctx.textAlign='center'; ctx.font=`900 ${46*s}px ${FD}`; ctx.fillStyle=banned?'#ff6a5a':'#fff8ea'; ctx.shadowBlur=16*s;
+    ctx.fillText(banned?'LICENCE SUSPENDED':'POLICE STOP',W/2,H*.36); ctx.font=`800 ${20*s}px ${FD}`; ctx.fillStyle='#ffd27a';
+    ctx.fillText(banned?'Three strikes. The race is over.':'Held for '+Math.ceil(penaltyT)+' s · strike '+strikes+' of 3',W/2,H*.36+34*s); ctx.restore();}
   const kmh=Math.round(speed/MAXSPEED*240), gear=speed<1?'N':String(Math.min(6,1+Math.floor(Math.min(speed/MAXSPEED,1.3)*4.6)));
   if(touchMode){ctx.font=`900 ${34*s}px ${FD}`; ctx.fillStyle=nitroOn?'#9fe4ff':'#fff8ea'; ctx.fillText(kmh+' KM/H',pad,cy0+104*s);
     const tw=ctx.measureText(kmh+' KM/H ').width; ctx.fillStyle='#e8b04b'; ctx.fillText(gear,pad+tw+6*s,cy0+104*s);}
@@ -2374,7 +2418,7 @@ function drawHUD(){
   ctx.fillText('NITRO'+(nitroCap>1?' +':'')+(shield?'   · SHIELD READY':''),nx,ny-22*s);
   ctx.shadowBlur=0; ctx.fillStyle='rgba(10,19,34,.6)'; ctx.fillRect(nx,ny-16*s,nw,12*s);
   const ng=ctx.createLinearGradient(nx,0,nx+nw,0); ng.addColorStop(0,'#2a7fd8'); ng.addColorStop(1,'#9fe4ff'); ctx.fillStyle=ng; ctx.fillRect(nx,ny-16*s,nw*U.limit(nitro/nitroCap,0,1),12*s);
-  ctx.font=`900 ${30*s}px ${FD}`; ctx.fillStyle='#ffd27a'; ctx.shadowBlur=10*s; ctx.fillText('$'+fortune+'M',nx,ny-40*s);
+  ctx.font=`900 ${30*s}px ${FD}`; ctx.fillStyle='#ffd27a'; ctx.shadowBlur=10*s; ctx.fillText(money(fortune),nx,ny-40*s);
   ctx.font=`700 ${13*s}px ${FD}`; ctx.fillStyle='#fff8ea'; ctx.fillText('FORTUNE COLLECTED',nx,ny-72*s);
   if(mode==='countdown'||(mode==='race'&&raceTime<.8)){
     const txt=mode==='countdown'?String(Math.ceil(countdown)):'GO!', t=mode==='countdown'?countdown%1:1-raceTime/.8;
@@ -2437,6 +2481,7 @@ const Sound = {
     s.buffer=this.noise; f.type='lowpass'; f.frequency.value=500; g.gain.setValueAtTime(.5,t); g.gain.exponentialRampToValueAtTime(.001,t+.45);
     s.connect(f); f.connect(g); g.connect(this.master); s.start(t); s.stop(t+.5); this.tone(90,.3,'sine',.3,40);
   },
+  siren(){for(let i=0;i<8;i++) setTimeout(()=>this.tone(i%2?660:880,.4,'triangle',.08),i*420);},
   fanfare(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.tone(f,.35,'triangle',.14),i*130));}
 };
 
@@ -2490,7 +2535,7 @@ function finishRace(){
   if(!prev||rank<prev.rank||(rank===prev.rank&&finalTime<prev.time)) save.best[stage.id]={rank,time:finalTime,fortune};
   save.results[stage.id]=legOrder;
   save.unlocked=Math.max(save.unlocked,Math.min(STAGES.length,stageIdx+2));
-  save.spins+=rank===1?2:1; save.bank+=fortune; persist(); syncToggles();
+  save.spins+=rank===1?2:1; save.bank=Math.max(0,save.bank+fortune); persist(); syncToggles();
   Sound.fanfare(); burst('#ffd27a',40); el.toast.hidden=true;
   clearSubs(); say(stage.script.outro[0],stage.script.outro[1],3.4);
 }
@@ -2500,7 +2545,7 @@ function showStory(){
   const sc=$('stScene'); sc.innerHTML=''; const b=document.createElement('b'); b.textContent=o[0]; sc.append(b,document.createTextNode('“'+o[1]+'”'));
   $('stStampPlace').textContent=st.place; $('stStampDate').textContent=ordinal(rank)+' · Arrived';
   $('stEra').textContent=st.era; $('stPlace').textContent=st.place; $('stCountry').textContent=st.country;
-  $('stHistory').textContent=st.history; $('stRank').textContent=ordinal(rank); $('stTime').textContent=fmtTime(finalTime); $('stFortune').textContent='$'+fortune+'M';
+  $('stHistory').textContent=st.history; $('stRank').textContent=ordinal(rank); $('stTime').textContent=fmtTime(finalTime); $('stFortune').textContent=money(fortune)+(fines?` (after $${fines}M in fines)`:'');
   $('stInitials').textContent=p.initials; $('stName').textContent=p.name; $('stRole').textContent=p.role; $('stStory').textContent=p.story; $('stFact').textContent=' '+p.fact;
   const tr=$('stTrail'); tr.innerHTML=''; STAGES.forEach((s,i)=>{const li=document.createElement('li'); li.className=i===stageIdx?'here':(save.best[s.id]?'done':''); li.title=s.place; tr.append(li);});
   el.story.hidden=false; el.touch.hidden=true; el.corner.hidden=true; clearSubs();
@@ -4305,9 +4350,13 @@ function initCrowd(){
   for(let k=0;k<total;k++){const cyc=k>=N, cloth=new TH.Color(C3(pick(Math.random,CLOTH))), pants=new TH.Color(C3(pick(Math.random,['#1d1f24','#2a3a5a','#5a4a3a','#3a3a3a',pick(Math.random,CLOTH)])));
     const skin=new TH.Color(C3(th.naija?pick(Math.random,SKIN.slice(0,6)):pick(Math.random,SKIN)));
     C.torso.setColorAt(k,cloth); C.head.setColorAt(k,skin); C.legL.setColorAt(k,pants); C.legR.setColorAt(k,pants); C.armL.setColorAt(k,cloth); C.armR.setColorAt(k,cloth);
-    peds.push({cyc,s:0,side:1,lat:0,dir:1,v:0,ph:Math.random()*6,alive:false,stand:false});}
+    peds.push({cyc,s:0,side:1,lat:0,dir:1,v:0,ph:Math.random()*6,alive:false,stand:false,crosser:!cyc&&k>=N-4,down:0});}
   Object.values(C).forEach(m=>{if(m.instanceColor) m.instanceColor.needsUpdate=true;});
-  R3.crowd={C,peds,N,NC,city};
+  // crossing points: the zebra crossings at junctions, plus jaywalking spots on busy Nigerian streets
+  const xs=[]; places.forEach(p=>{const sg=segments[p.seg]; if(sg&&!sg.water&&!sg.fly&&!sg.branch&&p.seg>startLine+60) xs.push({seg:p.seg+1.5,zebra:!!th.dual});});
+  if(th.naija) for(let i=startLine+300;i<finishIdx-100;i+=420+Math.floor(Math.random()*300)){const sg=segments[i]; if(sg&&!sg.water&&!sg.fly&&!sg.branch&&!sg.street) xs.push({seg:i+.5,zebra:false});}
+  xs.sort((a,b)=>a.seg-b.seg);
+  R3.crowd={C,peds,N,NC,city,xs:(city||th.naija)?xs:[]};
 }
 const _m1=TH?new TH.Matrix4():null, _m2=TH?new TH.Matrix4():null, _q1=TH?new TH.Quaternion():null, _p1=TH?new TH.Vector3():null, _s1=TH?new TH.Vector3(1,1,1):null, _eu=TH?new TH.Euler():null, _hide=TH?new TH.Matrix4().makeScale(0,0,0):null;
 function spawnPed(o,pIdx,anywhere){
@@ -4324,19 +4373,37 @@ function spawnPed(o,pIdx,anywhere){
 function updateCrowd(dt,pIdx){
   const cr=R3.crowd; if(!cr) return; const C=cr.C, segs=segments, city=cr.city;
   let bi=0;
+  const pz=position+playerZ, pS=(pz/SEG)%segments.length, pxm=playerX*HW, racing=mode==='race';
   cr.peds.forEach((o,k)=>{
-    if(!o.alive||o.s<pIdx-40||o.s>pIdx+R3.view) spawnPed(o,pIdx,!o.alive&&!o.seen);
+    if(o.crosser){
+      if(o.alive&&(o.s<pIdx-30||o.s>pIdx+R3.view+40)) o.alive=false;
+      if(!o.alive&&racing){const x=cr.xs.find(x=>!x.used&&x.seg-pIdx>120&&x.seg-pIdx<Math.min(R3.view*.9,300));
+        if(x){x.used=true; const side=Math.random()<.5?-1:1, tArr=(x.seg-pS)*SEG/Math.max(speed,MAXSPEED*.45);
+          o.alive=true; o.cross=true; o.down=0; o.hurt=false; o.s=x.seg+(Math.random()-.5)*(x.zebra?1.6:.6); o.v=1.25+Math.random()*.35; o.stand=false;
+          o.cdir=-side; o.lat=U.limit(pxm+side*o.v*tArr*(.85+Math.random()*.3),-(HW+1.2),HW+1.2);
+          if(Math.abs(o.lat)<HW+.5) event('peds',null,true);}}
+    } else if(!o.alive||o.s<pIdx-40||o.s>pIdx+R3.view) spawnPed(o,pIdx,!o.alive&&!o.seen);
     o.seen=true;
     if(!o.alive){['torso','head','legL','legR','armL','armR'].forEach(n=>C[n].setMatrixAt(k,_hide)); return;}
-    if(mode!=='intro') o.s+=o.dir*o.v*dt/SL;
-    o.ph+=dt*(o.cyc?7:o.v*5.2);
-    const p=poseAt(o.s*SEG,o.lat/HW), d=Math.abs(o.lat)-(o.side<0&&stage.theme.dual?MW+2*HW+1.4:0);
-    const gy=p.y+(o.cyc?.04:(city&&d<HW+4.1?.16:terrainY(d)));
-    _eu.set(0,-p.h+(o.dir>0?0:Math.PI),0); _q1.setFromEuler(_eu); _p1.set(p.x,gy,p.z); _m1.compose(_p1,_q1,_s1);
-    const swing=o.stand?0:Math.sin(o.ph)*(o.cyc?.9:.55), hip=o.cyc?1.0:.82;
+    // knocked over: lie still, then get up and limp to the side of the road
+    if(o.down>0){o.down-=dt; if(o.down<=0){o.hurt=true; if(o.cross){o.v=.55;} else {o.v=o.cyc?0:.5; o.stand=o.cyc;}}}
+    else if(mode!=='intro'){
+      if(o.cross){o.lat+=o.cdir*o.v*dt; if(o.cdir*o.lat>HW+1.3){o.cross=false; o.v=0; o.stand=true;}}
+      else o.s+=o.dir*o.v*dt/SL;}
+    if(racing&&o.down<=0&&!o.hurt&&speed>MAXSPEED*.05){ // the player's car hits this person or cyclist
+      const dzm=(o.s-pS)*SL; if(dzm>-2.4&&dzm<2.6&&Math.abs(o.lat-pxm)<1.15&&hitRoadUser(o.cyc?'cyclist':'person')){o.down=4.5; o.lat+=(o.lat>=pxm?1:-1)*1.8; position=U.increase(position,-SEG*9,trackLength);}}
+    o.ph+=dt*(o.cyc?(o.stand?0:7):o.v*5.2*(o.hurt?.6:1));
+    const p=poseAt(o.s*SEG,o.lat/HW), d=Math.abs(o.lat)-(o.lat<-HW-1&&stage.theme.dual?MW+2*HW+1.4:0);
+    const gy=p.y+(o.cyc?.04:(Math.abs(o.lat)<HW+.3?0:city&&d<HW+4.1?.16:terrainY(Math.max(0,d))));
+    const yaw=o.cross&&o.down<=0?-p.h+(o.cdir>0?-Math.PI/2:Math.PI/2):-p.h+(o.dir>0?0:Math.PI);
+    if(o.down>0){_eu.set(-Math.PI/2,yaw,0,'YXZ'); _p1.set(p.x,gy+.16,p.z);} else {_eu.set(0,yaw,0,'YXZ'); _p1.set(p.x,gy,p.z);}
+    _q1.setFromEuler(_eu); _m1.compose(_p1,_q1,_s1);
+    const swing=(o.stand||o.down>0)?0:Math.sin(o.ph)*(o.cyc?.9:.55), hip=o.cyc?1.0:.82;
     const part=(n,x,y,z,rx)=>{_m2.makeRotationX(rx); _m2.setPosition(0,0,0); const t=new TH.Matrix4().makeTranslation(x,y,z).multiply(_m2); C[n].setMatrixAt(k,_m1.clone().multiply(t));};
     part('torso',0,hip+.31,o.cyc?.08:0,o.cyc?-.25:0); part('head',0,hip+.8,o.cyc?-.05:0,0);
-    if(o.cyc){part('legL',.12,hip,0,-1.1+swing*.6); part('legR',-.12,hip,0,-1.1-swing*.6); part('armL',.24,hip+.56,-.08,-1.0); part('armR',-.24,hip+.56,-.08,-1.0);
+    if(o.cyc&&o.down>0){ // rider on the ground, bicycle on its side next to them
+      _eu.set(0,yaw,Math.PI/2,'YXZ'); _q1.setFromEuler(_eu); _p1.set(p.x+Math.cos(p.h)*1.1,gy+.05,p.z+Math.sin(p.h)*1.1); C.bike.setMatrixAt(bi++,new TH.Matrix4().compose(_p1,_q1,_s1));}
+    if(o.cyc&&o.down<=0){part('legL',.12,hip,0,-1.1+swing*.6); part('legR',-.12,hip,0,-1.1-swing*.6); part('armL',.24,hip+.56,-.08,-1.0); part('armR',-.24,hip+.56,-.08,-1.0);
       C.bike.setMatrixAt(bi++,_m1.clone());}
     else{part('legL',.11,hip,0,swing); part('legR',-.11,hip,0,-swing); part('armL',.28,hip+.58,0,-swing*.8); part('armR',-.28,hip+.58,0,swing*.8);}
   });

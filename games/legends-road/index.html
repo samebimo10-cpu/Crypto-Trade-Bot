@@ -4594,8 +4594,7 @@ function woodTex(){ if(TEX.wood) return TEX.wood;
 function buildCockpit(){
   const T=cockpitTheme(), G=new TH.Group(), cx=.37, CZ=.6, R0=1.5; // the dash curves around the car's centre line, right of the driver's eye
   const M=(hex,o)=>cpMat(hex,o), leather=M(T.leather,{roughness:.7}), top=M(T.top,{roughness:.85}), piano=M(T.piano,{roughness:.12,metalness:.3}),
-    trim=M(T.trim,{metalness:.85,roughness:.28}), amb=new TH.MeshBasicMaterial({color:C3(T.amb)}), wheelM=M(T.wheel,{roughness:.55}), dark=M('#141518',{roughness:.6}),
-    skin=M('#5a3a26',{roughness:.65}), sleeve=M('#2a3a5a',{roughness:.85});
+    trim=M(T.trim,{metalness:.85,roughness:.28}), amb=new TH.MeshBasicMaterial({color:C3(T.amb)}), wheelM=M(T.wheel,{roughness:.55}), dark=M('#141518',{roughness:.6});
   const add=(geo,mat,x,y,z,rx,P)=>{const m=new TH.Mesh(geo,mat); m.position.set(x,y,z); if(rx) m.rotation.x=rx; (P||G).add(m); return m;};
   const beam=(mat,a,b,w,d,P)=>{const A=new TH.Vector3(...a),B=new TH.Vector3(...b),dir=B.clone().sub(A),L=dir.length(); const m=new TH.Mesh(new TH.BoxGeometry(w,L,d),mat);
     m.position.copy(A).add(B).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new TH.Vector3(0,1,0),dir.normalize()); (P||G).add(m); return m;};
@@ -4619,7 +4618,7 @@ function buildCockpit(){
   add(new TH.BoxGeometry(.26,.06,.6),T.wood?new TH.MeshStandardMaterial({map:woodTex(),roughness:.45}):piano,0,0,0,0,cons);
   [-1,1].forEach(s=>add(new TH.BoxGeometry(.012,.07,.6),amb,s*.135,0,0,0,cons));
   add(new TH.BoxGeometry(.22,.02,.08),piano,0,.04,.22,0,cons);
-  // two-spoke steering wheel with touch pads, a plain centre emblem, and the driver's hands
+  // two-spoke steering wheel with touch pads and a plain centre emblem
   const wheel=new TH.Group(); wheel.position.set(0,-.34,-.66); wheel.rotation.x=-.3; G.add(wheel);
   const spin=new TH.Group(); wheel.add(spin);
   const rim=new TH.TorusGeometry(.17,.026,12,48); rim.scale(1,.94,1); add(rim,wheelM,0,0,0,0,spin);
@@ -4629,8 +4628,6 @@ function buildCockpit(){
     add(new TH.BoxGeometry(.06,.032,.004),piano,s*.1,-.003,.017,0,spin);
     for(let k=0;k<3;k++) add(new TH.CircleGeometry(.004,8),new TH.MeshBasicMaterial({color:0xcfd8e8}),s*(.083+k*.017),-.003,.0195,0,spin);});
   beam(wheelM,[-.035,-.05,0],[-.05,-.155,0],.028,.024,spin); beam(wheelM,[.035,-.05,0],[.05,-.155,0],.028,.024,spin);
-  [-1,1].forEach(s=>{const hx=s*.148, hy=.088, h=add(new TH.SphereGeometry(.032,10,8),skin,hx,hy,.02,0,spin); h.scale.set(1.15,1.35,1.1);
-    beam(skin,[hx,hy-.02,.03],[s*.19,-.02,.13],.042,.042,spin); beam(sleeve,[s*.19,-.02,.13],[s*.27,-.28,.55],.085,.085,spin);});
   add(new TH.CylinderGeometry(.03,.04,.12,12).rotateX(Math.PI/2),dark,0,-.34,-.74);
   // door panel with an ambient line and a speaker
   const door=new TH.Group(); door.position.set(-.72,-.38,-.42); door.rotation.y=.25; G.add(door);

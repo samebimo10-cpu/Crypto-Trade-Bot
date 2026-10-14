@@ -123,11 +123,16 @@ still count.
 Press **C** (or tap **OUT/IN** at the top right) to switch between the
 chase camera behind the car and the driver's seat. Inside you get:
 
-- A dashboard with working speed and rev dials, gear, fuel and a brake
-  warning, plus a centre screen with the radio station (fictional), the
-  outside temperature and a compass.
-- A steering wheel that turns with your steering, with the driver's hands
-  on it, A-pillars, sun visors and the bonnet in your car's colour.
+- A modern luxury-car dashboard: one curved glass screen across the whole
+  dash, with the driver display (speed and power dials, gear, distance to
+  go) behind the wheel, a centre display (search bar, radio with fictional
+  stations, phone, climate) and a passenger display with a clock.
+- Round turbine air vents, glowing ambient light lines along the dash and
+  doors, and a centre console with wood trim.
+- A two-spoke steering wheel with touch pads that turns with your
+  steering, with the driver's hands on it. The executive saloon, luxury
+  SUV, estate and 4x4 have a light leather interior with pink ambient
+  light; the other cars are dark with blue light. No maker badges.
 - A live rear-view mirror showing the road behind (on *3D · High*).
 - Wipers that run in the rain, with rain drops building up on the glass
   between sweeps.

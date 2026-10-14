@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2758"/><stop offset=".6" stop-color="#c96a4c"/><stop offset="1" stop-color="#f7c27a"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#s)"/>
+  <circle cx="360" cy="250" r="56" fill="#ffd590"/>
+  <rect y="280" width="512" height="232" fill="#bb9250"/>
+  <polygon points="236,280 276,280 470,512 42,512" fill="#645243"/>
+  <polygon points="252,300 260,300 268,380 244,380" fill="#f2e3c4"/>
+  <polygon points="248,420 264,420 276,512 236,512" fill="#f2e3c4"/>
+  <text x="256" y="150" text-anchor="middle" font-family="Impact, Arial Narrow, sans-serif" font-size="92" font-weight="900" fill="#fff8ea">LEGENDS</text>
+  <text x="256" y="232" text-anchor="middle" font-family="Impact, Arial Narrow, sans-serif" font-size="80" font-weight="900" fill="#e8b04b">ROAD</text>
+</svg>

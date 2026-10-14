@@ -1,0 +1,38 @@
+{
+  "name": "Legends Road",
+  "short_name": "Legends Road",
+  "description": "An offline racing series: a Lagos couple race rival couples across twelve cities, from Lagos, Port Harcourt, Yenagoa and Asaba to Starbase, meeting the legends whose fortunes began there.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0a1322",
+  "theme_color": "#0a1322",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "id": "./"
+}

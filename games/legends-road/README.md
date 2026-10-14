@@ -181,6 +181,15 @@ code, so the game needs no network connection.
 
 ## Install on a phone and play offline
 
+**Play and install:** https://samebimo10-cpu.github.io/Crypto-Trade-Bot/
+**Source:** https://github.com/samebimo10-cpu/Crypto-Trade-Bot/tree/main/games/legends-road
+
+Open the link on your phone and press **Install on phone** on the title
+screen. On Android (Chrome) this opens the normal install prompt; on
+iPhone it shows how to use Share > Add to Home Screen. Once installed the
+game opens from its own icon, full screen, and plays with no connection.
+
+
 Phones will not run a game from a downloaded HTML file, and they only offer
 "Install" for a page served over HTTPS. So the game has to be hosted once;
 after the first visit it is cached on the phone and works with no connection.

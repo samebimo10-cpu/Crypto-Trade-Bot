@@ -65,6 +65,8 @@ button{font:inherit;color:inherit}
   font-size:clamp(3.4rem,12vw,8.4rem);letter-spacing:.01em;color:var(--paper);text-shadow:0 6px 30px rgba(0,0,0,.45)}
 .logo span{display:block;color:var(--gold)}
 .lede{font-size:clamp(1rem,2.3vw,1.18rem);line-height:1.5;margin:0;max-width:36rem;color:#e7dcc6}
+.install-help{margin:0;max-width:640px;font-size:.95rem;color:var(--paper,#f4ead6);background:rgba(10,19,34,.6);border-left:3px solid var(--gold,#e8b04b);padding:8px 12px}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .keys{font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;color:var(--mist);margin:0}
 .fineprint{font-size:.78rem;color:var(--mist);margin:0;max-width:36rem;font-style:italic}
 .toggle{display:inline-flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:4px 0;
@@ -265,6 +267,12 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
       <button class="btn ghost" id="btnGfx" type="button">Graphics: 3D · High</button>
       <label class="slider" for="rgBright">Brightness <input type="range" id="rgBright" min="60" max="140" step="5" value="100"></label>
     </div>
+    <div class="row install">
+      <button class="btn" id="btnInstall" type="button">Install on phone</button>
+      <a class="btn ghost" id="lnkPlay" href="https://samebimo10-cpu.github.io/Crypto-Trade-Bot/" target="_blank" rel="noopener">Play online</a>
+      <a class="btn ghost" id="lnkGit" href="https://github.com/samebimo10-cpu/Crypto-Trade-Bot/tree/main/games/legends-road" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <p class="install-help" id="installHelp" hidden></p>
     <p class="keys">Arrows or WASD to drive · Space for nitro · H horn · C inside/outside view · N map · P pause</p>
     <p class="fineprint">The legends' stories are short summaries of public biographies; fortunes and rankings change often. The couples are fictional. Street maps are stylised. Works fully offline once loaded.</p>
   </div>
@@ -4754,6 +4762,22 @@ const fontsReady=document.fonts&&document.fonts.ready?Promise.race([document.fon
 fontsReady.then(boot);
 
 /* ---------- offline install (only when served over http/https) ---------- */
+/* ---------- install as an app on a phone ---------- */
+const PAGES_URL='https://samebimo10-cpu.github.io/Crypto-Trade-Bot/';
+let installEvt=null;
+const installed=()=>matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true;
+function syncInstall(){const b=$('btnInstall'); if(installed()){b.textContent='Installed ✓'; b.disabled=true;} else if(installEvt) b.textContent='Install app';}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault(); installEvt=e; syncInstall();});
+addEventListener('appinstalled',()=>{installEvt=null; syncInstall(); showToast('Installed','Legends Road is on your home screen and plays offline.');});
+$('btnInstall').addEventListener('click',async()=>{
+  const help=$('installHelp'); help.hidden=false;
+  if(installEvt){installEvt.prompt(); const r=await installEvt.userChoice.catch(()=>null); installEvt=null; help.hidden=true; if(r&&r.outcome==='accepted') syncInstall(); return;}
+  const onPages=location.href.startsWith(PAGES_URL), ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!onPages&&!/^https:$/.test(location.protocol)||/claude\.ai|claudeusercontent/.test(location.hostname)) help.textContent='To install, open '+PAGES_URL+' on your phone (tap “Play online”), wait for the title screen, then press Install on phone there.';
+  else if(ios) help.textContent='On iPhone or iPad: tap the Share button in Safari, then “Add to Home Screen”. The game then opens from its icon and plays offline.';
+  else help.textContent='Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”. The game then opens from its icon and plays offline.';
+});
+syncInstall();
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
   addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
 }

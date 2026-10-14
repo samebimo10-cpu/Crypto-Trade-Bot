@@ -57,16 +57,18 @@ button{font:inherit;color:inherit}
 .sum{margin:0;color:var(--mist);font-size:.95rem}
 
 /* ---------- title ---------- */
-#title{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-end;padding:16px;overflow-y:auto;
+#title{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;padding:16px;overflow-y:auto;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));
   background:linear-gradient(180deg,rgba(10,19,34,0) 25%,rgba(10,19,34,.82) 70%,rgba(10,19,34,.96))}
-.title-wrap{max-width:48rem;width:100%;margin:0 auto 0 max(0px,4vw);display:flex;flex-direction:column;gap:12px}
+.title-wrap{max-width:48rem;width:100%;margin:auto auto 0 max(0px,4vw);display:flex;flex-direction:column;gap:12px}
 .logo{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.82;margin:0;
   font-size:clamp(3.4rem,12vw,8.4rem);letter-spacing:.01em;color:var(--paper);text-shadow:0 6px 30px rgba(0,0,0,.45)}
 .logo span{display:block;color:var(--gold)}
 .lede{font-size:clamp(1rem,2.3vw,1.18rem);line-height:1.5;margin:0;max-width:36rem;color:#e7dcc6}
 .install-help{margin:0;max-width:640px;font-size:.95rem;color:var(--paper,#f4ead6);background:rgba(10,19,34,.6);border-left:3px solid var(--gold,#e8b04b);padding:8px 12px}
-a.btn{text-decoration:none;display:inline-flex;align-items:center}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;color:var(--paper)}
+a.btn.ghost{text-decoration:underline}
 .keys{font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;color:var(--mist);margin:0}
 .fineprint{font-size:.78rem;color:var(--mist);margin:0;max-width:36rem;font-style:italic}
 .toggle{display:inline-flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:4px 0;
@@ -161,7 +163,7 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
 @keyframes toastIn{0%{opacity:0;transform:translate(-50%,-10px)}8%{opacity:1;transform:translate(-50%,0)}85%{opacity:1}100%{opacity:0}}
 
 /* ---------- episode end / passport ---------- */
-#story{position:fixed;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;padding:16px;
+#story{position:fixed;inset:0;z-index:7;display:flex;padding:16px;overflow-y:auto;
   padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));
   background:radial-gradient(ellipse at center,rgba(10,19,34,.55),rgba(10,19,34,.9))}
 .passport{width:min(1100px,100%);max-height:100%;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;
@@ -210,7 +212,9 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
 .trail li.here{background:var(--stamp);border-color:var(--stamp);opacity:1;transform:scale(1.3)}
 
 /* ---------- pause ---------- */
-#pause{position:fixed;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:rgba(10,19,34,.78);padding:16px}
+#pause{position:fixed;inset:0;z-index:8;display:flex;overflow-y:auto;background:rgba(10,19,34,.78);padding:16px;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+#story>*,#pause>*{margin:auto}
 .pause-card{display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:30rem}
 .pause-card h2{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:3.4rem;margin:0;line-height:.9}
 .pause-card p{margin:0;color:var(--mist)}
@@ -242,6 +246,32 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
   #toast{top:calc(52px + env(safe-area-inset-top,0px));font-size:.85rem;padding:6px 12px;max-width:min(26rem,calc(100% - 32px))}
   #subs{bottom:calc(30% + env(safe-area-inset-bottom,0px));font-size:.95rem}
 }
+/* phones and tablets, both orientations */
+@media (pointer:coarse){ .keys{display:none} }
+@media (max-width:560px){
+  #title{background:linear-gradient(180deg,rgba(10,19,34,.1) 0%,rgba(10,19,34,.78) 22%,rgba(10,19,34,.95) 60%)}
+  #title .row.main{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  #title .row.main #btnPlay{grid-column:1/-1}
+  #title .row.main .btn,#title .install .btn{justify-content:center;text-align:center}
+  #title .row.install{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%;gap:8px}
+  #title .install .btn{padding:.7em .4em;font-size:.9rem}
+  .title-wrap{margin-left:auto}
+  .slider{width:100%} .slider input{flex:1;width:auto}
+}
+@media (max-height:560px) and (orientation:landscape){
+  #title{padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .title-wrap{gap:8px;max-width:none}
+  .logo{font-size:clamp(2.2rem,14vh,4rem);display:flex;gap:.25em}
+  .logo span{display:inline}
+  .lede{font-size:.9rem;line-height:1.35;max-width:46rem}
+  .fineprint{display:none}
+  #title .btn{font-size:.88rem;padding:.55em 1em}
+  .row{gap:8px}
+  .toggle,.slider{font-size:.78rem}
+  .screen{padding-top:calc(10px + env(safe-area-inset-top,0px))}
+  .wrap{gap:12px}
+}
+@media (max-height:420px) and (orientation:landscape){ .lede{display:none} }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
 }
@@ -255,7 +285,7 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
     <p class="eyebrow">Season One · The Fortune Trail</p>
     <h1 class="logo">Legends<span>Road</span></h1>
     <p class="lede">Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across twelve cities to win the Fortune Trail and save Tobi's late father's garage. Every episode ends where a famous fortune began.</p>
-    <div class="row">
+    <div class="row main">
       <button id="btnPlay" class="btn primary">Play season</button>
       <button id="btnMap" class="btn">Episodes</button>
       <button id="btnGarage" class="btn">Garage</button>
@@ -4600,7 +4630,8 @@ function buildCockpit(){
     m.position.copy(A).add(B).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new TH.Vector3(0,1,0),dir.normalize()); (P||G).add(m); return m;};
   const arc=(r,h,a0,a1,mat,y,seg)=>{const g=new TH.CylinderGeometry(r,r,h,seg||64,1,true,Math.PI-a1,a1+a0); const m=add(g,mat,cx,y,CZ); m.material.side=TH.DoubleSide; return m;}; // a0 = angle to the left, a1 = to the right
   // the dashboard: a sweeping curved face, a padded top running to the windscreen, ambient light lines
-  arc(R0+.02,.36,.92,.92,leather,-.33);
+  arc(R0+.02,.36,.92,.92,leather,-.33); arc(R0+.04,.9,.95,.95,M(T.key==='light'?'#a8a49c':'#101114',{roughness:.9}),-.95);
+  add(new TH.PlaneGeometry(3.2,2).rotateX(-Math.PI/2),M('#0c0d10',{roughness:1}),cx,-1.05,-.3);
   const tg=new TH.RingGeometry(R0-.02,R0+.55,64,1,Math.PI/2-.92,1.84); tg.rotateX(-Math.PI/2); add(tg,top,cx,-.12,CZ).material.side=TH.DoubleSide;
   arc(R0-.03,.006,.9,.9,amb,-.128); arc(R0-.04,.006,.9,.9,amb,-.305);
   // the full-width curved glass screen: driver display, centre display and passenger display in one band
@@ -4643,8 +4674,9 @@ function buildCockpit(){
   add(new TH.PlaneGeometry(.255,.064),new TH.MeshBasicMaterial({map:rt.texture}),cx,.4,-.664);
   // wipers, parked low on the windscreen
   const wipers=[0,.8].map(x=>{const w=new TH.Group(); w.position.set(x,-.1,-1.3); G.add(w); beam(dark,[0,0,0],[.6,0,0],.01,.01,w); return w;});
+  G.position.y=-.06;
   G.traverse(o=>{if(o.isMesh){o.castShadow=false; o.receiveShadow=false; o.userData.shared=true; if(!o.renderOrder) o.renderOrder=5;}});
-  return {G,spin,wipers,sc,st,rt,theme:T.key,mcam:new TH.PerspectiveCamera(38,256/72,.5,900),carId:activeCar.id,piv:[[0,-.1,-1.3],[.8,-.1,-1.3]],tip:[0,.5,-1.3]};
+  return {G,spin,wipers,sc,st,rt,theme:T.key,mcam:new TH.PerspectiveCamera(38,256/72,.5,900),carId:activeCar.id,piv:[[0,-.16,-1.3],[.8,-.16,-1.3]],tip:[0,.44,-1.3]};
 }
 function drawGauges(D){ // paints the whole screen band: driver display | centre display | passenger display
   const g=D.sc.getContext('2d'), W2=2048, H2=170, kmh=Math.round(speed/MAXSPEED*240), sp=speed/MAXSPEED, th=stage.theme, night=!!th.night;
@@ -4724,9 +4756,10 @@ function cockpitCamera(cam,dt){
   const ey=m.userData.eye, sp=speed/MAXSPEED, bob=Math.sin(tNow*31)*.004*sp+(offroad?(Math.random()-.5)*.02*sp:0);
   cam.position.copy(m.localToWorld(new TH.Vector3(-.37,ey+bob,.15)));
   if(shake>0&&!reduceMotion) cam.position.add(new TH.Vector3((Math.random()-.5)*shake*.06,(Math.random()-.5)*shake*.05,0));
-  cam.lookAt(m.localToWorld(new TH.Vector3(-.3,ey-2.6,-30)));
+  cam.lookAt(m.localToWorld(new TH.Vector3(-.3,ey-1.1,-30)));
   cam.rotateZ(-steerDir*.025*sp);
-  const fov=(innerHeight>innerWidth?84:74)+sp*5+(nitroOn?4:0); if(Math.abs(cam.fov-fov)>.05){cam.fov+=(fov-cam.fov)*Math.min(1,dt*3); cam.updateProjectionMatrix();}
+  const asp=innerWidth/innerHeight, base=U.limit(2*Math.atan(1.15/asp)*180/Math.PI,52,82); // keep about 98° across on every screen shape
+  const fov=base+sp*4+(nitroOn?3:0); if(Math.abs(cam.fov-fov)>.05){cam.fov+=(fov-cam.fov)*Math.min(1,dt*3); cam.updateProjectionMatrix();}
 }
 // the rear-view mirror: a small render looking backwards, every other frame on High
 function renderMirror(cam){

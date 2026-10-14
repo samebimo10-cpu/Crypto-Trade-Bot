@@ -133,7 +133,7 @@ chase camera behind the car and the driver's seat. Inside you get:
   steering. The executive saloon, luxury
   SUV, estate and 4x4 have a light leather interior with pink ambient
   light; the other cars are dark with blue light. No maker badges.
-- A live rear-view mirror showing the road behind (on *3D · High*).
+- A live rear-view mirror showing the road behind.
 - Wipers that run in the rain, with rain drops building up on the glass
   between sweeps.
 - A little engine vibration and head tilt in bends.

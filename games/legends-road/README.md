@@ -130,7 +130,7 @@ chase camera behind the car and the driver's seat. Inside you get:
 - Round turbine air vents, glowing ambient light lines along the dash and
   doors, and a centre console with wood trim.
 - A two-spoke steering wheel with touch pads that turns with your
-  steering, with the driver's hands on it. The executive saloon, luxury
+  steering. The executive saloon, luxury
   SUV, estate and 4x4 have a light leather interior with pink ambient
   light; the other cars are dark with blue light. No maker badges.
 - A live rear-view mirror showing the road behind (on *3D · High*).

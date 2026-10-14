@@ -92,13 +92,21 @@ falling rain, a wet, reflective road and spray from the tyres.
 
 People walk, cross and ride on these streets, and hitting one has consequences:
 
-- **Pedestrians cross the road** at zebra crossings, and in Nigerian cities
-  people also cross away from them. Tobi or Kemi warns you when someone is
-  on the road ahead. Brake or steer round them.
+- **Pedestrians sometimes cross the road** at a few of the zebra crossings,
+  and now and then away from them in Nigerian cities. Like real people,
+  they wait at the kerb while your car is close and only step out when
+  you are far away or have passed. Rivals and traffic stop for them too,
+  so they are not an obstacle aimed at you alone. Tobi or Kemi warns you
+  when someone is crossing ahead.
+- **Horn** (H, or the Horn button on a phone): people crossing ahead hurry
+  to the side, and slow traffic in your lane moves over.
 - **Hit a pedestrian, a cyclist, an okada or a keke** and the car stops dead.
   The person goes down (they get up again after a few seconds) and the
   police hold you at the roadside for 5 seconds while the rivals drive
   past, with flashing police lights and a siren.
+- **Blood effects:** a splash of blood on the road where the person fell,
+  and on the windscreen in the inside view, which the wipers clear. Turn
+  them off with **Blood effects** in the pause menu.
 - **Fines** come out of the fortune you have collected: $15M for a
   pedestrian, $10M for a cyclist or okada rider, $8M for a keke. Your
   fortune can go below zero, and the story screen shows what you paid.
@@ -109,6 +117,35 @@ People walk, cross and ride on these streets, and hitting one has consequences:
 
 In *Classic 2D* there are no people on the pavements, but okadas and kekes
 still count.
+
+## Inside or outside the car
+
+Press **C** (or tap **OUT/IN** at the top right) to switch between the
+chase camera behind the car and the driver's seat. Inside you get:
+
+- A dashboard with working speed and rev dials, gear, fuel and a brake
+  warning, plus a centre screen with the radio station (fictional), the
+  outside temperature and a compass.
+- A steering wheel that turns with your steering, with the driver's hands
+  on it, A-pillars, sun visors and the bonnet in your car's colour.
+- A live rear-view mirror showing the road behind (on *3D · High*).
+- Wipers that run in the rain, with rain drops building up on the glass
+  between sweeps.
+- A little engine vibration and head tilt in bends.
+
+Outside, your car shows bright brake lights when you brake or stop.
+
+## People, okadas and kekes
+
+Pedestrians have rounded bodies, faces, hair and shoes, and vary in
+height. Women wear wrappers, some with a *gele* head tie, and some street
+hawkers carry a basin of goods on their heads. Cyclists ride real-looking
+bicycles with spoked wheels. Okadas are modelled on the common commuter
+motorbike (spoked wheels, fork, tank, long seat, exhaust, mirrors) with a
+rider, often in a helmet, and usually a passenger. Kekes (keke napep) have
+the rounded nose with a single front wheel, a canvas roof with rolled-up
+side curtains, open sides, a spare wheel on the back, a driver at the
+handlebar and one to three passengers on the rear bench.
 
 ## Features
 
@@ -175,6 +212,8 @@ open `http://localhost:8000`.
 | Skip intro | Enter or Esc | Skip button |
 | Pause | P or Esc | II button |
 | Sound on/off | M | SND button |
+| Horn | H | Horn button |
+| Inside / outside view | C | OUT / IN button |
 
 Collect gold coins to build your fortune and blue canisters to refill nitro.
 Off-road driving slows you down, and roadside objects stop you. Finishing an

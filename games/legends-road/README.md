@@ -88,6 +88,25 @@ night) and **Weather** (story default, clear, cloudy or rain) before you
 start. Night lights the street lamps, windows and headlights; rain adds
 falling rain, a wet, reflective road and spray from the tyres.
 
+## Car radio: Afrobeats and heavy bass
+
+The game plays its own original music, made live in code (no recordings,
+so it works offline). There are five stations with heavy bass, a
+side-chain pump on every kick, and a bass harmonic so it still thumps on
+phone speakers:
+
+| Station | Style | Tempo |
+| --- | --- | --- |
+| Afro Wave 99.3 | Afrobeats: 3-3-2 rim pattern, rolling 808, chord stabs, marimba hook | 104 BPM |
+| Lagos Groove 97.1 | Amapiano: log drum, shakers, jazzy keys | 112 BPM |
+| Creek Radio 94.5 | Afro-house: four-on-the-floor, congas, offbeat bass | 122 BPM |
+| Road FM 101.5 | Highlife: bell pattern, walking bass, guitar arpeggios | 118 BPM |
+| Bass FM 88.8 | Afro-trap: half-time beat, long gliding 808s, hat rolls | 140 BPM |
+
+Press **R** or tap **FM** to change station; the station shows on the car's
+centre screen in the inside view. Turn music on or off with **Music** on
+the title screen or in the pause menu. The station names are fictional.
+
 ## Road safety
 
 People walk, cross and ride on these streets, and hitting one has consequences:
@@ -227,6 +246,7 @@ open `http://localhost:8000`.
 | Pause | P or Esc | II button |
 | Sound on/off | M | SND button |
 | Horn | H | Horn button |
+| Change radio station | R | FM button |
 | Inside / outside view | C | OUT / IN button |
 
 Collect gold coins to build your fortune and blue canisters to refill nitro.

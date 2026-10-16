@@ -107,6 +107,59 @@ Press **R** or tap **FM** to change station; the station shows on the car's
 centre screen in the inside view. Turn music on or off with **Music** on
 the title screen or in the pause menu. The station names are fictional.
 
+## Cinema Mode (press C)
+
+Cinema Mode turns the game into a film set. You can open it from a race
+(press **C**, or use **Cinema mode** in the pause menu) or from the title
+screen. Press **C** or **Esc** to leave.
+
+- **Clean picture:** the HUD, touch controls and subtitles are hidden, and
+  the race freezes.
+- **Shot list:** the camera plays the shots in [`shots.json`](shots.json) in
+  order, with hard cuts between them.
+  - Each shot has a `pos`, `lookAt`, `fov`, `duration` and `move`.
+  - Moves: `static`, `dolly`, `crane`, `track`, `push`, `pull`, `pan`,
+    `zoom`, `orbit` or `handheld`. Moves that travel take their end values
+    from `to`.
+  - Coordinates are metres in the set's own frame: x toward the road, y up,
+    z along the road.
+  - `?shots=other.json` in the address loads a different list.
+- **Street spot:** `spot` picks a named place on the current route (e.g.
+  `"place": "Ikoyi"`) and which side of the road. If that place isn't on the
+  episode, the set goes a little ahead of your car.
+- **Two actors** stand there and face each other.
+  - **Your own Mixamo characters:** put FBX or GLB files in
+    [`actors/`](actors/README.md), with idle and talking animations. They
+    are scaled to each actor's `height`, and blend from idle to talk while
+    their line plays.
+  - **Without those files**, built-in stand-in actors are used, so the mode
+    works straight away.
+- **Lip movement from loudness:** each actor's mouth opens and closes with
+  the loudness of their voice line (`lines` in `shots.json`, files in
+  [`voice/`](voice/README.md)).
+  - It uses a mouth or jaw morph target or a jaw bone if the model has one.
+    Otherwise it draws a small mouth on the head bone.
+  - Missing voice files are replaced by a synthetic mumble.
+- **A closed set:** pedestrians and cars stay out of a 10-metre circle
+  around the actors. People turn back at the edge, traffic stops and queues,
+  and nobody spawns inside it.
+- **Recording (K, or the Record button):** the sequence is recorded frame by
+  frame with [CCapture.js](https://github.com/spite/ccapture.js) (MIT,
+  bundled in `vendor/`).
+  - **Video:** 1920×1080 at a locked 30 fps, with the game's clock stepped
+    exactly 1/30 s per frame. It downloads as `legends-road-cinema.webm` in
+    Chrome or Edge, or as a TAR of PNG frames in other browsers.
+  - **Dialogue:** CCapture records pictures only, so the voice lines also
+    download as `legends-road-cinema-dialogue.wav` on the same timeline.
+    Join the two with:
+
+    ```
+    ffmpeg -i legends-road-cinema.webm -i legends-road-cinema-dialogue.wav -c:v copy -c:a libopus -shortest legends-road-cinema-final.webm
+    ```
+
+- **Rendering speed:** recording runs as fast as your graphics card can
+  draw 1080p frames, so it can be slower than real time.
+
 ## Road safety
 
 People walk, cross and ride on these streets, and hitting one has consequences:
@@ -139,7 +192,7 @@ still count.
 
 ## Inside or outside the car
 
-Press **C** (or tap **OUT/IN** at the top right) to switch between the
+Press **V** (or tap **OUT/IN** at the top right) to switch between the
 chase camera behind the car and the driver's seat. Inside you get:
 
 - A modern luxury-car dashboard: one curved glass screen across the whole
@@ -247,7 +300,10 @@ open `http://localhost:8000`.
 | Sound on/off | M | SND button |
 | Horn | H | Horn button |
 | Change radio station | R | FM button |
-| Inside / outside view | C | OUT / IN button |
+| Inside / outside view | V | OUT / IN button |
+| Cinema Mode on/off | C | Pause menu: Cinema mode |
+| Record (in Cinema Mode) | K | Record button |
+| Replay the scene (in Cinema Mode) | Space | Replay button |
 
 Collect gold coins to build your fortune and blue canisters to refill nitro.
 Off-road driving slows you down, and roadside objects stop you. Finishing an

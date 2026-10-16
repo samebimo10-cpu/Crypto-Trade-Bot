@@ -1,0 +1,24 @@
+{
+  "_help": "Cinema Mode shot list. Coordinates are metres in the set's own frame: x points toward the road, y is up, z runs along the road (the way the race drives). The two actors stand at z = -0.85 and z = +0.85. move: static, dolly, crane, track, push, pull, pan, zoom, orbit or handheld. 'to' gives the end values for moves that travel. Cuts between shots are hard cuts.",
+  "spot": { "place": "Ikoyi", "side": 1, "offset": 12, "ahead": 45 },
+  "loop": true,
+  "actors": [
+    { "name": "Kemi", "model": "actors/kemi.fbx", "idle": "actors/kemi_idle.fbx", "talk": "actors/kemi_talk.fbx", "voice": "female", "height": 1.68, "at": [0, 0, -0.85] },
+    { "name": "Tobi", "model": "actors/tobi.fbx", "idle": "actors/tobi_idle.fbx", "talk": "actors/tobi_talk.fbx", "voice": "male", "height": 1.8, "at": [0, 0, 0.85] }
+  ],
+  "lines": [
+    { "actor": 0, "src": "voice/kemi_1.mp3", "at": 4.3, "dur": 3.0 },
+    { "actor": 1, "src": "voice/tobi_1.mp3", "at": 8.0, "dur": 3.0 },
+    { "actor": 0, "src": "voice/kemi_2.mp3", "at": 11.6, "dur": 2.6 },
+    { "actor": 1, "src": "voice/tobi_2.mp3", "at": 14.6, "dur": 3.2 }
+  ],
+  "shots": [
+    { "pos": [9, 4.5, -14], "lookAt": [0, 1.4, 0], "fov": 50, "duration": 4, "move": "dolly", "to": { "pos": [6.5, 3, -9] } },
+    { "pos": [3.4, 1.55, 0], "lookAt": [0, 1.45, 0], "fov": 40, "duration": 3.8, "move": "static" },
+    { "pos": [0.75, 1.68, 2.4], "lookAt": [0, 1.55, -0.85], "fov": 30, "duration": 3.6, "move": "handheld" },
+    { "pos": [0.75, 1.7, -2.4], "lookAt": [0, 1.62, 0.85], "fov": 30, "duration": 3.4, "move": "handheld" },
+    { "pos": [1.1, 1.58, 0.2], "lookAt": [0, 1.56, -0.85], "fov": 24, "duration": 3, "move": "push", "distance": 0.35 },
+    { "pos": [3, 1.8, 0], "lookAt": [0, 1.4, 0], "fov": 45, "duration": 4.5, "move": "orbit", "angle": 55 },
+    { "pos": [2, 1.2, 0], "lookAt": [0, 1.4, 0], "fov": 42, "duration": 5, "move": "crane", "to": { "pos": [7, 8, -7], "lookAt": [0, 0.5, 10], "fov": 55 } }
+  ]
+}

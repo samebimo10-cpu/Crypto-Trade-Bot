@@ -233,6 +233,58 @@ table.st small{display:block;color:var(--mist);font-size:.82rem}
 .tb.nitro{border-color:var(--sea);color:#bfeaff}
 .tb svg{width:30px;height:30px;fill:currentColor}
 
+
+/* ---------- garage workshop ---------- */
+.workshop{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;background:rgba(19,34,59,.7);border:1px solid rgba(244,234,214,.15);border-radius:6px;padding:14px}
+.ws-view{position:relative;min-width:0}
+#wsCanvas{width:100%;aspect-ratio:16/9;display:block;border-radius:4px;background:#4a4d52;touch-action:none;cursor:grab}
+#wsCanvas:focus-visible{outline:3px solid var(--gold-2);outline-offset:2px}
+.ws-hint{margin:6px 0 0;font-size:.82rem;color:var(--mist)}
+.ws-panel{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ws-panel h3{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.7rem;margin:0;line-height:1}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs [role=tab]{font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;padding:.5em .9em;border-radius:3px;border:1.5px solid rgba(244,234,214,.35);background:none;cursor:pointer}
+.tabs [role=tab][aria-selected=true]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.opt-group{display:flex;flex-direction:column;gap:6px}
+.opt-h{margin:0;font-family:var(--display);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.72rem;color:var(--gold)}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;padding:.4em .7em;border-radius:3px;border:1.5px solid rgba(244,234,214,.3);background:rgba(10,19,34,.5);cursor:pointer}
+.opt[aria-pressed=true]{border-color:var(--gold);background:rgba(232,176,75,.18)}
+.opt.sw i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.5);flex:none}
+.ws-act{margin-top:4px}
+.ws-note,.ws-msg{margin:0;font-size:.9rem;color:var(--mist)}
+.ws-msg{color:var(--gold-2);min-height:1.2em}
+.upg{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(244,234,214,.12)}
+.upg b{display:block;font-family:var(--display);text-transform:uppercase;letter-spacing:.06em}
+.upg span{display:block;font-size:.85rem;color:var(--mist)}
+.upg .pips{color:var(--gold);letter-spacing:.2em}
+.upg .btn{font-size:.85rem;padding:.55em .9em;flex:none}
+/* ---------- results ---------- */
+#results .wrap,#choice .wrap{max-width:980px}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.res-card{background:var(--paper);color:var(--paper-ink);border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.res-card h3{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.15rem;margin:4px 0 0;color:var(--stamp)}
+.res-card p{margin:0;line-height:1.4}
+.res-card .btn{color:var(--paper-ink);border-color:rgba(43,34,23,.4);background:transparent;align-self:flex-start;font-size:.85rem}
+.ledger{margin:0;display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
+.ledger div{display:flex;justify-content:space-between;gap:10px}
+.ledger dt{margin:0} .ledger dd{margin:0;font-weight:700}
+.ledger .neg dd{color:var(--stamp)}
+.ledger .total{border-top:1px solid rgba(43,34,23,.3);padding-top:4px;font-weight:700}
+/* ---------- story choice ---------- */
+.ch-text{font-size:1.1rem;line-height:1.55;max-width:46rem;margin:0}
+.ch-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.ch-opt{display:flex;flex-direction:column;gap:6px;text-align:left;padding:16px;border-radius:4px;border:1.5px solid rgba(244,234,214,.4);background:rgba(19,34,59,.8);cursor:pointer}
+.ch-opt b{font-family:var(--display);font-size:1.4rem;text-transform:uppercase}
+.ch-opt span{color:var(--mist)}
+.ch-opt:hover:not(:disabled){border-color:var(--gold)}
+.ch-opt:disabled{opacity:.5;cursor:not-allowed}
+.ch-opt:focus-visible{outline:3px solid var(--gold-2);outline-offset:3px}
+/* ---------- settings ---------- */
+.more summary{cursor:pointer;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--mist)}
+.mix{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:8px}
+.pause-card .mix{margin:6px 0}
+@media (max-width:760px){ .workshop{grid-template-columns:1fr} }
 @media (max-width:760px){
   .passport{grid-template-columns:1fr}
   .page.place{border-right:none;border-bottom:1px dashed rgba(43,34,23,.25)}
@@ -305,6 +357,14 @@ body.cinema #cineBar{display:flex}
       <button class="btn ghost" id="btnGfx" type="button">Graphics: 3D · High</button>
       <label class="slider" for="rgBright">Brightness <input type="range" id="rgBright" min="60" max="140" step="5" value="100"></label>
     </div>
+    <details class="more"><summary>Sound mix and accessibility</summary>
+    <div class="mix">
+      <label class="slider">Music <input type="range" data-vol="music" min="0" max="100" step="5" value="80"></label>
+      <label class="slider">Effects <input type="range" data-vol="fx" min="0" max="100" step="5" value="90"></label>
+      <label class="slider">City sounds <input type="range" data-vol="amb" min="0" max="100" step="5" value="60"></label>
+      <button class="toggle tgReduce" type="button" aria-pressed="false"><span class="sw" aria-hidden="true"></span>Reduce motion</button>
+    </div>
+    </details>
     <div class="row install">
       <button class="btn" id="btnInstall" type="button">Install on phone</button>
       <a class="btn ghost" id="lnkPlay" href="https://samebimo10-cpu.github.io/Crypto-Trade-Bot/" target="_blank" rel="noopener">Play online</a>
@@ -325,7 +385,7 @@ body.cinema #cineBar{display:flex}
         <p class="sum" id="atlasSum"></p>
         <div class="row conds">
           <label class="pick" for="selTod">Time of day <select id="selTod"><option value="story">As in the story</option><option value="morning">Morning</option><option value="midday">Midday</option><option value="sunset">Sunset</option><option value="night">Night</option></select></label>
-          <label class="pick" for="selWx">Weather <select id="selWx"><option value="story">As in the story</option><option value="clear">Clear</option><option value="cloudy">Cloudy</option><option value="rain">Rain</option></select></label>
+          <label class="pick" for="selWx">Weather <select id="selWx"><option value="story">As in the story</option><option value="clear">Clear</option><option value="cloudy">Cloudy</option><option value="rain">Rain (looks only, same grip)</option></select></label>
         </div>
       </div>
       <button id="btnBack" class="btn">Back</button>
@@ -345,6 +405,23 @@ body.cinema #cineBar{display:flex}
       </div>
       <button id="btnGarageBack" class="btn">Back</button>
     </header>
+    <section class="workshop" id="workshop" aria-label="Workshop for your selected car">
+      <div class="ws-view">
+        <canvas id="wsCanvas" tabindex="0" aria-label="Turntable view of your car. Drag or use the arrow keys to turn it; scroll, pinch or use plus and minus to zoom."></canvas>
+        <p class="ws-hint" id="wsHint">Drag to turn · scroll or pinch to zoom</p>
+      </div>
+      <div class="ws-panel">
+        <p class="eyebrow">Workshop · your selected car</p>
+        <h3 id="wsName"></h3>
+        <div class="tabs" role="tablist">
+          <button role="tab" type="button" data-tab="paint" id="tabPaint" aria-selected="true">Customise</button>
+          <button role="tab" type="button" data-tab="up" id="tabUp" aria-selected="false">Upgrade</button>
+          <button role="tab" type="button" data-tab="fix" id="tabFix" aria-selected="false">Repair</button>
+        </div>
+        <div id="wsBody"></div>
+        <p class="ws-msg" id="wsMsg" aria-live="polite"></p>
+      </div>
+    </section>
     <div id="lineup" class="lineup"></div>
     <div class="cards" id="carCards"></div>
   </div>
@@ -380,6 +457,44 @@ body.cinema #cineBar{display:flex}
       <button id="btnStdGarage" class="btn">Garage</button>
       <button id="btnStdTitle" class="btn ghost">Title screen</button>
     </div>
+  </div>
+</div>
+
+<div id="results" class="screen" hidden>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow" id="resEyebrow"></p>
+        <h2 id="resTitle"></h2>
+        <p class="sum" id="resSub"></p>
+      </div>
+    </header>
+    <div class="res-grid">
+      <section class="res-card"><h3>Rewards</h3><dl class="ledger" id="resLedger"></dl></section>
+      <section class="res-card"><h3>Objective</h3><p id="resObj"></p><h3>Story</h3><p id="resStory"></p></section>
+      <section class="res-card"><h3>Your car</h3><p id="resCar"></p><button id="btnResRepair" class="btn" type="button" hidden></button><h3>Unlocked</h3><p id="resUnlock"></p></section>
+    </div>
+    <div class="row">
+      <button id="btnResNext" class="btn primary" type="button">Next episode</button>
+      <button id="btnResGarage" class="btn" type="button">Garage</button>
+      <button id="btnResStory" class="btn" type="button">Legend's story</button>
+      <button id="btnResStd" class="btn" type="button">Standings</button>
+      <button id="btnResRetry" class="btn ghost" type="button">Race again</button>
+    </div>
+  </div>
+</div>
+
+<div id="choice" class="screen" hidden>
+  <div class="wrap">
+    <p class="eyebrow" id="chEyebrow"></p>
+    <h2 id="chTitle"></h2>
+    <p class="ch-text" id="chText"></p>
+    <div class="ch-opts">
+      <button class="ch-opt" id="chA" type="button"><b></b><span></span></button>
+      <button class="ch-opt" id="chB" type="button"><b></b><span></span></button>
+    </div>
+    <p class="sum">Your choice is saved and changes what happens later in the season.</p>
+    <div class="row"><button id="btnChBack" class="btn ghost" type="button">Decide later · back to title</button></div>
   </div>
 </div>
 
@@ -450,6 +565,12 @@ body.cinema #cineBar{display:flex}
     <button class="toggle" id="tgMusic2" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Music</button>
     <button class="toggle" id="tgBlood" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Blood effects</button>
     <label class="slider" for="rgBright2">Brightness <input type="range" id="rgBright2" min="60" max="140" step="5" value="100"></label>
+    <div class="mix">
+      <label class="slider">Music <input type="range" data-vol="music" min="0" max="100" step="5" value="80"></label>
+      <label class="slider">Effects <input type="range" data-vol="fx" min="0" max="100" step="5" value="90"></label>
+      <label class="slider">City sounds <input type="range" data-vol="amb" min="0" max="100" step="5" value="60"></label>
+      <button class="toggle tgReduce" type="button" aria-pressed="false"><span class="sw" aria-hidden="true"></span>Reduce motion</button>
+    </div>
     <div class="row">
       <button id="btnResume" class="btn primary">Resume</button>
       <button id="btnPauseMap" class="btn">Map</button>

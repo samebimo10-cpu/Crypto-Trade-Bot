@@ -73,7 +73,7 @@ The race is drawn as a real 3D world with [three.js](https://threejs.org)
 
 Use **Brightness** (title screen or pause menu) to make the picture lighter or darker.
 Use **Graphics** on the title screen to switch between *3D · High*
-(shadows, full detail), *3D · Fast* (for phones) and *Classic 2D*. Phones
+(shadows, full detail), *3D · Medium* (for tablets and mid-range phones), *3D · Fast* (for phones) and *Classic 2D*. Phones
 start on *3D · Fast*. If a device cannot run WebGL, the game falls back to
 Classic 2D automatically.
 
@@ -224,6 +224,88 @@ the rounded nose with a single front wheel, a canvas roof with rolled-up
 side curtains, open sides, a spare wheel on the back, a driver at the
 handlebar and one to three passengers on the rear bench.
 
+## Career: objectives, rivals, choices and the workshop
+
+- **Race objectives.** Every episode has one objective, shown when the race
+  starts and as one line under the progress bar:
+  - Collect a fortune target.
+  - Beat a named couple.
+  - Clean driving.
+  - Beat the clock.
+  - Podium.
+  - Win.
+
+  Meeting it pays a **$10M** bonus. Missing it never blocks the next episode.
+- **Results screen** after every finish, on one page:
+  - Your place and time.
+  - What you earned: fortune collected, fines, a placing bonus
+    (15/10/6/3M) and the objective bonus.
+  - Reputation and story changes, your car's damage with a repair button,
+    and what you unlocked.
+  - **Next** is the main action; Garage, the legend's story, Standings and
+    Race again sit beside it.
+- **Rivals drive differently:**
+
+  | Couple | Driving style |
+  | --- | --- |
+  | Okafors | Aggressive: they weave in front of you |
+  | Laurents | Fast starters |
+  | Sharmas | Surge late |
+  | Chens, Müllers | Steady |
+
+  The standings table shows each couple's style.
+- **Story choices with consequences:**
+  - **Before Yenagoa:** the Okafors break down. Helping costs $10M.
+    - If you help, in Asaba they repay $15M and give way on the road.
+    - If you drive past, in Asaba they come for you: aggressive, a little
+      faster, with their own dialogue.
+  - **Before Kano:** a reporter asks for an interview.
+    - Accept: a $5M fee and reputation, then new customers (+$8M) two
+      episodes later.
+    - Decline: a bigger nitro tank for the Kano race.
+
+  Each choice is made once and saved.
+- **Workshop** (top of the Garage), for your selected car:
+  - **Turntable preview.** Drag to turn the car, scroll or pinch to zoom,
+    or use the arrow and +/− keys. It turns slowly on its own when idle.
+  - **Customise:**
+
+    | Option | Choices |
+    | --- | --- |
+    | Paint | 7 colours |
+    | Finish | Factory gloss, metallic or satin matte |
+    | Wheels | Silver, black or gold |
+    | Window tint | Factory, light or limo |
+
+    Changes show live. **Apply** charges once and only for what changed.
+    **Cancel** reverts and costs nothing. **Reset to factory** asks you to
+    tap again, and is free.
+  - **Upgrade.** Four parts (engine, turbo, tyres and suspension, nitro),
+    three levels each at $12M, $22M and $36M. Each level's effect is spelled
+    out.
+  - **Repair.** Hard knocks in a race scuff the paint (and, at level 2,
+    crack a headlight). Damage is cosmetic and does not slow the car. A
+    repair costs $6M per damage level.
+
+  Everything you buy shows on your race car.
+- **Sound mix and accessibility.** These are under *Sound mix and
+  accessibility* on the title screen and in the pause menu:
+  - Separate Music, Effects and City-sounds volume.
+  - Ambience: city rumble and horns, surf near water, insects on country
+    nights.
+  - Tyre squeal.
+  - Interface sounds for confirm, purchase and error.
+  - A **Reduce motion** switch (no shake, blur, speed lines or long wheel
+    spin).
+
+  Restart and Quit in the pause menu ask you to tap again. On a phone held
+  upright, a one-time tip suggests landscape.
+- **Graphics: High, Medium, Fast or Classic 2D.**
+  - *High*: full shadows and view distance.
+  - *Medium*: shadows, a shorter view and fewer people.
+  - *Fast*: car shadows only, the shortest view and the fewest trees and
+    people.
+
 ## Features
 
 - **Minimap** in the top-right corner, with your position, the rivals and the
@@ -317,7 +399,7 @@ change often.
 ## Developing
 
 The game's source is in `src/` (one module per area: data, engine, 3D
-renderer, cars, street life, inside view, radio, Cinema Mode, main loop).
+renderer, cars, street life, inside view, radio, Cinema Mode, career, main loop).
 `index.html` is built from it:
 
 ```
@@ -327,4 +409,4 @@ node games/legends-road/tools/build.mjs --check  # CI: fails if index.html is st
 
 Edit files in `src/`, never `index.html` directly. `REDESIGN_AUDIT.md` and
 `REDESIGN_PROGRESS.md` track the visual and gameplay redesign against
-`REDESIGN_SPEC.md`.
+`REDESIGN_SPEC.md`. `CITY_BRIEFS.md` holds the art direction for each city.

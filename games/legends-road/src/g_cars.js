@@ -179,7 +179,7 @@ function vehWheel(R){
   return VWHEEL[key]={tire:gMerge([gPrep(tire),gPrep(side),gPrep(s1)]),rim:gPrep(rim),spokes:gMerge([...spokes,gPrep(hub)])};
 }
 function vehicleModel(o){
-  const V=VEH[o.model], geo=vehicleGeometry(o.model), mats=carMats(o.color||'#9aa0a8',o.accent);
+  const V=VEH[o.model], geo=vehicleGeometry(o.model), mats=carMats(o.color||'#9aa0a8',o.accent,o.finish||'gloss',o.tint||'none');
   if(!mats.roofB){mats.roofB=new TH.MeshPhysicalMaterial({color:C3(ROOFCOL.black),metalness:.4,roughness:.25,clearcoat:1,clearcoatRoughness:.05,side:TH.DoubleSide});
     mats.roofW=new TH.MeshPhysicalMaterial({color:C3(ROOFCOL.white),metalness:.3,roughness:.3,clearcoat:1,side:TH.DoubleSide});
     mats.paint.side=TH.DoubleSide; mats.glass.side=TH.DoubleSide;}
@@ -191,14 +191,36 @@ function vehicleModel(o){
   if(!mats.rimDark) mats.rimDark=new TH.MeshStandardMaterial({color:C3('#2a2d33'),metalness:.8,roughness:.35});
   geo.ax.forEach((ax,i)=>[-1,1].forEach(s=>{
     const w=new TH.Group(), t=new TH.Mesh(wg.tire,tm.tireM); t.castShadow=true;
-    const rim=new TH.Mesh(wg.rim,mats.rimDark), sp=new TH.Mesh(wg.spokes,tm.rimM);
+    const rim=new TH.Mesh(wg.rim,mats.rimDark), sp=new TH.Mesh(wg.spokes,rimMat(o.rim)||tm.rimM);
     if(s<0){rim.scale.x=-1; sp.scale.x=-1;}
     w.add(t,rim,sp); w.position.set(s*(geo.hwAx[i]-V.R*.3),V.R,-(ax-geo.L/2)); G.add(w); wheels.push({w,front:i===1});}));
   const ordered=wheels.filter(x=>x.front).map(x=>x.w).concat(wheels.filter(x=>!x.front).map(x=>x.w));
   const sh=new TH.Mesh(new TH.PlaneGeometry(geo.W*1.5,geo.L*1.25),new TH.MeshBasicMaterial({map:shadowTex(),transparent:true,depthWrite:false,opacity:.85}));
   sh.rotation.x=-Math.PI/2; sh.position.y=.03; sh.renderOrder=1; G.add(sh);
   G.userData={wheels:ordered,body,L:geo.L};
+  if(o.damage) addDamage(G,body,o.damage,geo);
   return G;
+}
+
+/* ---------- garage options: wheel colour and staged damage ---------- */
+const RIMMAT={};
+function rimMat(k){ if(!k||k==='silver') return null;
+  return RIMMAT[k]||(RIMMAT[k]=new TH.MeshStandardMaterial(k==='gold'?{color:C3('#c9a243'),metalness:1,roughness:.22}:{color:C3('#1b1c20'),metalness:.7,roughness:.3}));}
+let SCUFF=null, CRACK=null;
+function addDamage(G,body,lvl,geo){ // decals projected onto the body by ray casts, so they sit on any body shape
+  if(!SCUFF){const c=mk(128,64,(g,w,h)=>{const R=rng(7); for(let i=0;i<26;i++){const x=w*(.1+R()*.8), y=h*(.2+R()*.6), l=10+R()*40;
+      g.strokeStyle=`rgba(${R()<.5?'230,230,225':'40,40,40'},${.35+R()*.45})`; g.lineWidth=.8+R()*1.8; g.beginPath(); g.moveTo(x,y); g.lineTo(x+l,y+(R()-.5)*8); g.stroke();}
+      const gr=g.createRadialGradient(w/2,h/2,2,w/2,h/2,w*.4); gr.addColorStop(0,'rgba(20,20,20,.45)'); gr.addColorStop(1,'rgba(20,20,20,0)'); g.fillStyle=gr; g.fillRect(0,0,w,h);});
+    SCUFF=new TH.MeshStandardMaterial({map:canvasTex(c,true,false),transparent:true,depthWrite:false,roughness:.9,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4});
+    CRACK=new TH.MeshStandardMaterial({color:C3('#9a9a92'),emissive:C3('#fff6e0'),emissiveIntensity:.25,roughness:.7});}
+  G.updateMatrixWorld(true);
+  const paint=body.children.filter(m=>m.isMesh&&m.material===body.children[0].material), ray=new TH.Raycaster(), L=geo.L;
+  const spots=[[1,.32,.55],[-1,-.3,.5],[1,-.38,.45],[-1,.36,.6],[1,0,.6],[-1,.05,.42]].slice(0,lvl*2);
+  spots.forEach(([s,f,yf])=>{const y=.25+yf*1.1, z=f*L; ray.set(new TH.Vector3(s*4,y,z),new TH.Vector3(-s,0,0));
+    const hit=ray.intersectObjects(paint,false)[0]; if(!hit||!hit.face) return;
+    const n=hit.face.normal.clone().transformDirection(hit.object.matrixWorld), m=new TH.Mesh(new TH.PlaneGeometry(.7,.34),SCUFF);
+    m.position.copy(hit.point).addScaledVector(n,.012); m.lookAt(hit.point.clone().add(n)); m.rotation.z+=(f*3)%1-.5; body.add(m);});
+  if(lvl>=2) body.children.forEach(m=>{if(m.isMesh&&m.material&&m.material.emissive&&m.material.emissive.r>.9&&m.material.emissive.b>.8&&m.material.emissiveIntensity>1){m.material=CRACK;}}); // cracked, dim headlights
 }
 
 /* ---------- studio renders for the garage ---------- */

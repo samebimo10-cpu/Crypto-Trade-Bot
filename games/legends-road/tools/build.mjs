@@ -21,6 +21,7 @@ const ORDER = [
   'i_drive.js',     // inside-the-car view, mirror, wipers, brake lights, blood
   'm_music.js',     // synthesised car radio
   'n_cinema.js',    // Cinema Mode
+  'k_career.js',    // objectives, rival styles, story choices, results, garage workshop, audio mix
   'z_main.js'       // main loop, input wiring, service worker
 ];
 const html = ORDER.map(f => readFileSync(join(root, 'src', f), 'utf8')).join('');

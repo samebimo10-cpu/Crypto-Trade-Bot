@@ -245,7 +245,7 @@ function crowdGeo(){
 }
 function initCrowd(){
   const th=stage.theme, city=th.scenery.some(s=>['office','haussmann','colonial','tower','craftsman','phhouse'].includes(s));
-  const N=(R3.quality==='high'?70:34)*(city?1:.5)|0, NC=th.naija?(R3.quality==='high'?10:5):4, total=N+NC;
+  const N=(R3.quality==='high'?70:R3.quality==='medium'?50:34)*(city?1:.5)|0, NC=th.naija?(R3.quality==='high'?10:5):4, total=N+NC;
   const G=crowdGeo(), mat=new TH.MeshStandardMaterial({roughness:.75,vertexColors:true});
   const mk=(geo,n)=>{const m=new TH.InstancedMesh(geo,mat,n); m.instanceMatrix.setUsage(TH.DynamicDrawUsage); m.castShadow=true; m.frustumCulled=false; m.userData.shared=true; R3.world.add(m); return m;};
   const C={torso:mk(G.torso,total),head:mk(G.head,total),hair:mk(G.hair,total),gele:mk(G.gele,total),load:mk(G.load,total),skirt:mk(G.skirt,total),hips:mk(G.hips,total),

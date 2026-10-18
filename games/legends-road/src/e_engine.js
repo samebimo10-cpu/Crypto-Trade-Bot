@@ -422,7 +422,7 @@ function startStage(idx,attract){
     save.perks={}; persist();
     mode='intro'; modeT=0;
     introDur=1.2; stage.script.intro.forEach(([who,text])=>{const d=Math.max(2.3,text.length*.055); say(who,text,d); introDur+=d;});
-    el.skip.hidden=false;
+    el.skip.hidden=false; careerStart(idx);
   }
   nitro=nitroCap;
 }
@@ -525,7 +525,7 @@ function updateCars(dt,playerSeg){
     if(car.rival){
       if(mode==='intro'||mode==='countdown') continue;
       const gap=car.z-(position+playerZ);
-      let target=car.base; if(gap>55*SEG) target*=.9; else if(gap<-35*SEG) target*=1.08;
+      let target=car.base*(car.style?rivalPace(car):1); if(gap>55*SEG) target*=.9; else if(gap<-35*SEG) target*=1.08;
       if(car.finished) target=car.base*.55;
       if(car.z>trackLength-SEG*(DRAWD+20)) target=0;
       car.speed+=(target-car.speed)*Math.min(1,dt*.6);
@@ -533,6 +533,7 @@ function updateCars(dt,playerSeg){
     if(car.v0==null&&!car.rival) car.v0=car.speed;
     if(mode!=='title'&&R3.on&&R3.crowd&&pedAhead(car.z,car.offset)) car.speed*=Math.max(0,1-dt*4); // stop for people on the road
     else if(!car.rival&&car.speed<car.v0) car.speed=Math.min(car.v0,car.speed+MAXSPEED*.15*dt);
+    if(car.rival&&car.style) rivalWeave(car,dt);
     if(car.dodge>0){car.dodge-=dt; car.offset=U.limit(car.offset+car.dodgeDir*dt*.9,-1.05,1.05);}
     const oldSeg=findSeg(car.z);
     car.offset=U.limit(car.offset+updateCarOffset(car,oldSeg,playerSeg),-1.05,1.05);
@@ -619,7 +620,7 @@ function update(dt){
     if(speed>MAXSPEED*.3&&Math.random()<.004) event('offroad');
     for(const s of pSeg.sprites){ if(!s.collide) continue;
       const sw=s.wW/ROADW*.7, sx=s.center?s.offset:s.offset+sw/2*(s.offset>0?1:-1);
-      if(U.overlap(playerX,PLAYER_W,sx,sw)){ if(speed>MAXSPEED*.25){Sound.crash(); shake=1; sparks(10); event('crash');} speed=MAXSPEED/6; position=U.increase(pSeg.p1.world.z,-playerZ,trackLength); break; }
+      if(U.overlap(playerX,PLAYER_W,sx,sw)){ if(speed>MAXSPEED*.25){onCarHit(speed/MAXSPEED); Sound.crash(); shake=1; sparks(10); event('crash');} speed=MAXSPEED/6; position=U.increase(pSeg.p1.world.z,-playerZ,trackLength); break; }
     }
   }
   if(!frozen) for(const car of pSeg.cars){
@@ -627,7 +628,7 @@ function update(dt){
       if(car.img&&(car.img._okada||car.img._keke)&&speed>MAXSPEED*.08&&hitRoadUser(car.img._okada?'okada':'keke',R3.on?poseAt(car.z,car.offset):null)){ // a shield protects the car, not people
         position=U.increase(car.z,-playerZ-SEG*3,trackLength); car.speed*=.3; break;}
       if(shield>0){shield--; flash=.8; flashCol='127,211,255'; Sound.power(); position=U.increase(car.z,-playerZ,trackLength); showToast('Shield used','Your Lucky spin shield took that hit.'); break;}
-      const after=car.speed*(car.speed/speed);
+      onCarHit((speed-car.speed)/MAXSPEED); const after=car.speed*(car.speed/speed);
       speed=C.tough?Math.max(after,speed*.62):after; position=U.increase(car.z,-playerZ,trackLength);
       Sound.crash(); shake=.7; sparks(14); event('crash'); break;}
   }
@@ -658,7 +659,7 @@ function update(dt){
     if(pz>=finishZ) finishRace();
   } else if(mode==='finish'){
     if(stage.id==='starbase'&&modeT>1) launchT+=dt;
-    if(!storyShown&&modeT>3.4){storyShown=true; showStory();}
+    if(!storyShown&&modeT>3.4){storyShown=true; showResults();}
   } else if(mode==='title'){
     if(pz>finishZ-SEG*50) startStage((stageIdx+1)%STAGES.length,true);
   }
@@ -877,7 +878,7 @@ function ordinal(n){return n+(n===1?'st':n===2?'nd':n===3?'rd':'th');}
 function fmtTime(t){const m=Math.floor(t/60), s=t-m*60; return m+':'+(s<10?'0':'')+s.toFixed(2);}
 function drawMiniMap(){
   if(!mapInfo) return;
-  const css=W/innerWidth, ms=Math.round(Math.min(W,H)*(touchMode?.3:.27)), mx=W-ms-12*css, my=62*css, k=ms/mapInfo.size;
+  const css=W/innerWidth, ms=Math.round(Math.min(W,H)*(W<H?.24:touchMode?.24:.22)), mx=W-ms-12*css, my=62*css, k=ms/mapInfo.size;
   miniRect={x:mx/css,y:my/css,w:ms/css,h:ms/css};
   const pIdx=Math.floor((position+playerZ)/SEG);
   ctx.save(); ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=14*css; rr(ctx,mx,my,ms,ms,10*css); ctx.fillStyle='#132238'; ctx.fill(); ctx.restore();
@@ -927,7 +928,7 @@ function drawHUD(){
   const kmLeft=(Math.max(0,(finishIdx*SEG-position-playerZ)/SEG*mapInfo.metersPerSeg)/1000).toFixed(1);
   if(bw>300*css){ctx.textAlign='right'; ctx.fillText(kmLeft+' KM TO ARRIVAL',bx+bw,by+26*s);}
   else{ctx.textAlign='right'; ctx.fillText(kmLeft+' KM',bx+bw,by+26*s);}
-  ctx.restore();
+  ctx.restore(); drawObjectiveHUD(s,bx,by+44*s);
   if(mode!=='finish') drawMiniMap();
   ctx.save();
   if(!touchMode){
@@ -952,10 +953,10 @@ function drawHUD(){
   ctx.font=`700 ${13*s}px ${FD}`; ctx.fillStyle='#fff8ea'; ctx.fillText('FORTUNE COLLECTED',nx,ny-72*s);
   if(mode==='countdown'||(mode==='race'&&raceTime<.8)){
     const txt=mode==='countdown'?String(Math.ceil(countdown)):'GO!', t=mode==='countdown'?countdown%1:1-raceTime/.8;
-    ctx.globalAlpha=U.limit(t*1.5,0,1); ctx.font=`900 ${(160+80*(1-t))*s}px ${FD}`; ctx.textAlign='center'; ctx.fillStyle=mode==='countdown'?'#fff8ea':'#ffd27a';
-    ctx.shadowBlur=30*s; ctx.fillText(txt,W/2,H*.42); ctx.globalAlpha=1;
+    ctx.globalAlpha=U.limit(t*1.5,0,1)*.9; ctx.font=`900 ${(84+30*(1-t))*s}px ${FD}`; ctx.textAlign='center'; ctx.fillStyle=mode==='countdown'?'#fff8ea':'#ffd27a';
+    ctx.shadowBlur=20*s; ctx.fillText(txt,W/2,H*.3); ctx.globalAlpha=1;
   }
-  if(mode==='finish'){ctx.font=`900 ${110*s}px ${FD}`; ctx.textAlign='center'; ctx.fillStyle='#ffd27a'; ctx.shadowBlur=30*s; ctx.fillText(ordinal(rank).toUpperCase(),W/2,H*.4);
+  if(mode==='finish'){ctx.font=`900 ${80*s}px ${FD}`; ctx.textAlign='center'; ctx.fillStyle='#ffd27a'; ctx.shadowBlur=30*s; ctx.fillText(ordinal(rank).toUpperCase(),W/2,H*.4);
     ctx.font=`800 ${30*s}px ${FD}`; ctx.fillStyle='#fff8ea'; ctx.fillText('ARRIVED IN '+stage.place.toUpperCase(),W/2,H*.4+44*s);}
   if(mode==='race'&&onBranch){ctx.font=`800 ${20*s}px ${FD}`; ctx.textAlign='center'; ctx.fillStyle='#7fd3ff'; ctx.shadowBlur=8*s; ctx.fillText('ON THE SHORTCUT · STAY IN THE LANE',W/2,H*.62);}
   else if(offroad&&mode==='race'&&speed>0){ctx.font=`800 ${18*s}px ${FD}`; ctx.textAlign='center'; ctx.fillStyle='#ffd27a'; ctx.shadowBlur=8*s; ctx.fillText('OFF ROAD · STEER BACK',W/2,H*.62);}
@@ -972,12 +973,13 @@ const Sound = {
     try{
       const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
       const ac=this.ac=new AC(); this.master=ac.createGain(); this.master.gain.value=this.muted?0:.55; this.master.connect(ac.destination);
+      ['fx','mus','amb'].forEach(k=>{this[k]=ac.createGain(); this[k].connect(this.master);}); // separate volume for effects, music and ambience
       const o1=ac.createOscillator(), o2=ac.createOscillator(), f=ac.createBiquadFilter(), g=ac.createGain();
       o1.type='sawtooth'; o2.type='square'; o2.detune.value=-1200+7; f.type='lowpass'; f.frequency.value=600; f.Q.value=4; g.gain.value=0;
-      o1.connect(f); o2.connect(f); f.connect(g); g.connect(this.master); o1.start(); o2.start();
+      o1.connect(f); o2.connect(f); f.connect(g); g.connect(this.fx); o1.start(); o2.start();
       const nb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate), d=nb.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
       const ns=ac.createBufferSource(); ns.buffer=nb; ns.loop=true; const nf=ac.createBiquadFilter(); nf.type='bandpass'; nf.frequency.value=800; const ng=ac.createGain(); ng.gain.value=0;
-      ns.connect(nf); nf.connect(ng); ng.connect(this.master); ns.start();
+      ns.connect(nf); nf.connect(ng); ng.connect(this.fx); ns.start();
       this.eng={o1,o2,f,g,nf,ng}; this.noise=nb;
     }catch(e){this.ac=null;}
   },
@@ -995,7 +997,7 @@ const Sound = {
   tone(freq,dur,type,vol,slide){
     if(!this.ac||this.muted) return; const t=this.ac.currentTime, o=this.ac.createOscillator(), g=this.ac.createGain();
     o.type=type||'sine'; o.frequency.setValueAtTime(freq,t); if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+dur);
-    g.gain.setValueAtTime(vol||.2,t); g.gain.exponentialRampToValueAtTime(.001,t+dur); o.connect(g); g.connect(this.master); o.start(t); o.stop(t+dur+.02);
+    g.gain.setValueAtTime(vol||.2,t); g.gain.exponentialRampToValueAtTime(.001,t+dur); o.connect(g); g.connect(this.fx); o.start(t); o.stop(t+dur+.02);
   },
   coin(){this.tone(1320,.08,'square',.06); setTimeout(()=>this.tone(1760,.14,'square',.06),60);},
   power(){this.tone(300,.4,'sawtooth',.12,1600);},
@@ -1003,13 +1005,13 @@ const Sound = {
   whoosh(){
     if(!this.ac||this.muted) return; const t=this.ac.currentTime, s=this.ac.createBufferSource(), f=this.ac.createBiquadFilter(), g=this.ac.createGain();
     s.buffer=this.noise; f.type='bandpass'; f.frequency.setValueAtTime(400,t); f.frequency.exponentialRampToValueAtTime(3000,t+.6); g.gain.setValueAtTime(.4,t); g.gain.exponentialRampToValueAtTime(.001,t+.7);
-    s.connect(f); f.connect(g); g.connect(this.master); s.start(t); s.stop(t+.75);
+    s.connect(f); f.connect(g); g.connect(this.fx); s.start(t); s.stop(t+.75);
   },
   countBeep(go){this.tone(go?880:440,go?.5:.18,'square',.12);},
   crash(){
     if(!this.ac||this.muted) return; const t=this.ac.currentTime, s=this.ac.createBufferSource(), f=this.ac.createBiquadFilter(), g=this.ac.createGain();
     s.buffer=this.noise; f.type='lowpass'; f.frequency.value=500; g.gain.setValueAtTime(.5,t); g.gain.exponentialRampToValueAtTime(.001,t+.45);
-    s.connect(f); f.connect(g); g.connect(this.master); s.start(t); s.stop(t+.5); this.tone(90,.3,'sine',.3,40);
+    s.connect(f); f.connect(g); g.connect(this.fx); s.start(t); s.stop(t+.5); this.tone(90,.3,'sine',.3,40);
   },
   horn(){[415,523].forEach(f=>this.tone(f,.42,'sawtooth',.07));},
   siren(){for(let i=0;i<8;i++) setTimeout(()=>this.tone(i%2?660:880,.4,'triangle',.08),i*420);},
@@ -1044,7 +1046,7 @@ function syncToggles(){
   ['tgMusic','tgMusic2'].forEach(id=>$(id).setAttribute('aria-pressed',String(save.music!==false)));
   $('btnView').textContent=save.view==='cockpit'?'IN':'OUT'; let on3=false; try{on3=R3.on;}catch(_){ } $('btnView').hidden=!on3;
   [$('spinBadge'),$('spinBadge2')].forEach(b=>{b.textContent=save.spins; b.hidden=!save.spins;});
-  const gl={high:'3D · High',low:'3D · Fast',['2d']:'Classic 2D'}[save.gfx||'high']; $('btnGfx').textContent='Graphics: '+gl;
+  const gl={high:'3D · High',medium:'3D · Medium',low:'3D · Fast',['2d']:'Classic 2D'}[save.gfx||'high']; $('btnGfx').textContent='Graphics: '+gl;
 }
 syncToggles();
 function showToast(title,txt){
@@ -1053,8 +1055,8 @@ function showToast(title,txt){
   clearTimeout(showToast.t); showToast.t=setTimeout(()=>{el.toast.hidden=true;},5100);
 }
 function beginRace(idx){
-  Sound.init(); hideAll(); paused=false;
-  activeCar=CARS.find(c=>c.id===save.car)||CARS[0]; buildPlayerArt(activeCar);
+  Sound.init(); if(needChoice(idx)) return; hideAll(); paused=false;
+  activeCar=effectiveCar(CARS.find(c=>c.id===save.car)||CARS[0]); buildPlayerArt(activeCar);
   el.corner.hidden=false; el.touch.hidden=!touchMode;
   for(const k in keys) keys[k]=false;
   startStage(idx,false);
@@ -1069,7 +1071,7 @@ function finishRace(){
   if(!prev||rank<prev.rank||(rank===prev.rank&&finalTime<prev.time)) save.best[stage.id]={rank,time:finalTime,fortune};
   save.results[stage.id]=legOrder;
   save.unlocked=Math.max(save.unlocked,Math.min(STAGES.length,stageIdx+2));
-  save.spins+=rank===1?2:1; save.bank=Math.max(0,save.bank+fortune); persist(); syncToggles();
+  save.spins+=rank===1?2:1; save.bank=Math.max(0,save.bank+fortune); settleRace(); persist(); syncToggles();
   Sound.fanfare(); burst('#ffd27a',40); el.toast.hidden=true;
   clearSubs(); say(stage.script.outro[0],stage.script.outro[1],3.4);
 }
@@ -1101,7 +1103,7 @@ function showStandings(){
     const pos=order.indexOf(r.t.id);
     tr.innerHTML='<td class="pos"></td><td><span class="dot"></span><span class="nm"></span><small></small></td><td class="lr"></td><td class="pts"></td>';
     tr.querySelector('.pos').textContent=i+1; tr.querySelector('.dot').style.background=r.t.color;
-    tr.querySelector('.nm').textContent=r.t.id==='you'?'The Adeyemis (you)':'The '+r.t.name+'s'; tr.querySelector('small').textContent=r.t.pair;
+    tr.querySelector('.nm').textContent=r.t.id==='you'?'The Adeyemis (you)':'The '+r.t.name+'s'; tr.querySelector('small').textContent=r.t.pair+(r.t.id!=='you'?' · '+rivalStyleName(r.t.id):'');
     tr.querySelector('.lr').textContent=pos>=0?ordinal(pos+1)+' · +'+POINTS[pos]:'—'; tr.querySelector('.pts').textContent=r.pts;
     body.append(tr);});
   $('stdTeaser').textContent=last?(champ.id==='you'?'Kemi and Tobi win the Fortune Trail. Adeyemi Motors opens its doors again. ':'The Adeyemis finished the season. Race any episode again to chase the title. ')+stage.script.next:stage.script.next;
@@ -1177,6 +1179,7 @@ function openGarage(){
     else{btn.textContent='Buy · $'+c.price+'M'; btn.disabled=save.bank<c.price; btn.onclick=()=>{if(save.bank<c.price) return; save.bank-=c.price; save.owned.push(c.id); save.car=c.id; persist(); activeCar=c; buildPlayerArt(c); Sound.init(); Sound.fanfare(); openGarage();};}
     d.append(m); wrap.append(d);
   });
+  openWorkshop();
   setTimeout(()=>$('btnGarageBack').focus({preventScroll:true}),50);
 }
 let garageReturn='title', spinReturn='title', wheelAng=0, spinning=false;
@@ -1266,7 +1269,7 @@ $('btnSpinT').addEventListener('click',()=>openSpin('title'));
 $('btnBack').addEventListener('click',toTitle);
 $('selTod').addEventListener('change',e=>{save.tod=e.target.value; persist();});
 $('selWx').addEventListener('change',e=>{save.wx=e.target.value; persist();});
-$('btnGarageBack').addEventListener('click',()=>garageReturn==='standings'?showStandings():toTitle());
+$('btnGarageBack').addEventListener('click',()=>garageReturn==='standings'?showStandings():garageReturn==='results'?showResults():toTitle());
 $('btnDoSpin').addEventListener('click',doSpin);
 $('btnSpinDone').addEventListener('click',()=>{if(spinning) return; spinReturn==='standings'?showStandings():toTitle();});
 $('btnContinue').addEventListener('click',showStandings);
@@ -1278,13 +1281,13 @@ $('btnRetry').addEventListener('click',()=>beginRace(stageIdx));
 $('btnAtlas').addEventListener('click',openAtlas);
 $('btnResume').addEventListener('click',()=>setPaused(false));
 $('btnPauseMap').addEventListener('click',()=>{el.pause.hidden=true; openBigMap('pause');});
-$('btnRestart').addEventListener('click',()=>beginRace(stageIdx));
+confirmTap($('btnRestart'),'Tap again to restart',()=>beginRace(stageIdx));
 $('btnCinema').addEventListener('click',()=>{setPaused(false); enterCinema();});
 $('cbReplay').addEventListener('click',()=>restartCinema(false));
 $('cbRec').addEventListener('click',()=>startRecording());
 $('cbExit').addEventListener('click',()=>exitCinema());
 {let t=0; const wake=()=>{$('cineBar').classList.remove('idle'); clearTimeout(t); t=setTimeout(()=>$('cineBar').classList.add('idle'),3000);}; addEventListener('pointermove',wake,{passive:true}); addEventListener('pointerdown',wake,{passive:true});}
-$('btnQuit').addEventListener('click',toTitle);
+confirmTap($('btnQuit'),'Tap again to quit',toTitle);
 $('btnPause').addEventListener('click',()=>setPaused(!paused));
 $('btnMute').addEventListener('click',toggleSound);
 $('btnMapClose').addEventListener('click',closeBigMap);
@@ -1300,10 +1303,10 @@ $('tgBlood').addEventListener('click',()=>{save.blood=save.blood===false; persis
 $('btnView').addEventListener('click',()=>{if(R3.on) setView(save.view==='cockpit'?'chase':'cockpit');});
 $('tbHorn').addEventListener('pointerdown',e=>{e.preventDefault(); honk();});
 ['rgBright','rgBright2'].forEach(id=>$(id).addEventListener('input',e=>{save.bright=Math.max(.6,Math.min(1.4,e.target.value/100)); persist(); applyBrightness();}));
-$('btnGfx').addEventListener('click',()=>{const order=['high','low','2d'], next=order[(order.indexOf(save.gfx||'high')+1)%3];
+$('btnGfx').addEventListener('click',()=>{const order=['high','medium','low','2d'], next=order[(order.indexOf(save.gfx||'high')+1)%4];
   setGraphics(next); syncToggles(); applyBrightness();
   if(save.gfx!==next) showToast('Graphics','3D is not available on this device, so the classic 2D view stays on.');
-  else showToast('Graphics',{high:'3D with shadows and full detail.',low:'3D with fewer trees and no shadows, for phones.',['2d']:'The classic painted 2D road.'}[next]);});
+  else showToast('Graphics',{high:'3D with shadows and full detail.',medium:'3D with shadows, a shorter view and fewer people. A balance for tablets and mid-range phones.',low:'3D with a shorter view, fewer trees and people, and only car shadows. For phones.',['2d']:'The classic painted 2D road.'}[next]);});
 
 /* ---------- input ---------- */
 const KEYMAP={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',Space:'nitro',ShiftLeft:'nitro',ShiftRight:'nitro'};

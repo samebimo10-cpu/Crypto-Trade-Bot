@@ -19,7 +19,7 @@ const Music={
     const ac=Sound.ac; if(!ac||this.bus) return !!this.bus;
     const shelf=ac.createBiquadFilter(); shelf.type='lowshelf'; shelf.frequency.value=110; shelf.gain.value=7; // the heavy bass
     const comp=ac.createDynamicsCompressor(); comp.threshold.value=-16; comp.ratio.value=4; comp.attack.value=.004; comp.release.value=.18;
-    this.bus=ac.createGain(); this.bus.gain.value=0; this.bus.connect(shelf); shelf.connect(comp); comp.connect(Sound.master);
+    this.bus=ac.createGain(); this.bus.gain.value=0; this.bus.connect(shelf); shelf.connect(comp); comp.connect(Sound.mus||Sound.master);
     this.drums=ac.createGain(); this.drums.connect(this.bus);
     this.keys=ac.createGain(); this.keys.connect(this.bus); // ducked by every kick (side-chain pump)
     const n=1024, curve=new Float32Array(n); for(let i=0;i<n;i++){const x=i/(n-1)*2-1; curve[i]=Math.tanh(x*2.4);}

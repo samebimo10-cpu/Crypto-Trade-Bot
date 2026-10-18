@@ -158,7 +158,7 @@ function cockpitCamera(cam,dt){
 }
 // the rear-view mirror: a small render looking backwards, every other frame on High
 function renderMirror(cam){
-  if(!cockpitOn()||!DRV.cp||(DRV.frame++%(R3.quality==='high'?2:4))) return;
+  if(!cockpitOn()||!DRV.cp||(DRV.frame++%(R3.quality==='high'?2:R3.quality==='medium'?3:4))) return;
   const D=DRV.cp, mc=D.mcam, r=R3.r, f=new TH.Vector3(); cam.getWorldDirection(f);
   mc.position.copy(cam.position).addScaledVector(f,.4); mc.position.y+=.05; mc.lookAt(mc.position.clone().addScaledVector(f,-10).add(new TH.Vector3(0,-.4,0)));
   D.G.visible=false; const au=r.shadowMap.autoUpdate; r.shadowMap.autoUpdate=false;

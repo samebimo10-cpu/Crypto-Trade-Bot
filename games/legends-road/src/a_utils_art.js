@@ -26,7 +26,8 @@ function poly(g,pts,fill){g.beginPath(); g.moveTo(pts[0],pts[1]); for(let i=2;i<
 function nightTint(g,w,h,a=.58){g.save(); g.globalCompositeOperation='source-atop'; g.fillStyle=`rgba(6,10,32,${a})`; g.fillRect(0,0,w,h); g.restore();}
 const FD='"Big Shoulders Display","Arial Narrow","Roboto Condensed",Impact,sans-serif';
 const FB='Spectral,Georgia,"Times New Roman",serif';
-const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceMotionSys = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+let reduceMotion = reduceMotionSys; // the in-game Reduce motion setting can also switch it on
 
 /* =====================================================================
    SPRITE ART — everything is painted procedurally, so no downloads

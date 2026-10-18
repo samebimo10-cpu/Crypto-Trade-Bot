@@ -313,3 +313,18 @@ Add `?autodrive` to the URL to let the car drive itself (demo mode).
 
 The stories are short summaries of public biographies. Fortunes and rankings
 change often.
+
+## Developing
+
+The game's source is in `src/` (one module per area: data, engine, 3D
+renderer, cars, street life, inside view, radio, Cinema Mode, main loop).
+`index.html` is built from it:
+
+```
+node games/legends-road/tools/build.mjs          # rebuild index.html
+node games/legends-road/tools/build.mjs --check  # CI: fails if index.html is stale
+```
+
+Edit files in `src/`, never `index.html` directly. `REDESIGN_AUDIT.md` and
+`REDESIGN_PROGRESS.md` track the visual and gameplay redesign against
+`REDESIGN_SPEC.md`.

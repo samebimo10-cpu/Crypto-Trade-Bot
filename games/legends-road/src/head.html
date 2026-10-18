@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Legends Road</title>
+<meta name="description" content="An offline racing series: a Lagos couple race rival couples across twelve cities, from Lagos, Port Harcourt, Yenagoa and Asaba to Starbase, meeting the legends whose fortunes began there.">
+<meta name="theme-color" content="#0a1322">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Legends Road">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: full-bleed canvas racer; menus read like a travel passport and a season programme. One-screen app, dark by design. */
+:root{
+  --ink:#0a1322;
+  --deep:#13223b;
+  --paper:#f4ead6;
+  --paper-2:#e9dcc2;
+  --paper-ink:#2b2217;
+  --gold:#e8b04b;
+  --gold-2:#ffd27a;
+  --signal:#d9432f;
+  --mist:#a9b8cf;
+  --stamp:#a2341f;
+  --sea:#7fd3ff;
+  --display:"Big Shoulders Display","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  --body:"Spectral",Georgia,"Times New Roman",serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--ink);color:var(--paper);overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;font-family:var(--body)}
+canvas#game,canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.btn{font-family:var(--display);font-weight:800;font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:.8em 1.4em;border-radius:3px;border:1.5px solid rgba(244,234,214,.45);background:rgba(10,19,34,.55);
+  cursor:pointer;transition:transform .15s,background .15s,border-color .15s}
+.btn:hover{border-color:var(--gold);transform:translateY(-1px)}
+.btn:focus-visible,.card:focus-visible,.icon-btn:focus-visible,.toggle:focus-visible{outline:3px solid var(--gold-2);outline-offset:3px}
+.btn.primary{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.btn.primary:hover{background:var(--gold-2)}
+.btn.ghost{border-color:transparent;background:none;text-decoration:underline;text-underline-offset:4px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.eyebrow{font-family:var(--display);font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:.8rem;margin:0;color:var(--gold)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.screen{position:fixed;inset:0;z-index:6;overflow-y:auto;background:rgba(10,19,34,.94);padding:16px;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.wrap>header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+.wrap h2{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(2.2rem,6vw,3.6rem);margin:0;line-height:.9;text-wrap:balance}
+.sum{margin:0;color:var(--mist);font-size:.95rem}
+
+/* ---------- title ---------- */
+#title{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;padding:16px;overflow-y:auto;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,rgba(10,19,34,0) 25%,rgba(10,19,34,.82) 70%,rgba(10,19,34,.96))}
+.title-wrap{max-width:48rem;width:100%;margin:auto auto 0 max(0px,4vw);display:flex;flex-direction:column;gap:12px}
+.logo{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.82;margin:0;
+  font-size:clamp(3.4rem,12vw,8.4rem);letter-spacing:.01em;color:var(--paper);text-shadow:0 6px 30px rgba(0,0,0,.45)}
+.logo span{display:block;color:var(--gold)}
+.lede{font-size:clamp(1rem,2.3vw,1.18rem);line-height:1.5;margin:0;max-width:36rem;color:#e7dcc6}
+.install-help{margin:0;max-width:640px;font-size:.95rem;color:var(--paper,#f4ead6);background:rgba(10,19,34,.6);border-left:3px solid var(--gold,#e8b04b);padding:8px 12px}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;color:var(--paper)}
+a.btn.ghost{text-decoration:underline}
+.keys{font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;color:var(--mist);margin:0}
+.fineprint{font-size:.78rem;color:var(--mist);margin:0;max-width:36rem;font-style:italic}
+.toggle{display:inline-flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:4px 0;
+  font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--paper)}
+.toggle .sw{width:40px;height:22px;border-radius:11px;background:rgba(244,234,214,.25);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--paper);transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--gold)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(18px);background:var(--ink)}
+.pick{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--paper)}
+.pick select{font-family:var(--body);font-size:1rem;letter-spacing:0;text-transform:none;padding:.45em .6em;border-radius:3px;border:1.5px solid rgba(244,234,214,.45);background:var(--deep);color:var(--paper)}
+.pick select:focus-visible{outline:3px solid var(--gold-2);outline-offset:2px}
+.conds{margin-top:10px}
+.cards-h{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.4rem;margin:8px 0 0;grid-column:1/-1;color:var(--gold)}
+.slider{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--paper)}
+.slider input{width:min(160px,40vw);accent-color:var(--gold)}
+.badge{display:inline-block;min-width:1.5em;padding:0 .4em;margin-left:.4em;border-radius:1em;background:var(--signal);color:#fff;font-size:.8em;text-align:center}
+
+/* ---------- episode cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{position:relative;display:flex;flex-direction:column;text-align:left;padding:0;border:none;border-radius:4px;overflow:hidden;
+  background:var(--paper);color:var(--paper-ink);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .2s}
+.card:hover{transform:translateY(-3px) rotate(-.4deg)}
+.card canvas{width:100%;aspect-ratio:16/10;display:block;max-width:100%}
+.card .meta{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.card .leg{font-family:var(--display);font-weight:800;letter-spacing:.18em;font-size:.72rem;text-transform:uppercase;color:var(--stamp)}
+.card h3{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.6rem;margin:0;line-height:1}
+.card p{margin:0;font-size:.92rem;line-height:1.35}
+.card .medal{position:absolute;top:10px;right:10px;font-family:var(--display);font-weight:900;font-size:.8rem;letter-spacing:.1em;
+  padding:.35em .6em;border-radius:2px;background:var(--ink);color:var(--gold-2)}
+.card.locked{cursor:not-allowed;filter:grayscale(.85) brightness(.7)}
+.card.locked:hover{transform:none}
+
+/* ---------- garage ---------- */
+.bank{font-family:var(--display);font-weight:900;font-size:1.6rem;color:var(--gold-2);margin:0}
+.car{background:var(--paper);color:var(--paper-ink);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.lineup canvas{width:100%;height:auto;display:block;border-radius:6px;max-width:100%;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.car canvas{width:100%;aspect-ratio:16/9;display:block;max-width:100%;background:linear-gradient(180deg,#2b3a55,#0f1a2c 70%,#1a2232)}
+.car .meta{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+.car h3{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.5rem;margin:0;line-height:1}
+.car p{margin:0;font-size:.92rem;line-height:1.35}
+.stats{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;font-family:var(--display);font-weight:800;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+.bar{height:7px;border-radius:4px;background:rgba(43,34,23,.15);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--stamp)}
+.car .btn{color:var(--paper-ink);border-color:rgba(43,34,23,.4);background:transparent;margin-top:auto;align-self:flex-start}
+.car .btn.primary{background:var(--paper-ink);color:var(--paper);border-color:var(--paper-ink)}
+.car.selected{outline:3px solid var(--gold);outline-offset:-3px}
+
+/* ---------- spin ---------- */
+#spin .wrap{max-width:720px;align-items:center;text-align:center}
+#wheel{width:min(400px,80vw,calc(100vh - 290px));min-width:220px;height:auto;aspect-ratio:1;max-width:100%}
+#spin .wrap{gap:12px}
+.prize{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(1.6rem,5vw,2.4rem);margin:0;min-height:1.2em;color:var(--gold-2)}
+
+/* ---------- standings ---------- */
+#standings .wrap{max-width:760px}
+.table-wrap{overflow-x:auto}
+table.st{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.st th{font-family:var(--display);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--mist);text-align:left;padding:8px 10px;border-bottom:1px solid rgba(244,234,214,.2)}
+table.st td{padding:10px;border-bottom:1px solid rgba(244,234,214,.1);font-size:1rem}
+table.st td.pos{font-family:var(--display);font-weight:900;font-size:1.4rem;width:3rem}
+table.st td.pts{font-family:var(--display);font-weight:900;font-size:1.4rem;text-align:right}
+table.st tr.you td{color:var(--gold-2)}
+table.st .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
+table.st small{display:block;color:var(--mist);font-size:.82rem}
+.teaser{margin:0;font-style:italic;font-size:1.1rem;line-height:1.5;color:#e7dcc6;max-width:60ch}
+
+/* ---------- big map ---------- */
+#bigmap .wrap{max-width:1180px}
+.map-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:start}
+#mapCanvas{width:min(100%,calc(100vh - 190px));min-width:260px;height:auto;aspect-ratio:1;border-radius:6px;display:block;max-width:100%}
+.places{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.places li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.places .n{width:24px;height:24px;border-radius:50%;background:var(--paper);color:var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:.8rem}
+.places li.done .n{background:var(--gold)}
+.places b{font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:1rem;display:block}
+.places span{color:var(--mist);font-size:.92rem;line-height:1.4}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--display);font-weight:800;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mist)}
+.legend i{display:inline-block;width:18px;height:4px;margin-right:6px;vertical-align:middle;border-radius:2px}
+
+/* ---------- in-race overlays ---------- */
+#subs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14% + env(safe-area-inset-bottom,0px));z-index:4;pointer-events:none;
+  width:min(44rem,calc(100% - 32px));text-align:center;font-size:clamp(1rem,2.4vw,1.25rem);line-height:1.4;
+  text-shadow:0 2px 6px rgba(0,0,0,.9),0 0 18px rgba(0,0,0,.6);transition:opacity .25s}
+#subs b{font-family:var(--display);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.8em;margin-right:.5em}
+#subs.narr{font-style:italic}
+#skip{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6}
+#toast{position:fixed;left:50%;top:calc(76px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:4;pointer-events:none;
+  max-width:min(34rem,calc(100% - 32px));background:rgba(244,234,214,.94);color:var(--paper-ink);padding:10px 16px;border-radius:3px;
+  font-size:.98rem;line-height:1.35;box-shadow:0 8px 24px rgba(0,0,0,.35);text-align:center}
+#toast b{font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;font-size:.75rem;color:var(--stamp);display:block}
+#toast.show{animation:toastIn 5s ease forwards}
+@keyframes toastIn{0%{opacity:0;transform:translate(-50%,-10px)}8%{opacity:1;transform:translate(-50%,0)}85%{opacity:1}100%{opacity:0}}
+
+/* ---------- episode end / passport ---------- */
+#story{position:fixed;inset:0;z-index:7;display:flex;padding:16px;overflow-y:auto;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  background:radial-gradient(ellipse at center,rgba(10,19,34,.55),rgba(10,19,34,.9))}
+.passport{width:min(1100px,100%);max-height:100%;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;
+  background:var(--paper);color:var(--paper-ink);border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+  animation:open .6s cubic-bezier(.2,.8,.2,1);-webkit-user-select:text;user-select:text}
+@keyframes open{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
+.passport .ep{grid-column:1/-1;padding:18px clamp(20px,3.4vw,40px);background:var(--paper-ink);color:var(--paper);display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.passport .ep .eyebrow{color:var(--gold)}
+.passport .ep h2{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(1.6rem,4vw,2.4rem);margin:0;line-height:1}
+.passport .ep p.scene{margin:0;flex-basis:100%;font-style:italic;font-size:1.05rem;color:#e7dcc6}
+.passport .ep p.scene b{font-style:normal;font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;color:var(--gold-2);margin-right:.4em}
+.page{padding:clamp(20px,3.4vw,40px);display:flex;flex-direction:column;gap:12px;min-width:0;position:relative}
+.page.place{border-right:1px dashed rgba(43,34,23,.25);
+  background:repeating-linear-gradient(0deg,rgba(43,34,23,.035) 0 1px,transparent 1px 28px),var(--paper)}
+.page .eyebrow{color:var(--stamp)}
+.page h3.big{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,5.4vw,3.8rem);line-height:.88;margin:0;text-wrap:balance}
+.page .country{margin:0;font-family:var(--display);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:.85rem;opacity:.7}
+.page p.history,.page p.story{margin:0;font-size:1.04rem;line-height:1.6;max-width:62ch}
+.page p.story::first-letter{font-family:var(--display);font-weight:900;font-size:3.1em;float:left;line-height:.8;margin:.06em .08em 0 0;color:var(--stamp)}
+.page.place>.eyebrow,.page.place>h3.big{padding-right:120px}
+.result{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 0;padding:12px 0 0;border-top:1px solid rgba(43,34,23,.2)}
+.result div{min-width:0}
+.result dt{font-family:var(--display);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:.7rem;opacity:.65}
+.result dd{margin:0;font-family:var(--display);font-weight:900;font-size:1.7rem;font-variant-numeric:tabular-nums}
+.stamp{position:absolute;top:18px;right:18px;width:118px;height:118px;border-radius:50%;border:3px double var(--stamp);color:var(--stamp);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-14deg);opacity:.85;
+  font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:1;padding:8px;animation:stampIn .5s .35s both cubic-bezier(.3,1.6,.5,1)}
+.stamp span{font-size:1rem;letter-spacing:.04em}
+.stamp small{font-size:.62rem;letter-spacing:.2em;margin-top:4px}
+@keyframes stampIn{from{opacity:0;transform:rotate(-30deg) scale(2.2)}to{opacity:.85;transform:rotate(-14deg) scale(1)}}
+.who{display:flex;gap:14px;align-items:center}
+.medal{flex:0 0 auto;width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-weight:900;font-size:1.9rem;color:#4a3410;letter-spacing:.02em;
+  background:radial-gradient(circle at 35% 30%,#fff3c4,#e8b04b 45%,#a8761f 80%);box-shadow:inset 0 0 0 4px rgba(255,255,255,.35),inset 0 0 0 7px rgba(120,80,20,.35),0 6px 16px rgba(0,0,0,.25)}
+.who h3{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(1.6rem,3.4vw,2.2rem);margin:0;line-height:.95}
+.who p{margin:.2em 0 0;font-style:italic;font-size:.98rem}
+.fact{margin:0;padding:12px 14px;background:var(--paper-2);border-radius:3px;font-size:.98rem;line-height:1.5}
+.fact b{font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;font-size:.75rem;color:var(--stamp);display:block}
+.page .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:8px}
+.page .btn{color:var(--paper-ink);border-color:rgba(43,34,23,.4);background:transparent}
+.page .btn.primary{background:var(--paper-ink);color:var(--paper);border-color:var(--paper-ink)}
+.page .btn.primary:hover{background:var(--stamp);border-color:var(--stamp)}
+.trail{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.trail li{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--paper-ink);opacity:.5}
+.trail li.done{background:var(--paper-ink);opacity:.8}
+.trail li.here{background:var(--stamp);border-color:var(--stamp);opacity:1;transform:scale(1.3)}
+
+/* ---------- pause ---------- */
+#pause{position:fixed;inset:0;z-index:8;display:flex;overflow-y:auto;background:rgba(10,19,34,.78);padding:16px;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+#story>*,#pause>*{margin:auto}
+.pause-card{display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:30rem}
+.pause-card h2{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:3.4rem;margin:0;line-height:.9}
+.pause-card p{margin:0;color:var(--mist)}
+
+/* ---------- corner + touch ---------- */
+#corner{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;z-index:6;display:flex;gap:8px}
+.icon-btn{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(244,234,214,.4);background:rgba(10,19,34,.5);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--display);font-weight:900;font-size:.85rem;letter-spacing:.05em}
+#touch{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-end;
+  padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));pointer-events:none}
+#touch .grp{display:flex;gap:12px;pointer-events:auto}
+.tb{width:74px;height:74px;border-radius:50%;border:2px solid rgba(244,234,214,.45);background:rgba(10,19,34,.38);
+  font-family:var(--display);font-weight:900;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);
+  display:flex;align-items:center;justify-content:center;touch-action:none}
+.tb.on{background:rgba(232,176,75,.55);border-color:var(--gold-2)}
+.tb.nitro{border-color:var(--sea);color:#bfeaff}
+.tb svg{width:30px;height:30px;fill:currentColor}
+
+@media (max-width:760px){
+  .passport{grid-template-columns:1fr}
+  .page.place{border-right:none;border-bottom:1px dashed rgba(43,34,23,.25)}
+  .stamp{width:92px;height:92px;top:14px;right:14px}
+  .stamp span{font-size:.8rem}
+  .page.place>.eyebrow,.page.place>h3.big{padding-right:96px}
+  .tb{width:62px;height:62px}
+  .map-grid{grid-template-columns:1fr}
+}
+@media (max-height:500px){
+  #toast{top:calc(52px + env(safe-area-inset-top,0px));font-size:.85rem;padding:6px 12px;max-width:min(26rem,calc(100% - 32px))}
+  #subs{bottom:calc(30% + env(safe-area-inset-bottom,0px));font-size:.95rem}
+}
+/* phones and tablets, both orientations */
+@media (pointer:coarse){ .keys{display:none} }
+@media (max-width:560px){
+  #title{background:linear-gradient(180deg,rgba(10,19,34,.1) 0%,rgba(10,19,34,.78) 22%,rgba(10,19,34,.95) 60%)}
+  #title .row.main{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  #title .row.main #btnPlay{grid-column:1/-1}
+  #title .row.main .btn,#title .install .btn{justify-content:center;text-align:center}
+  #title .row.install{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%;gap:8px}
+  #title .install .btn{padding:.7em .4em;font-size:.9rem}
+  .title-wrap{margin-left:auto}
+  .slider{width:100%} .slider input{flex:1;width:auto}
+}
+@media (max-height:560px) and (orientation:landscape){
+  #title{padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .title-wrap{gap:8px;max-width:none}
+  .logo{font-size:clamp(2.2rem,14vh,4rem);display:flex;gap:.25em}
+  .logo span{display:inline}
+  .lede{font-size:.9rem;line-height:1.35;max-width:46rem}
+  .fineprint{display:none}
+  #title .btn{font-size:.88rem;padding:.55em 1em}
+  .row{gap:8px}
+  .toggle,.slider{font-size:.78rem}
+  .screen{padding-top:calc(10px + env(safe-area-inset-top,0px))}
+  .wrap{gap:12px}
+}
+@media (max-height:420px) and (orientation:landscape){ .lede{display:none} }
+/* cinema mode: no HUD, just the picture */
+body.cinema #corner,body.cinema #touch,body.cinema #subs,body.cinema #title,body.cinema #pause,body.cinema .screen,body.cinema #skip{display:none!important}
+body.recording #toast,body.recording #cineBar{display:none!important}
+#cineBar{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));z-index:9;display:none;gap:8px;transition:opacity .4s}
+body.cinema #cineBar{display:flex}
+#cineBar.idle{opacity:0}
+#cineBar .btn{font-size:.8rem;padding:.5em .9em}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="game" aria-label="Race view"></canvas>
+
+<div id="title">
+  <div class="title-wrap">
+    <p class="eyebrow">Season One · The Fortune Trail</p>
+    <h1 class="logo">Legends<span>Road</span></h1>
+    <p class="lede">Kemi and Tobi Adeyemi, a Lagos couple, race five rival couples across twelve cities to win the Fortune Trail and save Tobi's late father's garage. Every episode ends where a famous fortune began.</p>
+    <div class="row main">
+      <button id="btnPlay" class="btn primary">Play season</button>
+      <button id="btnMap" class="btn">Episodes</button>
+      <button id="btnGarage" class="btn">Garage</button>
+      <button id="btnSpinT" class="btn">Lucky spin<span class="badge" id="spinBadge">0</span></button>
+    </div>
+    <div class="row">
+      <button class="toggle" id="tgAssist" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Steering assist</button>
+      <button class="toggle" id="tgSound" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Sound</button>
+      <button class="toggle" id="tgMusic" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Music</button>
+      <button class="btn ghost" id="btnGfx" type="button">Graphics: 3D · High</button>
+      <label class="slider" for="rgBright">Brightness <input type="range" id="rgBright" min="60" max="140" step="5" value="100"></label>
+    </div>
+    <div class="row install">
+      <button class="btn" id="btnInstall" type="button">Install on phone</button>
+      <a class="btn ghost" id="lnkPlay" href="https://samebimo10-cpu.github.io/Crypto-Trade-Bot/" target="_blank" rel="noopener">Play online</a>
+      <a class="btn ghost" id="lnkGit" href="https://github.com/samebimo10-cpu/Crypto-Trade-Bot/tree/main/games/legends-road" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <p class="install-help" id="installHelp" hidden></p>
+    <p class="keys">Arrows or WASD to drive · Space for nitro · H horn · R radio · V inside/outside view · C cinema · N map · P pause</p>
+    <p class="fineprint">The legends' stories are short summaries of public biographies; fortunes and rankings change often. The couples are fictional. Street maps are stylised. Works fully offline once loaded.</p>
+  </div>
+</div>
+
+<div id="select" class="screen" hidden>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow">Season One · The Fortune Trail</p>
+        <h2>Twelve episodes, twelve cities</h2>
+        <p class="sum" id="atlasSum"></p>
+        <div class="row conds">
+          <label class="pick" for="selTod">Time of day <select id="selTod"><option value="story">As in the story</option><option value="morning">Morning</option><option value="midday">Midday</option><option value="sunset">Sunset</option><option value="night">Night</option></select></label>
+          <label class="pick" for="selWx">Weather <select id="selWx"><option value="story">As in the story</option><option value="clear">Clear</option><option value="cloudy">Cloudy</option><option value="rain">Rain</option></select></label>
+        </div>
+      </div>
+      <button id="btnBack" class="btn">Back</button>
+    </header>
+    <div class="cards" id="cards"></div>
+  </div>
+</div>
+
+<div id="garage" class="screen" hidden>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow">Adeyemi Motors</p>
+        <h2>Garage</h2>
+        <p class="bank" id="bank"></p>
+        <p class="sum">Fortune you collect on the road pays for new cars.</p>
+      </div>
+      <button id="btnGarageBack" class="btn">Back</button>
+    </header>
+    <div id="lineup" class="lineup"></div>
+    <div class="cards" id="carCards"></div>
+  </div>
+</div>
+
+<div id="spin" class="screen" hidden>
+  <div class="wrap">
+    <p class="eyebrow">Lucky spin</p>
+    <h2>Spin the wheel</h2>
+    <p class="sum" id="spinSum"></p>
+    <canvas id="wheel" width="840" height="840" aria-label="Prize wheel"></canvas>
+    <p class="prize" id="prize" aria-live="polite"></p>
+    <div class="row" style="justify-content:center">
+      <button id="btnDoSpin" class="btn primary">Spin</button>
+      <button id="btnSpinDone" class="btn">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="standings" class="screen" hidden>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow" id="stdEyebrow"></p>
+        <h2 id="stdTitle">Season standings</h2>
+      </div>
+    </header>
+    <div class="table-wrap"><table class="st"><thead><tr><th>#</th><th>Couple</th><th>Last race</th><th style="text-align:right">Points</th></tr></thead><tbody id="stdBody"></tbody></table></div>
+    <p class="teaser" id="stdTeaser"></p>
+    <div class="row">
+      <button id="btnNextEp" class="btn primary">Next episode</button>
+      <button id="btnStdSpin" class="btn">Lucky spin<span class="badge" id="spinBadge2">0</span></button>
+      <button id="btnStdGarage" class="btn">Garage</button>
+      <button id="btnStdTitle" class="btn ghost">Title screen</button>
+    </div>
+  </div>
+</div>
+
+<div id="bigmap" class="screen" hidden>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow" id="mapEyebrow"></p>
+        <h2 id="mapTitle"></h2>
+        <div class="legend"><span><i style="background:#f4ead6"></i>Route</span><span><i style="background:#e8b04b"></i>Driven</span><span><i style="background:#7fd3ff"></i>Shortcut</span><span><i style="background:#2b5d8a"></i>Water</span></div>
+      </div>
+      <button id="btnMapClose" class="btn primary">Back to the road</button>
+    </header>
+    <div class="map-grid">
+      <canvas id="mapCanvas" aria-label="Route map"></canvas>
+      <ol class="places" id="placeList"></ol>
+    </div>
+  </div>
+</div>
+
+<div id="subs" aria-live="polite"></div>
+<button id="skip" class="btn" hidden>Skip ▸</button>
+<div id="toast" hidden></div>
+
+<div id="story" hidden>
+  <article class="passport" aria-live="polite">
+    <div class="ep">
+      <p class="eyebrow" id="stEp"></p>
+      <h2 id="stEpTitle"></h2>
+      <p class="scene" id="stScene"></p>
+    </div>
+    <section class="page place">
+      <div class="stamp" aria-hidden="true"><span id="stStampPlace"></span><small id="stStampDate">Arrived</small></div>
+      <p class="eyebrow" id="stEra"></p>
+      <h3 class="big" id="stPlace"></h3>
+      <p class="country" id="stCountry"></p>
+      <p class="history" id="stHistory"></p>
+      <dl class="result">
+        <div><dt>Finish</dt><dd id="stRank"></dd></div>
+        <div><dt>Time</dt><dd id="stTime"></dd></div>
+        <div><dt>Fortune</dt><dd id="stFortune"></dd></div>
+      </dl>
+      <ul class="trail" id="stTrail" aria-label="Season progress"></ul>
+    </section>
+    <section class="page person">
+      <p class="eyebrow">The legend of this city</p>
+      <div class="who">
+        <div class="medal" id="stInitials" aria-hidden="true"></div>
+        <div><h3 id="stName"></h3><p id="stRole"></p></div>
+      </div>
+      <p class="story" id="stStory"></p>
+      <p class="fact"><b>Did you know?</b><span id="stFact"></span></p>
+      <div class="actions">
+        <button id="btnContinue" class="btn primary">Season standings</button>
+        <button id="btnRetry" class="btn">Race again</button>
+        <button id="btnAtlas" class="btn ghost">Episodes</button>
+      </div>
+    </section>
+  </article>
+</div>
+
+<div id="pause" hidden>
+  <div class="pause-card">
+    <p class="eyebrow">Paused</p>
+    <h2>Roadside stop</h2>
+    <p>Take a breath. The road will wait.</p>
+    <button class="toggle" id="tgAssist2" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Steering assist</button>
+    <button class="toggle" id="tgMusic2" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Music</button>
+    <button class="toggle" id="tgBlood" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Blood effects</button>
+    <label class="slider" for="rgBright2">Brightness <input type="range" id="rgBright2" min="60" max="140" step="5" value="100"></label>
+    <div class="row">
+      <button id="btnResume" class="btn primary">Resume</button>
+      <button id="btnPauseMap" class="btn">Map</button>
+      <button id="btnRestart" class="btn">Restart episode</button>
+      <button id="btnCinema" class="btn">Cinema mode</button>
+      <button id="btnQuit" class="btn ghost">Quit to title</button>
+    </div>
+  </div>
+</div>
+
+<div id="cineBar" aria-label="Cinema controls"><button class="btn" id="cbReplay" type="button">Replay</button><button class="btn primary" id="cbRec" type="button">Record</button><button class="btn" id="cbExit" type="button">Exit</button></div>
+<div id="corner" hidden>
+  <button class="icon-btn" id="btnMute" aria-label="Toggle sound">SND</button>
+  <button class="icon-btn" id="btnRadio" aria-label="Change radio station">FM</button>
+  <button class="icon-btn" id="btnView" aria-label="Switch between inside and outside camera">OUT</button>
+  <button class="icon-btn" id="btnPause" aria-label="Pause">II</button>
+</div>
+
+<div id="touch" hidden>
+  <div class="grp">
+    <button class="tb" data-k="left" aria-label="Steer left"><svg viewBox="0 0 24 24"><path d="M15.5 4 7 12l8.5 8 1.5-1.5L10 12l7-6.5z"/></svg></button>
+    <button class="tb" data-k="right" aria-label="Steer right"><svg viewBox="0 0 24 24"><path d="M8.5 4 17 12l-8.5 8L7 18.5 14 12 7 5.5z"/></svg></button>
+  </div>
+  <div class="grp">
+    <button class="tb horn" id="tbHorn" aria-label="Horn">Horn</button>
+    <button class="tb" data-k="down" aria-label="Brake">Brake</button>
+    <button class="tb nitro" data-k="nitro" aria-label="Nitro">Nitro</button>
+  </div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script>
+(() => {
+'use strict';

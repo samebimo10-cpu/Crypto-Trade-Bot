@@ -1,0 +1,24 @@
+# Checks that Legends Road's built index.html matches its source modules and has no syntax errors.
+name: Legends Road build check
+
+on:
+  pull_request:
+    paths: ['games/legends-road/**', '.github/workflows/legends-road-check.yml']
+  push:
+    branches: [main]
+    paths: ['games/legends-road/**']
+
+permissions:
+  contents: read
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node games/legends-road/tools/build.mjs --check
+      - run: node --check games/legends-road/sw.js
+      - run: python3 -c "import json; json.load(open('games/legends-road/shots.json')); json.load(open('games/legends-road/manifest.webmanifest'))"
